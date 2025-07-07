@@ -2,7 +2,9 @@ import streamlit as st
 
 #from streamlit_option_menu import option_menu
 
-
+# Main page content
+st.markdown("# Planet Profile Main Settings")
+st.sidebar.markdown("# Planet Profile Main Settings")
 
 
 st.title("Planet Profile")
