@@ -3,8 +3,8 @@ import streamlit as st
 #from streamlit_option_menu import option_menu
 
 # Main page content
-st.markdown("# Planet Profile Main Settings")
-st.sidebar.markdown("# Planet Profile Main Settings")
+st.set_page_config(page_title="Planet Profile Main", page_icon="🌙",)
+
 
 
 st.title("Planet Profile")
@@ -38,8 +38,6 @@ if user_ocean_type == "Define your own ocean composition":
     species_concentration_unit = st.selectbox("Choose Salt Species Concentration Units", ("absolute mol/kg", "relative ratios"))
     num_salts = st.number_input("Input number of salt species", min_value = 1)
     num_salts_list = [int(digit) for digit in str(num_salts)]
-    #st.write(type(num_salts_list))
-    #st.write(num_salts_list)
     salt_name_list = []
     salt_conc_list = []
     st.markdown("---")
@@ -51,28 +49,5 @@ if user_ocean_type == "Define your own ocean composition":
     st.write(salt_name_list)
     st.write(salt_conc_list)
     st.write(species_concentration_unit)
-    #num_salts_list = list(len(str((num_salts))))
-    #st.write(len(num_salts_list))
-    
-    #for num in num_salts_list:
-        #st.write(num_salts_list)
-        #salt_name_list.append(st.text_input("Salt Species"))
-        #st.write(salt_name_list)
-        #num += 1
-
-
-    #salt_name_list.append(st.text_input("First Ocean Salt"))
-    #st.number_input("First Salt Concentration")
-    #st.write(salt_name_list)
-    #if num_salts >= 2: 
-        #st.text_input("Second Ocean Salt")
-        #st.number_input("Second Salt Concentration (ppt)")
-
-    #if num_salts >= 3: 
-        #st.text_input("Third Ocean Salt")
-        #st.number_input("Third Salt Concentration (ppt)")
-
-#with st.popover("Open popover"):
-   # st.markdown("Hello World 👋")
-    #name = st.text_input("What's your name?")
+ 
 
