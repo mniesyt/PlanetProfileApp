@@ -12,7 +12,8 @@ if st.button("Run Planet Profile with my Choices", type = "primary"):
     current_directory = os.getcwd()
     st.write(f"Current working directory: {current_directory}")
     Planet = os.getenv("Planet")
-    os.system('python PlanetProfileCLI.py Planet')
+    #st.write('python PlanetProfileCLI.py ' +str(Planet))
+    os.system('python PlanetProfileCLI.py ' + str(Planet))
 
     #python PlanetProfileCLI.py Europa
 
