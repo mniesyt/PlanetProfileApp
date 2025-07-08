@@ -1,6 +1,5 @@
 import streamlit as st
-
-#from streamlit_option_menu import option_menu
+import os
 
 # Main page content
 st.set_page_config(page_title="Planet Profile Main", page_icon="🌙",)
@@ -12,9 +11,11 @@ st.write("Let's Start by Setting Up Your Planet")
 
 st.subheader("Body Selection")
 
-Planet = st.selectbox("Choose your Planetary Body below",
+os.environ["Planet"] = st.selectbox("Choose your Planetary Body below",
              ("Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"))
 # will eventually have to have an actual call to the list of available moons from planet profile directly
+st.write(os.environ["Planet"])
+
 
 st.markdown("---")
 st.subheader("Temperature Setup")
@@ -25,7 +26,7 @@ st.markdown("---")
 st.subheader("Ocean Composition")
 user_ocean_type = st.selectbox("Use Predefined Ocean or Define own Ocean Composition", ("Use pre-defined ocean composition","Define your own ocean composition"),index = None, placeholder = "Select Ocean Type")
 #User selects which water they want to use, will have to call from prespecified options list
-#print(user_ocean_type.index)
+
 
 if user_ocean_type == "Use pre-defined ocean composition":
    st.selectbox("Choose Predefined Ocean", ("Pure H2O", "Seawater", "MgSO4", "NaCl"))

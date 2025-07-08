@@ -4,9 +4,9 @@ import streamlit as st
 main_settings = st.Page("pages/PlanetProfileMainPage.py", title="Planet Profile Main Settings", icon = "🌙" ) 
 bulk_planetary_settings = st.Page("pages/BulkPlanetarySettings.py", title="Bulk Planetary Settings", icon="🪙")
 layer_step_settings = st.Page("pages/LayerStepSettings.py", title="Layer Step Settings", icon="📶")
-
+run_PlanetProfile = st.Page("pages/RunPlanetProfile.py", title="Run Planet Profile", icon="🚀")
 # Set up navigation
-pg = st.navigation([main_settings, bulk_planetary_settings, layer_step_settings])
+pg = st.navigation([main_settings, bulk_planetary_settings, layer_step_settings, run_PlanetProfile])
 
 # Run the selected page
 pg.run()
