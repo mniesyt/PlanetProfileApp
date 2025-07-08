@@ -9,11 +9,11 @@ GUI for PlanetProfile, found here: git@github.com:vancesteven/PlanetProfile.git
 1. Install the requirements
 
    ```
-   $ pip install -r requirements.txt
+   $ pip install streamlit
    ```
 
 2. Run the app
 
    ```
-   $ streamlit run streamlit_app.py
+   $ streamlit run IntroPage.py
    ```
