@@ -19,7 +19,6 @@ os.environ["Planet"] = st.selectbox("Choose your Planetary Body below",
 #st.write(os.environ["Planet"])
 
 Planet = os.getenv("Planet")
-st.write("PP"+str(Planet))
 
 st.markdown("---")
 st.subheader("Temperature Setup")

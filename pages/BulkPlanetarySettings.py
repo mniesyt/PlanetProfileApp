@@ -5,10 +5,13 @@ st.set_page_config(page_title="Bulk Planetary Settings")
 st.title("Bulk Planetary Settings")
 st.write("OPTIONAL -- Choose your Bulk Planetary Settings Below")
 
+Planet = os.getenv("Planet")
+
 os.chdir('..') #going to PlanetProfile
 os.chdir("/"+ str(Planet)) #pulling 
-Planet = os.getenv("Planet")
-st.write(PP+str(Planet))
+
+#st.write(PP+str(Planet))
+
 PPPlanet = "PP"+str(Planet)
 
 from PPPlanet import *
