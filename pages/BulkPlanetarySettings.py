@@ -1,26 +1,43 @@
 import streamlit as st
 import os
+import importlib
+
 st.set_page_config(page_title="Bulk Planetary Settings")
 
 st.title("Bulk Planetary Settings")
 st.write("OPTIONAL -- Choose your Bulk Planetary Settings Below")
 
 Planet = os.getenv("Planet")
-current_directory = os.getcwd()
-st.write(current_directory)
+
+
+#current_directory = os.getcwd()
+#st.write(current_directory)
 
 os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
-st.write(os.getcwd())
+#st.write(os.getcwd())
 os.chdir(str(Planet)) #now in the individual folder of the planet
-st.write(os.getcwd())
+#st.write(os.getcwd())
 #st.write(PP+str(Planet))
 
-PPPlanet = "PP"+str(Planet)
-
-from PPPlanet import *
+#PPPlanet = "PP"+str(Planet)
 
 
-os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = Planet.Bulk.R_m))
+#from "PP"+str(Planet) import *
+
+# Get the planet name from the environment variable
+Planet = os.getenv("Planet") # e.g., "Venus"
+
+if Planet:
+    try:
+        # Construct the module name as a string
+        # e.g., if Planet is "Venus", this becomes "PPVenus"
+        module_to_import = f"PP{Planet}"
+
+        # Use importlib to import the module
+        planet_module = importlib.import_module(module_to_import)
+
+
+os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m))
 #to be passed to Planet.Bulk.R_m
 os.environ["Planet.Bulk.M_kg"] = str(st.number_input("Mass of the body (kg)"))
 # to be passed to Planet.Bulk.M_kg
