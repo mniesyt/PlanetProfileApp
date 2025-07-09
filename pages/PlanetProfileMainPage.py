@@ -11,10 +11,12 @@ st.write("Let's Start by Setting Up Your Planet")
 
 st.subheader("Body Selection")
 
-os.environ["Planet"] = st.selectbox("Choose your Planetary Body below",
-             ("Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"))
+os.environ["Planet"] = st.selectbox("Choose your Planetary Body below", 
+                                    ("Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
+                                     "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
+                                     "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"))
 # will eventually have to have an actual call to the list of available moons from planet profile directly
-st.write(os.environ["Planet"])
+#st.write(os.environ["Planet"])
 
 
 st.markdown("---")
