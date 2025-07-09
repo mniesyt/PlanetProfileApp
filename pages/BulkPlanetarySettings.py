@@ -9,8 +9,9 @@ os.chdir('..') #going to PlanetProfile
 os.chdir("/"+ str(Planet)) #pulling 
 Planet = os.getenv("Planet")
 st.write(PP+str(Planet))
+PPPlanet = "PP"+str(Planet)
 
-from PP+str(Planet) import *
+from PPPlanet import *
 
 
 os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = Planet.Bulk.R_m))
