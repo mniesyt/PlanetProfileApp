@@ -29,7 +29,7 @@ if parent_directory not in sys.path:
 #st.write(current_directory)
 
 #os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
-#st.write(os.getcwd())
+st.write(parent_directory)
 #os.chdir(str(Planet)) #now in the individual folder of the planet
 #st.write(os.getcwd())
 #st.write(PP+str(Planet))
