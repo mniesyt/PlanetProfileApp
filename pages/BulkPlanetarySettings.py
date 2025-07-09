@@ -14,11 +14,13 @@ Planet = os.getenv("Planet")
 # Get the path to the current script's directory
 # For /PlanetProfile/PlanetProfileApp/your_script.py, this will be:
 # /PlanetProfile/PlanetProfileApp
-app_directory = os.path.dirname(os.path.abspath(__file__))
-st.write(app_directory)
+BulkPlanertarySettings_directory = os.path.dirname(os.path.abspath(__file__))
+st.write(BulkPlanertarySettings_directory)
 
 # Get the parent directory (/PlanetProfile)
-parent_directory = os.path.dirname(app_directory)
+app_directory = os.path.dirname(BulkPlanertarySettings_directory)
+st.write(app_directory)
+parent_directory  = os.path.dirname(app_directory)
 st.write(parent_directory)
 # Add the parent directory to Python's search path.
 # Now Python can find any modules inside /PlanetProfile.
@@ -29,8 +31,8 @@ if parent_directory not in sys.path:
 #current_directory = os.getcwd()
 #st.write(current_directory)
 
-os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
-st.write(parent_directory)
+#os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
+#st.write(parent_directory)
 
 #os.chdir(str(Planet)) #now in the individual folder of the planet
 #st.write(os.getcwd())
@@ -50,8 +52,9 @@ Planet = os.getenv("Planet") # e.g., "Venus"
 module_to_import = f"PP{Planet}"
 
 # Use importlib to import the module
-#planet_module = importlib.import_module(module_to_import)
+planet_module = importlib.import_module(module_to_import)
 
+st.write(planet_module)
 
 #os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m))
 #to be passed to Planet.Bulk.R_m
