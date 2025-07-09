@@ -5,7 +5,13 @@ st.set_page_config(page_title="Bulk Planetary Settings")
 st.title("Bulk Planetary Settings")
 st.write("OPTIONAL -- Choose your Bulk Planetary Settings Below")
 
-os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)"))
+os.chdir('..') #going to PlanetProfile
+os.chdir("/"+ str(Planet)) #pulling 
+
+from PP+str(Planet) import *
+
+
+os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = Planet.Bulk.R_m))
 #to be passed to Planet.Bulk.R_m
 os.environ["Planet.Bulk.M_kg"] = str(st.number_input("Mass of the body (kg)"))
 # to be passed to Planet.Bulk.M_kg
