@@ -27,14 +27,13 @@ os.chdir(str(Planet)) #now in the individual folder of the planet
 # Get the planet name from the environment variable
 Planet = os.getenv("Planet") # e.g., "Venus"
 
-if Planet:
-    try:
-        # Construct the module name as a string
-        # e.g., if Planet is "Venus", this becomes "PPVenus"
-        module_to_import = f"PP{Planet}"
 
-        # Use importlib to import the module
-        planet_module = importlib.import_module(module_to_import)
+# Construct the module name as a string
+# e.g., if Planet is "Venus", this becomes "PPVenus"
+module_to_import = f"PP{Planet}"
+
+# Use importlib to import the module
+planet_module = importlib.import_module(module_to_import)
 
 
 os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m))
