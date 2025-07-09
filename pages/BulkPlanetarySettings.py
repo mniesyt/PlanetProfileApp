@@ -10,12 +10,26 @@ st.write("OPTIONAL -- Choose your Bulk Planetary Settings Below")
 Planet = os.getenv("Planet")
 
 
+# Get the path to the current script's directory
+# For /PlanetProfile/PlanetProfileApp/your_script.py, this will be:
+# /PlanetProfile/PlanetProfileApp
+app_directory = os.path.dirname(os.path.abspath(__file__))
+
+# Get the parent directory (/PlanetProfile)
+parent_directory = os.path.dirname(app_directory)
+
+# Add the parent directory to Python's search path.
+# Now Python can find any modules inside /PlanetProfile.
+if parent_directory not in sys.path:
+    sys.path.append(parent_directory)
+
+
 #current_directory = os.getcwd()
 #st.write(current_directory)
 
-os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
+#os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 #st.write(os.getcwd())
-os.chdir(str(Planet)) #now in the individual folder of the planet
+#os.chdir(str(Planet)) #now in the individual folder of the planet
 #st.write(os.getcwd())
 #st.write(PP+str(Planet))
 
