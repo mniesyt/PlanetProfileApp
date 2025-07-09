@@ -75,3 +75,6 @@ os.environ["Planet.Bulk.Cuncertainty "] = str(st.number_input("Uncertainty in $C
 #Planet.Bulk.Cuncertainty = 0.005
 os.environ["Planet.Bulk.Tb_K"] = str(st.number_input("Temperature at the bottom ($^\circ K$)"))
 #Planet.Bulk.Tb_K = 268.305  # 30 km ice with 1.0x Seawater
+
+
+os.chdir('PlanetProfileApp')
