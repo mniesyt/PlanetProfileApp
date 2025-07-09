@@ -57,7 +57,8 @@ st.write(sys.path)
 planet_folder = sys.path.append(Planet)
 st.write(planet_folder)
 
-#planet_module = importlib.import_module(planet_folder.module_to_import)
+planet_module = importlib.import_module(module_to_import)
+st.write(planet_module.Planet.Bulk.R_m)
 
 #st.write(planet_module)
 
