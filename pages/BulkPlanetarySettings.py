@@ -58,11 +58,11 @@ planet_folder = sys.path.append(Planet)
 st.write(planet_folder)
 
 planet_module = importlib.import_module(module_to_import)
-st.write(planet_module.Planet.Bulk.R_m)
+#st.write(planet_module.Planet.Bulk.R_m)
 
 #st.write(planet_module)
 
-#os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m))
+os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m))
 #to be passed to Planet.Bulk.R_m
 os.environ["Planet.Bulk.M_kg"] = str(st.number_input("Mass of the body (kg)"))
 # to be passed to Planet.Bulk.M_kg
