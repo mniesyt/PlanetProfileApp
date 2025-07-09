@@ -6,9 +6,12 @@ st.title("Bulk Planetary Settings")
 st.write("OPTIONAL -- Choose your Bulk Planetary Settings Below")
 
 Planet = os.getenv("Planet")
+current_directory = os.getcwd()
+st.write(current_directory)
 
+os.chdir('..') #From the PlanetProfileApp/pages,
 os.chdir('..') #going to PlanetProfile
-os.chdir("/"+ str(Planet)) #pulling 
+os.chdir("/"+ str(Planet)) #now in the individual folder of the planet
 
 #st.write(PP+str(Planet))
 
