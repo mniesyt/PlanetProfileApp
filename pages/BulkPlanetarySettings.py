@@ -10,8 +10,9 @@ current_directory = os.getcwd()
 st.write(current_directory)
 
 os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
-os.chdir("../"+ str(Planet)) #now in the individual folder of the planet
-
+st.write(os.getcwd())
+os.chdir(str(Planet)) #now in the individual folder of the planet
+st.write(os.getcwd())
 #st.write(PP+str(Planet))
 
 PPPlanet = "PP"+str(Planet)
