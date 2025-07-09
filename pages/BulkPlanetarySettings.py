@@ -6,7 +6,7 @@ import sys
 st.set_page_config(page_title="Bulk Planetary Settings")
 
 st.title("Bulk Planetary Settings")
-st.write("Choose your Bulk Planetary Settings Below. Default values ")
+st.write("Choose your Bulk Planetary Settings Below.")
 
 # Get the path to the current script's directory
 # /PlanetProfile/PlanetProfileApp/BulkPlanetarySettings.py
@@ -38,7 +38,7 @@ planet_folder = sys.path.append(Planet)
 # Use importlib to import the module
 try:
     planet_module = importlib.import_module(module_to_import)
-
+    st.write("Default values for your selected body are displayed below. You can also change the Bulk Planetary Settings if you would like to.")
     # Pulls default values into the app for each PPPlanet, if the user sets a new
     # value then it is saved as an environment variable
     os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m))
