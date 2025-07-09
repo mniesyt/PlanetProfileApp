@@ -6,62 +6,40 @@ import sys
 st.set_page_config(page_title="Bulk Planetary Settings")
 
 st.title("Bulk Planetary Settings")
-st.write("OPTIONAL -- Choose your Bulk Planetary Settings Below")
-
-Planet = os.getenv("Planet")
-
+st.write("Choose your Bulk Planetary Settings Below. Default values ")
 
 # Get the path to the current script's directory
-# For /PlanetProfile/PlanetProfileApp/your_script.py, this will be:
-# /PlanetProfile/PlanetProfileApp
+# /PlanetProfile/PlanetProfileApp/BulkPlanetarySettings.py
 BulkPlanertarySettings_directory = os.path.dirname(os.path.abspath(__file__))
 #st.write(BulkPlanertarySettings_directory)
 
-# Get the parent directory (/PlanetProfile)
+# Get the app directory (/PlanetProfile/PlanetProfileAPP)
 app_directory = os.path.dirname(BulkPlanertarySettings_directory)
-#st.write(app_directory)
+# Get the parent directory (/PlanetProfile)
 parent_directory  = os.path.dirname(app_directory)
-st.write(parent_directory)
 # Add the parent directory to Python's search path.
-# Now Python can find any modules inside /PlanetProfile.
 if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
 
-
 os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
-#st.write(parent_directory)
-current_directory = os.getcwd()
-st.write(current_directory)
 
-#os.chdir(str(Planet)) #now in the individual folder of the planet
-#st.write(os.getcwd())
-#st.write(PP+str(Planet))
-
-#PPPlanet = "PP"+str(Planet)
-
-
-#from "PP"+str(Planet) import *
 
 # Get the planet name from the environment variable
 Planet = os.getenv("Planet") # e.g., "Venus"
 
-
 # Construct the module name as a string
-# e.g., if Planet is "Venus", this becomes "PPVenus"
+# e.g., if Planet is "Europa", this becomes "PPEuropa"
 module_to_import = f"PP{Planet}"
 
+# making sure the Planet folder is in the path so can find PPPlanet
+planet_folder = sys.path.append(Planet)
 
 # Use importlib to import the module
-st.write(sys.path)
-planet_folder = sys.path.append(Planet)
-st.write(planet_folder)
-
 planet_module = importlib.import_module(module_to_import)
-#st.write(planet_module.Planet.Bulk.R_m)
 
-#st.write(planet_module)
-
+# Pulls default values into the app for each PPPlanet, if the user sets a new
+# value then it is saved as an environment variable
 os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m))
 #to be passed to Planet.Bulk.R_m
 os.environ["Planet.Bulk.M_kg"] = str(st.number_input("Mass of the body (kg)", value = planet_module.Planet.Bulk.M_kg))
