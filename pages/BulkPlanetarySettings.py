@@ -8,6 +8,8 @@ st.write("OPTIONAL -- Choose your Bulk Planetary Settings Below")
 os.chdir('..') #going to PlanetProfile
 os.chdir("/"+ str(Planet)) #pulling 
 
+st.write(PP+str(Planet))
+
 from PP+str(Planet) import *
 
 
