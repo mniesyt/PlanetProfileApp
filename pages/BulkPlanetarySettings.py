@@ -2,6 +2,9 @@ import streamlit as st
 import os
 import importlib
 import sys
+import numpy as np
+from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants
+
 
 st.set_page_config(page_title="Bulk Planetary Settings")
 
@@ -28,15 +31,12 @@ os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 Planet = os.getenv("Planet") # e.g., "Venus"
 
 # making sure the Planet folder is in the path so can find PPPlanet
-default_folder_string = '/PlanetProfile/Default/'+str(Planet)
-st.write(default_folder_string)
-full_default_folder_string = parent_directory + default_folder_string
-default_folder = sys.path.append(os.path.join(full_default_folder_string))
-st.write(sys.path)
-planet_folder = sys.path.append(Planet)
+planet_folder_string = '/PlanetProfile/Default/'+str(Planet)
+full_planet_folder_string = parent_directory + planet_folder_string
+default_folder = sys.path.append(os.path.join(full_planet_folder_string))
+#st.write(sys.path)
+#planet_folder = sys.path.append(Planet)
 
-current_directory = os.getcwd()
-print(current_directory)
 
 # Construct the module name as a string
 # e.g., if Planet is "Europa", this becomes "PPEuropa"
@@ -45,9 +45,21 @@ module_to_import = f"PP{Planet}"
 # Use importlib to import the module
 planet_module = importlib.import_module(module_to_import)
 st.write("Default values for your selected body are displayed below. You can also change the Bulk Planetary Settings if you would like to.")
+
+# Initialize session state if not already set
+#if "my_number_input_value" not in st.session_state:
+    #st.session_state.my_number_input_value = DEFAULT_VALUE
+# Callback function to track changes
+#def check_value_changed():
+    #if st.session_state.my_number_input_value != DEFAULT_VALUE:
+       # st.write("You are using a custom value for this variable")
+    #else:
+       # st.write("This value is currently set at the default.")
+
 # Pulls default values into the app for each PPPlanet, if the user sets a new
 # value then it is saved as an environment variable
-os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m))
+st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, on_change = Planet.Bulk.R_m)
+
 #to be passed to Planet.Bulk.R_m
 os.environ["Planet.Bulk.M_kg"] = str(st.number_input("Mass of the body (kg)", value = planet_module.Planet.Bulk.M_kg))
 # to be passed to Planet.Bulk.M_kg
