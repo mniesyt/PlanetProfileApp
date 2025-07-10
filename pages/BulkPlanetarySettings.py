@@ -51,12 +51,14 @@ st.write("Default values for your selected body are displayed below. You can als
 # value then it is saved as an environment variable
 from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
 
-def user_input_a_variable():
-    st.write("You are setting a custom value for this variable")
+def user_input_a_variable(bulk_setting):
+    st.write("You are setting a custom value for this variable:" + str(bulk_setting))
+    os_environ_key = str("Planet.Bulk."+bulk_setting)
+    Planet.Bulk.bulk_setting = int(os.environ[os_environ_key])
     
 
 
-os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, on_change = user_input_a_variable))
+os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, on_change = user_input_a_variable(R_m)))
 st.write(os.environ["Planet.Bulk.R_m"])
 #Planet.Bulk.R_m = os.environ["Planet.Bulk.R_m"]
 #st.write(Planet.Bulk.R_m)
