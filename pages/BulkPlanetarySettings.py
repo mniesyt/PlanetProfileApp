@@ -53,31 +53,21 @@ from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabb
 
 def user_input_a_variable(bulk_setting):
     st.write("You are setting a custom value for this variable: " + bulk_setting)
-    os_environ_key = str("Planet.Bulk."+bulk_setting)
-    bulk_setting = float(bulk_setting)
-    Planet.Bulk.bulk_setting = int(os.environ[os_environ_key])
+    #os_environ_key = str("Planet.Bulk."+bulk_setting)
+    #bulk_setting = float(bulk_setting)
+     #= bulk_setting
     
 
 
-os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, on_change = user_input_a_variable("R_m")))
-st.write(os.environ["Planet.Bulk.R_m"])
-#Planet.Bulk.R_m = os.environ["Planet.Bulk.R_m"]
-#st.write(Planet.Bulk.R_m)
+Planet.Bulk.R_m = st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, on_change = user_input_a_variable("Radius of the body (m)"))
+Planet.Bulk.M_kg = st.number_input("Mass of the body (kg)", value = planet_module.Planet.Bulk.M_kg, on_change = user_input_a_variable("Mass of the body (kg)"))
+Planet.Bulk.Tsurf_K = st.number_input("Temperature at the surface ($^\circ K$)", value = planet_module.Planet.Bulk.Tsurf_K, on_change = user_input_a_variable("Temperature at the surface ($^\circ K$)"))
+Planet.Bulk.Psurf_MPa = st.number_input("Pressure at the surface (MPa)", value = planet_module.Planet.Bulk.Psurf_MPa, on_change = user_input_a_variable("Pressure at the surface (MPa)"))
+Planet.Bulk.Cmeasured = st.number_input("Normalized Axial Moment of Inertia $C$", value = planet_module.Planet.Bulk.Cmeasured, on_change = user_input_a_variable("Normalized Axial Moment of Inertia $C$"))
+Planet.Bulk.Cuncertainty = st.number_input("Uncertainty in $C$", value = planet_module.Planet.Bulk.Cuncertainty, on_change = user_input_a_variable("Uncertainty in $C$y"))
+Planet.Bulk.Tb_K = st.number_input("Temperature at the bottom ($^\circ K$)", value = planet_module.Planet.Bulk.Tb_K, on_change = user_input_a_variable("Temperature at the bottom "))
+#os.environ["Planet.Bulk.Tb_K"] = str(st.number_input("Temperature at the bottom ($^\circ K$)", value = planet_module.Planet.Bulk.Tb_K))
 
-
-#to be passed to Planet.Bulk.R_m
-os.environ["Planet.Bulk.M_kg"] = str(st.number_input("Mass of the body (kg)", value = planet_module.Planet.Bulk.M_kg))
-# to be passed to Planet.Bulk.M_kg
-os.environ["Planet.Bulk.Tsurf_K"] = str(st.number_input("Temperature at the surface ($^\circ K$)", value = planet_module.Planet.Bulk.Tsurf_K))
-#Planet.Bulk.Tsurf_K = 110
-os.environ["Planet.Bulk.Psurf_MPa"] = str(st.number_input("Pressure at the surface (MPa)", value = planet_module.Planet.Bulk.Psurf_MPa))
-#Planet.Bulk.Psurf_MPa = 0.0
-os.environ["Planet.Bulk.Cmeasured"] = str(st.number_input("Normalized Axial Moment of Inertia $C$", value = planet_module.Planet.Bulk.Cmeasured))
-#Planet.Bulk.Cmeasured = 0.346  # Value from Anderson et al. (1998): https://doi.org/10.1126/science.281.5385.2019
-os.environ["Planet.Bulk.Cuncertainty "] = str(st.number_input("Uncertainty in $C$", value = planet_module.Planet.Bulk.Cuncertainty))
-#Planet.Bulk.Cuncertainty = 0.005
-os.environ["Planet.Bulk.Tb_K"] = str(st.number_input("Temperature at the bottom ($^\circ K$)", value = planet_module.Planet.Bulk.Tb_K))
-#Planet.Bulk.Tb_K = 268.305  # 30 km ice with 1.0x Seawater
-
+#need to make it so that custom runs save to /PlanetProfile/Planet, and that these runs will be available for the user to load their custom runs later
 
 os.chdir('PlanetProfileApp') #changing back to app directory so people can navigate between other pages
