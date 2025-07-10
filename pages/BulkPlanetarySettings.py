@@ -3,7 +3,7 @@ import os
 import importlib
 import sys
 import numpy as np
-from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants
+
 
 
 st.set_page_config(page_title="Bulk Planetary Settings")
@@ -34,7 +34,7 @@ Planet = os.getenv("Planet") # e.g., "Venus"
 planet_folder_string = '/PlanetProfile/Default/'+str(Planet)
 full_planet_folder_string = parent_directory + planet_folder_string
 default_folder = sys.path.append(os.path.join(full_planet_folder_string))
-#st.write(sys.path)
+st.write(sys.path)
 #planet_folder = sys.path.append(Planet)
 
 
@@ -58,6 +58,8 @@ st.write("Default values for your selected body are displayed below. You can als
 
 # Pulls default values into the app for each PPPlanet, if the user sets a new
 # value then it is saved as an environment variable
+from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants
+
 st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, on_change = Planet.Bulk.R_m)
 
 #to be passed to Planet.Bulk.R_m
