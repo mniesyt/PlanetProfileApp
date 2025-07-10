@@ -34,7 +34,7 @@ Planet = os.getenv("Planet") # e.g., "Venus"
 planet_folder_string = '/PlanetProfile/Default/'+str(Planet)
 full_planet_folder_string = parent_directory + planet_folder_string
 default_folder = sys.path.append(os.path.join(full_planet_folder_string))
-st.write(sys.path)
+#st.write(sys.path)
 #planet_folder = sys.path.append(Planet)
 
 
@@ -45,12 +45,6 @@ module_to_import = f"PP{Planet}"
 # Use importlib to import the module
 planet_module = importlib.import_module(module_to_import)
 st.write("Default values for your selected body are displayed below. You can also change the Bulk Planetary Settings if you would like to.")
-
-# Initialize session state if not already set
-#if "my_number_input_value" not in st.session_state:
-    #st.session_state.my_number_input_value = DEFAULT_VALUE
-# Callback function to track changes
-#def check_value_changed():
 
 
 # Pulls default values into the app for each PPPlanet, if the user sets a new
@@ -63,8 +57,9 @@ def user_input_a_variable():
 
 
 os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, on_change = user_input_a_variable))
-Planet.Bulk.R_m = os.environ["Planet.Bulk.R_m"]
-st.write(Planet.Bulk.R_m)
+st.write(os.environ["Planet.Bulk.R_m"])
+#Planet.Bulk.R_m = os.environ["Planet.Bulk.R_m"]
+#st.write(Planet.Bulk.R_m)
 
 
 #to be passed to Planet.Bulk.R_m
