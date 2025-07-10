@@ -33,10 +33,10 @@ Planet = os.getenv("Planet") # e.g., "Venus"
 module_to_import = f"PP{Planet}"
 
 # making sure the Planet folder is in the path so can find PPPlanet
-default_folder = sys.path.append(/PlanetProfile/Defaults/Planet)
-st.write(default_folder)
+default_folder_string = '/PlanetProfile/Defaults/'+str(Planet)
+default_folder = sys.path.extend(default_folder_string)
 planet_folder = sys.path.append(Planet)
-st.write(planet_folder)
+
 # Use importlib to import the module
 
 planet_module = importlib.import_module(module_to_import)
