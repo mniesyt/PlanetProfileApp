@@ -24,21 +24,22 @@ if parent_directory not in sys.path:
 
 os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 
-
 # Get the planet name from the environment variable
 Planet = os.getenv("Planet") # e.g., "Venus"
+
+# making sure the Planet folder is in the path so can find PPPlanet
+default_folder_string = '/PlanetProfile/Default/'+str(Planet)
+default_folder = sys.path.extend(default_folder_string)
+planet_folder = sys.path.append(Planet)
+
+current_directory = os.getcwd()
+print(current_directory)
 
 # Construct the module name as a string
 # e.g., if Planet is "Europa", this becomes "PPEuropa"
 module_to_import = f"PP{Planet}"
 
-# making sure the Planet folder is in the path so can find PPPlanet
-default_folder_string = '/PlanetProfile/Defaults/'+str(Planet)
-default_folder = sys.path.extend(default_folder_string)
-planet_folder = sys.path.append(Planet)
-
 # Use importlib to import the module
-
 planet_module = importlib.import_module(module_to_import)
 st.write("Default values for your selected body are displayed below. You can also change the Bulk Planetary Settings if you would like to.")
 # Pulls default values into the app for each PPPlanet, if the user sets a new
