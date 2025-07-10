@@ -29,7 +29,7 @@ Planet = os.getenv("Planet") # e.g., "Venus"
 
 # making sure the Planet folder is in the path so can find PPPlanet
 default_folder_string = '/PlanetProfile/Default/'+str(Planet)
-default_folder = sys.path.extend(default_folder_string)
+default_folder = sys.path.extend(os.path.join(default_folder_string))
 planet_folder = sys.path.append(Planet)
 
 current_directory = os.getcwd()
