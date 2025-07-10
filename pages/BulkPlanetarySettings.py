@@ -30,6 +30,8 @@ os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 # Get the planet name from the environment variable
 Planet = os.getenv("Planet") # e.g., "Venus"
 st.write(Planet)
+
+
 # making sure the Planet folder is in the path so can find PPPlanet
 planet_folder_string = '/PlanetProfile/Default/'+str(Planet)
 full_planet_folder_string = parent_directory + planet_folder_string
@@ -51,6 +53,7 @@ st.write("Default values for your selected body are displayed below. You can als
 # Pulls default values into the app for each PPPlanet, if the user sets a new
 # value then it is saved as an environment variable
 from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
+Planet =PlanetStruct(Planet)
 
 def user_input_a_variable(bulk_setting):
     st.write("You are setting a custom value for this variable: " + bulk_setting)

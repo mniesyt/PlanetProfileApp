@@ -18,7 +18,7 @@ os.environ["Planet"] = st.selectbox("Choose your Planetary Body below",
 # will eventually have to have an actual call to the list of available moons from planet profile directly
 #st.write(os.environ["Planet"])
 
-Planet = os.getenv("Planet")
+#Planet = os.getenv("Planet")
 
 st.markdown("---")
 st.subheader("Temperature Setup")
