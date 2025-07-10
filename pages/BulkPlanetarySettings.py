@@ -57,7 +57,7 @@ st.write("Default values for your selected body are displayed below. You can als
 # value then it is saved as an environment variable
 from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
 
-def user_input_a_variable:
+def user_input_a_variable():
     st.write("You are setting a custom value for this variable")
     
 
