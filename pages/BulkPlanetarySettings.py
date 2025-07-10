@@ -51,16 +51,21 @@ st.write("Default values for your selected body are displayed below. You can als
     #st.session_state.my_number_input_value = DEFAULT_VALUE
 # Callback function to track changes
 #def check_value_changed():
-    #if st.session_state.my_number_input_value != DEFAULT_VALUE:
-       # st.write("You are using a custom value for this variable")
-    #else:
-       # st.write("This value is currently set at the default.")
+
 
 # Pulls default values into the app for each PPPlanet, if the user sets a new
 # value then it is saved as an environment variable
-from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants
+from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
 
-st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, on_change = Planet.Bulk.R_m)
+def user_input_a_variable:
+    st.write("You are setting a custom value for this variable")
+    
+
+
+os.environ["Planet.Bulk.R_m"] = str(st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, on_change = user_input_a_variable))
+Planet.Bulk.R_m = os.environ["Planet.Bulk.R_m"]
+st.write(Planet.Bulk.R_m)
+
 
 #to be passed to Planet.Bulk.R_m
 os.environ["Planet.Bulk.M_kg"] = str(st.number_input("Mass of the body (kg)", value = planet_module.Planet.Bulk.M_kg))
@@ -77,4 +82,4 @@ os.environ["Planet.Bulk.Tb_K"] = str(st.number_input("Temperature at the bottom 
 #Planet.Bulk.Tb_K = 268.305  # 30 km ice with 1.0x Seawater
 
 
-os.chdir('PlanetProfileApp')
+os.chdir('PlanetProfileApp') #changing back to app directory so people can navigate between other pages
