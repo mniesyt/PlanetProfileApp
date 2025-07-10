@@ -29,7 +29,7 @@ os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 
 # Get the planet name from the environment variable
 Planet = os.getenv("Planet") # e.g., "Venus"
-
+st.write(Planet)
 # making sure the Planet folder is in the path so can find PPPlanet
 planet_folder_string = '/PlanetProfile/Default/'+str(Planet)
 full_planet_folder_string = parent_directory + planet_folder_string
@@ -44,6 +44,7 @@ module_to_import = f"PP{Planet}"
 
 # Use importlib to import the module
 planet_module = importlib.import_module(module_to_import)
+
 st.write("Default values for your selected body are displayed below. You can also change the Bulk Planetary Settings if you would like to.")
 
 
