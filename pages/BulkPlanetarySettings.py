@@ -54,6 +54,7 @@ from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabb
 def user_input_a_variable(bulk_setting):
     st.write("You are setting a custom value for this variable: " + bulk_setting)
     os_environ_key = str("Planet.Bulk."+bulk_setting)
+    bulk_setting = float(bulk_setting)
     Planet.Bulk.bulk_setting = int(os.environ[os_environ_key])
     
 
