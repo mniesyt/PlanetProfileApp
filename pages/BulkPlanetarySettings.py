@@ -29,7 +29,6 @@ os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 
 # Get the planet name from the environment variable
 Planet = os.getenv("Planet") # e.g., "Venus"
-st.write(Planet)
 
 
 # making sure the Planet folder is in the path so can find PPPlanet
@@ -57,9 +56,11 @@ Planet =PlanetStruct(Planet)
 
 def user_input_a_variable(bulk_setting):
     st.write("You are setting a custom value for this variable: " + bulk_setting)
-    #os_environ_key = str("Planet.Bulk."+bulk_setting)
-    #bulk_setting = float(bulk_setting)
-     #= bulk_setting
+
+
+# Initializing the session state of all the variables
+if "Planet.Bulk.R_m" not in st.session_state:
+    st.session_state.Planet.Bulk.R_m = planet_module.Planet.Bulk.R_m  # Initialize the session state
     
 
 

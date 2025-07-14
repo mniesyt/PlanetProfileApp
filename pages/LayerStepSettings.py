@@ -24,7 +24,6 @@ os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 
 # Get the planet name from the environment variable
 Planet = os.getenv("Planet") # e.g., "Venus"
-st.write(Planet)
 
 
 # making sure the Planet folder is in the path so can find PPPlanet
