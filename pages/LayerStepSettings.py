@@ -65,6 +65,8 @@ st.write("Step size in $^\circ K$ for temperature values used in generating ocea
 st.markdown("---")
 
 st.subheader("Hydrosphere Maximum Pressure")
-Planet.Ocean.PHydroMax_MPa = st.number_input("Maximum Pressure of the Hydrosphere (MPa)", value = planet_module.Planet.Ocean.PHydroMaz_MPa)
+Planet.Ocean.PHydroMax_MPa = st.number_input("Maximum Pressure of the Hydrosphere (MPa)", value = planet_module.Planet.Ocean.PHydroMax_MPa)
 st.write("Guessed maximum pressure of the hydrosphere in MPa. Must be greater than the actual pressure, but ideally not by much.")
 st.markdown("---")
+
+os.chdir('PlanetProfileApp') #changing back to app directory so people can navigate between other pages
