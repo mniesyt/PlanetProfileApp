@@ -54,12 +54,12 @@ st.write("Default values for your selected body are displayed below. You can als
 from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
 Planet =PlanetStruct(Planet)
 
-
+st.session_state.setdefault("Planet.Bulk.R_m",planet_module.Planet.Bulk.R_m)
 
 
 # Initializing the session state of all the variables
-if "Planet.Bulk.R_m" not in st.session_state:
-    st.session_state["Planet.Bulk.R_m"]= planet_module.Planet.Bulk.R_m  # Initialize the session state
+#if "Planet.Bulk.R_m" not in st.session_state:
+   # st.session_state["Planet.Bulk.R_m"]= planet_module.Planet.Bulk.R_m  # Initialize the session state
 if "Planet.Bulk.M_kg" not in st.session_state:
     st.session_state["Planet.Bulk.M_kg"] = planet_module.Planet.Bulk.M_kg
 if "Planet.Bulk.Tsurf_K" not in st.session_state:
@@ -78,7 +78,7 @@ def user_input_a_variable(bulk_setting):
     st.write("You are setting a custom value for this variable: " + bulk_setting)
 
 
-Planet.Bulk.R_m = st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, key = "Planet.Bulk.R_m", on_change = user_input_a_variable("Radius of the body (m)"))
+Planet.Bulk.R_m = st.number_input("Radius of the body (m)", key = "Planet.Bulk.R_m", on_change = user_input_a_variable("Radius of the body (m)"))
 Planet.Bulk.M_kg = st.number_input("Mass of the body (kg)", value = planet_module.Planet.Bulk.M_kg, key = "Planet.Bulk.M_kg", on_change = user_input_a_variable("Mass of the body (kg)"))
 Planet.Bulk.Tsurf_K = st.number_input("Temperature at the surface ($^\circ K$)", value = planet_module.Planet.Bulk.Tsurf_K, key = "Planet.Bulk.Tsurf_K",on_change = user_input_a_variable("Temperature at the surface ($^\circ K$)"))
 Planet.Bulk.Psurf_MPa = st.number_input("Pressure at the surface (MPa)", value = planet_module.Planet.Bulk.Psurf_MPa, key = "Planet.Bulk.Psurf_MPa", on_change = user_input_a_variable("Pressure at the surface (MPa)"))
