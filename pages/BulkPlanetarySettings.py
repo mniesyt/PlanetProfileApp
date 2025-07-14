@@ -61,17 +61,17 @@ Planet =PlanetStruct(Planet)
 if "Planet.Bulk.R_m" not in st.session_state:
     st.session_state.Planet_Bulk_R_m = planet_module.Planet.Bulk.R_m  # Initialize the session state
 if "Planet.Bulk.M_kg" not in st.session_state:
-    st.session_state.Planet_Bulk_M_kg = planet_module.Bulk.M_kg
+    st.session_state.Planet_Bulk_M_kg = planet_module.Planet.Bulk.M_kg
 if "Planet.Bulk.Tsurf_K" not in st.session_state:
-     st.session_state.Planet_Bulk_Tsurf_K = planet_module.Bulk.Tsurf_K
+     st.session_state.Planet_Bulk_Tsurf_K = planet_module.Planet.Bulk.Tsurf_K
 if "Planet.Bulk.Psurf_MPa" not in st.session_state:
-    st.session_state.Planet_Bulk_Psurf_MPa = planet_module.Bulk.Psurf_MPa
+    st.session_state.Planet_Bulk_Psurf_MPa = planet_module.Planet.Bulk.Psurf_MPa
 if "Planet.Bulk.Cmeasured" not in st.session_state:
-    st.session_state.Planet_Bulk_Cmeasured = Planet.Bulk.Cmeasured
+    st.session_state.Planet_Bulk_Cmeasured = Planet.Planet.Bulk.Cmeasured
 if "Planet.Bulk.Cuncertainty" not in st.session_state:
-    st.session_state.Planet_Bulk_Cuncertainty = Planet.Bulk.Cuncertainty
+    st.session_state.Planet_Bulk_Cuncertainty = Planet.Planet.Bulk.Cuncertainty
 if "Planet.Bulk.Tb_K" not in st.session_state:
-    st.session_state.Planet_Bulk_Tb_K = Planet.Bulk.Tb_K
+    st.session_state.Planet_Bulk_Tb_K = Planet.Planet.Bulk.Tb_K
 
 
 def user_input_a_variable(bulk_setting):
