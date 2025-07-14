@@ -67,7 +67,7 @@ def user_input_a_variable(bulk_setting):
     st.write("You are setting a custom value for this variable: " + bulk_setting)
 
 
-Planet.Bulk.R_m = st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, key = "Planet.Bulk.R_m", on_change = user_input_a_variable("Radius of the body (m)"))
+Planet.Bulk.R_m = st.number_input("Radius of the body (m)", key = "Planet.Bulk.R_m", on_change = user_input_a_variable("Radius of the body (m)"))
 Planet.Bulk.M_kg = st.number_input("Mass of the body (kg)", value = planet_module.Planet.Bulk.M_kg, on_change = user_input_a_variable("Mass of the body (kg)"))
 Planet.Bulk.Tsurf_K = st.number_input("Temperature at the surface ($^\circ K$)", value = planet_module.Planet.Bulk.Tsurf_K, on_change = user_input_a_variable("Temperature at the surface ($^\circ K$)"))
 Planet.Bulk.Psurf_MPa = st.number_input("Pressure at the surface (MPa)", value = planet_module.Planet.Bulk.Psurf_MPa, on_change = user_input_a_variable("Pressure at the surface (MPa)"))
