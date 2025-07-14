@@ -60,7 +60,7 @@ def user_input_a_variable(bulk_setting):
 
 # Initializing the session state of all the variables
 if "Planet.Bulk.R_m" not in st.session_state:
-    st.session_state.Planet.Bulk.R_m = planet_module.Planet.Bulk.R_m  # Initialize the session state
+    st.session_state.Planet_Bulk_R_m = planet_module.Planet.Bulk.R_m  # Initialize the session state
     
 
 
