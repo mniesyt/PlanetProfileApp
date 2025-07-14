@@ -80,8 +80,8 @@ def user_input_a_variable(bulk_setting):
 
 Planet.Bulk.R_m = st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, key = "Planet.Bulk.R_m", on_change = user_input_a_variable("Radius of the body (m)"))
 Planet.Bulk.M_kg = st.number_input("Mass of the body (kg)", value = planet_module.Planet.Bulk.M_kg, key = "Planet.Bulk.M_kg", on_change = user_input_a_variable("Mass of the body (kg)"))
-Planet.Bulk.Tsurf_K = st.number_input("Temperature at the surface ($^\circ K$)", value = planet_module.Planet.Bulk.Tsurf_K, key = "Planet.Bulk.M_kg",on_change = user_input_a_variable("Temperature at the surface ($^\circ K$)"))
-Planet.Bulk.Psurf_MPa = st.number_input("Pressure at the surface (MPa)", value = planet_module.Planet.Bulk.Psurf_MPa, key = "Bulk.Psurf_MPa", on_change = user_input_a_variable("Pressure at the surface (MPa)"))
+Planet.Bulk.Tsurf_K = st.number_input("Temperature at the surface ($^\circ K$)", value = planet_module.Planet.Bulk.Tsurf_K, key = "Planet.Bulk.Tsurf_K",on_change = user_input_a_variable("Temperature at the surface ($^\circ K$)"))
+Planet.Bulk.Psurf_MPa = st.number_input("Pressure at the surface (MPa)", value = planet_module.Planet.Bulk.Psurf_MPa, key = "Planet.Bulk.Psurf_MPa", on_change = user_input_a_variable("Pressure at the surface (MPa)"))
 Planet.Bulk.Cmeasured = st.number_input("Normalized Axial Moment of Inertia $C$", value = planet_module.Planet.Bulk.Cmeasured, key = "Planet.Bulk.Cmeasured", on_change = user_input_a_variable("Normalized Axial Moment of Inertia $C$"))
 Planet.Bulk.Cuncertainty = st.number_input("Uncertainty in $C$", value = planet_module.Planet.Bulk.Cuncertainty, key = "Planet.Bulk.Cuncertainty", on_change = user_input_a_variable("Uncertainty in $C$y"))
 Planet.Bulk.Tb_K = st.number_input("Temperature at the bottom ($^\circ K$)", value = planet_module.Planet.Bulk.Tb_K, key = "Planet.Bulk.Tb_K", on_change = user_input_a_variable("Temperature at the bottom "))
