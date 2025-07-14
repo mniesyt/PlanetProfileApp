@@ -67,11 +67,11 @@ if "Planet.Bulk.Tsurf_K" not in st.session_state:
 if "Planet.Bulk.Psurf_MPa" not in st.session_state:
     st.session_state.Planet_Bulk_Psurf_MPa = planet_module.Planet.Bulk.Psurf_MPa
 if "Planet.Bulk.Cmeasured" not in st.session_state:
-    st.session_state.Planet_Bulk_Cmeasured = Planet.Planet.Bulk.Cmeasured
+    st.session_state.Planet_Bulk_Cmeasured = planet_module.Planet.Bulk.Cmeasured
 if "Planet.Bulk.Cuncertainty" not in st.session_state:
-    st.session_state.Planet_Bulk_Cuncertainty = Planet.Planet.Bulk.Cuncertainty
+    st.session_state.Planet_Bulk_Cuncertainty = planet_module.Planet.Bulk.Cuncertainty
 if "Planet.Bulk.Tb_K" not in st.session_state:
-    st.session_state.Planet_Bulk_Tb_K = Planet.Planet.Bulk.Tb_K
+    st.session_state.Planet_Bulk_Tb_K = planet_module.Planet.Bulk.Tb_K
 
 
 def user_input_a_variable(bulk_setting):
