@@ -84,6 +84,8 @@ for key, (_, default_val) in bulk_fields.items():
     if key not in st.session_state:
         st.session_state[key] = default_val
 
+if "changed_inputs" not in st.session_state:
+    st.session_state["changed_inputs"] = {}
 
 # Persistent change-tracking dictionary
 if st.session_state.get("reset_bulk_flag", False):
