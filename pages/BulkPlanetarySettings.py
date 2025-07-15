@@ -135,7 +135,6 @@ for key, (label, _) in bulk_fields.items():
     # Create input
     st.number_input(
         label,
-        value=st.session_state[key],
         key=key,
         on_change=partial(on_change_bulk_setting, key)
     )
