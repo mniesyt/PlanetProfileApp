@@ -26,7 +26,7 @@ if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
 
-os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
+#os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 
 # Get the planet name from the environment variable
 Planet = os.getenv("Planet") # e.g., "Venus"
@@ -158,4 +158,4 @@ if st.button("🔄 Reset to module defaults"):
 
 #need to make it so that custom runs save to /PlanetProfile/Planet, and that these runs will be available for the user to load their custom runs later
 
-os.chdir('PlanetProfileApp') #changing back to app directory so people can navigate between other pages
+#os.chdir('PlanetProfileApp') #changing back to app directory so people can navigate between other pages
