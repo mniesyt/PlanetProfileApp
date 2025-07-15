@@ -96,30 +96,37 @@ if "changed_inputs" not in st.session_state:
     #st.session_state["Planet.Bulk.Tb_K"] = planet_module.Planet.Bulk.Tb_K
 
 def on_change_bulk_setting(bulk_setting_key):
-    new_value = st.session_state[bulk_setting_key]
-    st.session_state["changed_inputs"][field_key] = True
-    return new_value
+    st.session_state["changed_inputs"][bulk_setting_key] = True
+
 
     
 # Create number inputs dynamically
 for key, (label, _) in bulk_fields.items():
     # Set value in the actual Planet object if needed
     field_name = key.split(".")[-1] # this grabs just the key i.e. just Tb_K from "Planet.Bulk.Tb_K" (key.split(".") splits the key into ["Planet", "Bulk", "R_m"] amd [-1] grabs the last object in the list )
-    setattr(Planet.Bulk, field_name, st.number_input(
+
+    # Create input
+    st.number_input(
         label,
         value=st.session_state[key],
         key=key,
         on_change=partial(on_change_bulk_setting, key)
-    ))
+    )
 
-    # Update the session state value explicitly
-    st.session_state[key] = new_value
+    # Update Planet object
+    current_value = st.session_state[key]
+    setattr(Planet.Bulk, field_name, current_value)
 
-    # Display success message directly below input (if changed)
+    # Show success message if changed
     if st.session_state["changed_inputs"].get(key, False):
-        st.success(f"You changed **{label}** to `{new_value}`")
+        st.success(f"You changed **{label}** to `{current_value}`")
 
 
+if st.button("🔄 Reset all values to defaults"):
+    for key, (_, default_val) in bulk_fields.items():
+        st.session_state[key] = default_val
+    st.session_state["changed_inputs"] = {}
+    st.rerun()  # Force UI to update immediately
 
 #Planet.Bulk.R_m = st.number_input("Radius of the body (m)", value =  st.session_state["Planet.Bulk.R_m"], key = "Planet.Bulk.R_m", on_change = user_input_a_variable)
 #Planet.Bulk.M_kg = st.number_input("Mass of the body (kg)", value = planet_module.Planet.Bulk.M_kg, on_change = user_input_a_variable)
