@@ -78,14 +78,6 @@ bulk_fields = {
         "Planet.Bulk.Tb_K": "Temperature at the bottom ($^\circ K$)",
     }.items()
 }
-# Initialize session state for all fields -> the key is the first part in the dictionary, this initialization loop prevents having to initialize every 
-# variable individually as below
-for key, (_, default_val) in bulk_fields.items():
-    if key not in st.session_state:
-        st.session_state[key] = default_val
-
-if "changed_inputs" not in st.session_state:
-    st.session_state["changed_inputs"] = {}
 
 # Persistent change-tracking dictionary
 if st.session_state.get("reset_bulk_flag", False):
@@ -94,6 +86,20 @@ if st.session_state.get("reset_bulk_flag", False):
     st.session_state["changed_inputs"] = {}
     st.session_state["reset_bulk_flag"] = False
     st.rerun()
+
+
+
+# Initialize session state for all fields -> the key is the first part in the dictionary, this initialization loop prevents having to initialize every 
+# variable individually as below
+for key, (_, default_val) in bulk_fields.items():
+    if key not in st.session_state:
+        st.session_state[key] = default_val
+
+#Initializing the changed_inputs to keep track of what variables the user has changed
+if "changed_inputs" not in st.session_state:
+    st.session_state["changed_inputs"] = {}
+
+
 
 # Initializing the session state of all the variables
 #if "Planet.Bulk.R_m" not in st.session_state:
