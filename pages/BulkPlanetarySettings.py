@@ -148,7 +148,7 @@ for key, (label, _) in bulk_fields.items():
         st.success(f"You changed **{label}** to `{current_value}`")
 
 
-if st.button("🔄 Reset to module defaults"):
+if st.button("🔄 Reset to module defaults (double click)"):
     st.session_state["reset_bulk_flag"] = True
 
 #Planet.Bulk.R_m = st.number_input("Radius of the body (m)", value =  st.session_state["Planet.Bulk.R_m"], key = "Planet.Bulk.R_m", on_change = user_input_a_variable)
