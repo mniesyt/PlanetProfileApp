@@ -55,7 +55,7 @@ st.write("Default values for your selected body are displayed below. You can als
 from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
 Planet =PlanetStruct(Planet)
 
-#st.session_state.setdefault("Planet.Bulk.R_m",planet_module.Planet.Bulk.R_m)
+
 
 # List of bulk property keys and labels - this is a dictionary holding the values of each bulk_setting from the default PP.py 
 bulk_fields = {
@@ -75,6 +75,10 @@ for key, (_, default_val) in bulk_fields.items():
         st.session_state[key] = default_val
 
 
+# Persistent change-tracking dictionary
+if "changed_inputs" not in st.session_state:
+    st.session_state["changed_inputs"] = {}
+
 # Initializing the session state of all the variables
 #if "Planet.Bulk.R_m" not in st.session_state:
     #st.session_state["Planet.Bulk.R_m"]= planet_module.Planet.Bulk.R_m  # Initialize the session state
@@ -93,9 +97,9 @@ for key, (_, default_val) in bulk_fields.items():
 
 def on_change_bulk_setting(bulk_setting_key):
     new_value = st.session_state[bulk_setting_key]
-    st.write(f"You set a custom value for {bulk_setting_key}: {new_value}")
+    st.session_state["changed_inputs"][field_key] = True
+    return new_value
 
-#user_input_a_variable = partial(on_change_bulk_setting, bulk_key)
     
 # Create number inputs dynamically
 for key, (label, _) in bulk_fields.items():
@@ -107,6 +111,14 @@ for key, (label, _) in bulk_fields.items():
         key=key,
         on_change=partial(on_change_bulk_setting, key)
     ))
+
+    # Update the session state value explicitly
+    st.session_state[key] = new_value
+
+    # Display success message directly below input (if changed)
+    if st.session_state["changed_inputs"].get(key, False):
+        st.success(f"You changed **{label}** to `{new_value}`")
+
 
 
 #Planet.Bulk.R_m = st.number_input("Radius of the body (m)", value =  st.session_state["Planet.Bulk.R_m"], key = "Planet.Bulk.R_m", on_change = user_input_a_variable)
