@@ -3,6 +3,7 @@ import os
 import importlib
 import sys
 import numpy as np
+from functools import partial
 
 
 
@@ -74,8 +75,10 @@ Planet =PlanetStruct(Planet)
  #   st.session_state["Planet.Bulk.Tb_K"] = planet_module.Planet.Bulk.Tb_K
 
 
+
 def user_input_a_variable():
-    st.write("You are setting a custom value for this variable")
+        st.write(f"You are setting a custom value for this variable" )
+
 
 
 Planet.Bulk.R_m = st.number_input("Radius of the body (m)", value = planet_module.Planet.Bulk.R_m, on_change = user_input_a_variable)
