@@ -79,13 +79,18 @@ bulk_fields = {
     }.items()
 }
 
+if "reset_bulk_flag" not in st.session_state:
+    st.session_state["reset_bulk_flag"] = False
+
+
 # Persistent change-tracking dictionary
-if st.session_state.get("reset_bulk_flag", False):
-    for key in planet_defaults:
-        st.session_state[key] = planet_defaults[key]
+
+if st.session_state["reset_bulk_flag"]:
+    for key, val in planet_defaults.items():
+        st.session_state[key] = val  # OK: safe before widget creation
     st.session_state["changed_inputs"] = {}
     st.session_state["reset_bulk_flag"] = False
-    st.rerun()
+    st.rerun()  # 🔁 ensures Streamlit restarts before widgets render
 
 
 
