@@ -95,7 +95,7 @@ def on_change_bulk_setting(bulk_setting_key):
     new_value = st.session_state[bulk_setting_key]
     st.write(f"You set a custom value for {bulk_setting_key}: {new_value}")
 
-user_input_a_variable = partial(on_change_bulk_setting, bulk_key)
+#user_input_a_variable = partial(on_change_bulk_setting, bulk_key)
     
 # Create number inputs dynamically
 for key, (label, _) in bulk_fields.items():
