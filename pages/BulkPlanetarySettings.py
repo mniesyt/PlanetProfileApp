@@ -76,7 +76,7 @@ for key, (_, default_val) in bulk_fields.items():
 
 
 # Initializing the session state of all the variables
-i#f "Planet.Bulk.R_m" not in st.session_state:
+#if "Planet.Bulk.R_m" not in st.session_state:
     #st.session_state["Planet.Bulk.R_m"]= planet_module.Planet.Bulk.R_m  # Initialize the session state
 #if "Planet.Bulk.M_kg" not in st.session_state:
     #st.session_state["Planet.Bulk.M_kg"] = planet_module.Planet.Bulk.M_kg
