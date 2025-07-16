@@ -46,8 +46,10 @@ module_to_import = f"PP{Planet}"
 # Use importlib to import the module
 planet_module = importlib.import_module(module_to_import)
 
-st.write("Default values for your selected body are displayed below. You can also change the Bulk Planetary Settings if you would like to.")
-
+st.write("Default values for your selected body are displayed below.")
+st.write("You may also change the Bulk Planetary Settings to custom values")
+st.write("YReset to defualt values with the button at the bottom of the page")
+st.markdown("---")
 
 # Pulls default values into the app for each PPPlanet, if the user sets a new
 # value then it is saved as a session state variable
