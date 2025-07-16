@@ -51,7 +51,7 @@ Planet =PlanetStruct(Planet)
 planet_step_defaults = {"Planet.Steps.nIceI": planet_module.Planet.Steps.nIceI,
                         "Planet.Ocean.deltaP": planet_module.Planet.Ocean.deltaP,
                         "Planet.Ocean.deltaT": planet_module.Planet.Ocean.deltaT,
-                        "Planet.Ocean.PHydroMax_MPa}": planet_module.Planet.Ocean.PHydroMax_MPa}
+                        "Planet.Ocean.PHydroMax_MPa": planet_module.Planet.Ocean.PHydroMax_MPa}
 
 
 step_settings = {
@@ -59,7 +59,7 @@ step_settings = {
         "Planet.Steps.nIceI": "Number of Ice I Layer steps",
         "Planet.Ocean.deltaP" : "Step Size for Ocean Pressure $\Delta P$ (MPa)",
         "Planet.Ocean.deltaT": "Step size for Temperature $\Delta T$ ($^\circ K$)",
-        "Planet.Ocean.PHydroMax_MPa}" : "Maximum Pressure of the Hydrosphere (MPa)",
+        "Planet.Ocean.PHydroMax_MPa" : "Maximum Pressure of the Hydrosphere (MPa)",
         }.items()
 }
 
