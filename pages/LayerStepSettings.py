@@ -55,6 +55,7 @@ planet_step_defaults = {"Planet.Steps.nIceI": planet_module.Planet.Steps.nIceI,
 
 
 # dictionary of dictionaries that each hold the label, defaults, subheaders, and descriptions of the step settings
+step_settings = {
     "Planet.Steps.nIceI": {
         "label": "Number of Ice I Layer steps",
         "default": planet_module.Planet.Steps.nIceI,
