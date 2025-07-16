@@ -70,9 +70,11 @@ if not pdf_files:
 
 figure_dict = {}
 for filename in pdf_files:
-    # Extract the part between TbXXXK and Figure
-    match = re.search(r'Tb\d+\.\d+K(.*?)Figure\.pdf', filename)
-    label = match.group(1) if match else filename.replace(".pdf", "")
+    match = re.search(r'Tb\d+\.\d+K(.+)\.pdf$', filename)
+    if match:
+        label = match.group(1)
+    else:
+        label = filename[:-4] if filename.endswith('.pdf') else filename
     figure_dict[label] = os.path.join(figures_folder, filename)
 
 figure_labels = list(figure_dict.keys()) 
