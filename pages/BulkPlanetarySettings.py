@@ -10,7 +10,10 @@ from functools import partial
 st.set_page_config(page_title="Bulk Planetary Settings")
 
 st.title("Bulk Planetary Settings")
-st.write("Choose your Bulk Planetary Settings Below.")
+st.write("Default values for your selected body are displayed below.")
+st.write("You may also change the Bulk Planetary Settings to custom values")
+st.write("Reset to defualt values with the button at the bottom of the page")
+st.markdown("---")
 
 # Get the path to the current script's directory
 # /PlanetProfile/PlanetProfileApp/BulkPlanetarySettings.py
@@ -46,10 +49,7 @@ module_to_import = f"PP{Planet}"
 # Use importlib to import the module
 planet_module = importlib.import_module(module_to_import)
 
-st.write("Default values for your selected body are displayed below.")
-st.write("You may also change the Bulk Planetary Settings to custom values")
-st.write("YReset to defualt values with the button at the bottom of the page")
-st.markdown("---")
+
 
 # Pulls default values into the app for each PPPlanet, if the user sets a new
 # value then it is saved as a session state variable
@@ -59,7 +59,7 @@ Planet =PlanetStruct(Planet)
 # planet_defaults dictionary
 #keeping track of defaults for the planet with this dicitonary {"key": value}
 #to get to the values, call the key form the dicitonary (planet_defaults["Planet.Bulk.R_m"] returns the value of planet_module.Planet.Bulk.R_m
-planet_defaults = {
+planet_bulk_defaults = {
     "Planet.Bulk.R_m": planet_module.Planet.Bulk.R_m,
     "Planet.Bulk.M_kg": planet_module.Planet.Bulk.M_kg,
     "Planet.Bulk.Tsurf_K": planet_module.Planet.Bulk.Tsurf_K,
@@ -74,7 +74,7 @@ planet_defaults = {
 # the keys are the same as in planet_defaults ("Planet.Bulk.R_m"), the 'value' is (label, value) with label 
 # being the string listed (e.g. "Radius of the body (m)") and value being the default value from planet_defaults (e.g. planet_module.Planet.Bulk.R_m)
 bulk_settings = {
-    key: (label, planet_defaults[key]) for key, label in {
+    key: (label, planet_bulk_defaults[key]) for key, label in {
         "Planet.Bulk.R_m": "Radius of the body (m)",
         "Planet.Bulk.M_kg": "Mass of the body (kg)",
         "Planet.Bulk.Tsurf_K": "Temperature at the surface ($^\circ K$)",
@@ -95,7 +95,7 @@ if "reset_bulk_flag" not in st.session_state:
 
 # This block is only executed when the user clicks the “Reset” button.
 if st.session_state["reset_bulk_flag"]: #if flag is true (if user presses reset button)
-    for key, val in planet_defaults.items():
+    for key, val in planet_bulk_defaults.items():
         st.session_state[key] = val  # reloads all of the planet_defaults into session_state
     st.session_state["changed_inputs"] = {} #clears blank dictionary for changed inputs to go into later
     st.session_state["reset_bulk_flag"] = False #reset_bulk_flag now is set to false
@@ -168,7 +168,7 @@ for key, (label, _) in bulk_settings.items():
         st.success(f"You changed **{label}** to `{current_value}`") #prints that a bulk setting has been changed and what value it has been changed to
 
 
-if st.button("🔄 Reset to module defaults (double click)"): #w hen user clicks reset button, 
+if st.button("🔄 Reset to module defaults (double click)"): #when user clicks reset button, 
     st.session_state["reset_bulk_flag"] = True #"reset_bulk_flag" is set to true in the session_state,
     # which triggers the if st.session_state["reset_bulk_flag"] function above
 
