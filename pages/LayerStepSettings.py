@@ -54,16 +54,33 @@ planet_step_defaults = {"Planet.Steps.nIceI": planet_module.Planet.Steps.nIceI,
                         "Planet.Ocean.PHydroMax_MPa": planet_module.Planet.Ocean.PHydroMax_MPa}
 
 
+# Updated settings with full metadata
 step_settings = {
-    key: (label, planet_step_defaults[key]) for key, label in {
-        "Planet.Steps.nIceI": "Number of Ice I Layer steps",
-        "Planet.Ocean.deltaP" : "Step Size for Ocean Pressure $\Delta P$ (MPa)",
-        "Planet.Ocean.deltaT": "Step size for Temperature $\Delta T$ ($^\circ K$)",
-        "Planet.Ocean.PHydroMax_MPa" : "Maximum Pressure of the Hydrosphere (MPa)",
-        }.items()
+    "Planet.Steps.nIceI": {
+        "label": "Number of Ice I Layer steps",
+        "default": planet_module.Planet.Steps.nIceI,
+        "subheader": "Ice I Layer Steps",
+        "description": "Defines the number of steps for the Ice I layer. Number of steps for other layers will be calculated based on mass, radius, and moment of inertia inputs."
+    },
+    "Planet.Ocean.deltaP": {
+        "label": "Step Size for Ocean Pressure $\Delta P$ (MPa)",
+        "default": planet_module.Planet.Ocean.deltaP,
+        "subheader": "Ocean Pressure Step Size",
+        "description": "Increment of pressure in MPa between each layer in lower hydrosphere/ocean (sets profile resolution)."
+    },
+    "Planet.Ocean.deltaT": {
+        "label": "Step size for Temperature $\Delta T$ ($^\circ K$)",
+        "default": planet_module.Planet.Ocean.deltaT,
+        "subheader": "Temperature Step Size",
+        "description": "Step size in $^\circ K$ for temperature values used in generating ocean EOS functions. If set, overrides calculations that otherwise use the specified precision in user-set temperature at the bottom $^\circ K$ to determine this."
+    },
+    "Planet.Ocean.PHydroMax_MPa": {
+        "label": "Maximum Pressure of the Hydrosphere (MPa)",
+        "default": planet_module.Planet.Ocean.PHydroMax_MPa,
+        "subheader": "Hydrosphere Maximum Pressure",
+        "description": "Guessed maximum pressure of the hydrosphere in MPa. Must be greater than the actual pressure, but ideally not by much."
+    }
 }
-
-
 #initializing the reset_bulk_flag in the session state as False
 if "reset_step_flag" not in st.session_state:
     st.session_state["reset_step_flag"] = False
@@ -92,30 +109,25 @@ def on_change_step_setting(step_setting_key):
     st.session_state["changed_inputs"][step_setting_key] = True
 
 # Create number inputs dynamically
-for key, (label, _) in step_settings.items():
-    #iterating over all of the key, (label,_) pairs in bulk_settings.items()
-    #we are only doing things with they key and label, so the actual value is ignored with _
-    setting_name = key.split(".")[-1] # this grabs just the key i.e. just Tb_K from "Planet.Bulk.Tb_K" 
-    #(key.split(".") splits the key into ["Planet", "Bulk", "R_m"] amd [-1] grabs the last object "R_m" in the list )
+for key, setting in step_settings.items():
+    setting_name = key.split(".")[-1]
 
-    # Create input widgets
+    st.subheader(setting["subheader"]) # this makes a subheader for each setting
+
     st.number_input(
-        label, #this prints the label for what the number_input widget shows
-        key = key, #this loads the default value into the widget -> the key calls the defualt value from the session state
-        on_change = partial(on_change_step_setting, key) #using partial funciton because you can only pass a callable here, not a function call
-        #if the user changes the value, then on_change_bulk_setting is called
+        label=setting["label"],
+        key=key,
+        on_change=partial(on_change_step_setting, key)
     )
+
+    current_value = st.session_state[key]
+    setattr(eval("Planet." + ".".join(key.split(".")[1:-1])), setting_name, current_value)
+
+    st.write(setting["description"]) #this writes out the description below the number_input
     st.markdown("---")
 
-    # Update Planet object
-    current_value = st.session_state[key] #pulls the current value of the setting from the session_state usings its key
-    setattr(Planet.Steps, setting_name, current_value) #setattr(object, attribute, value) -> sets Planet.Bulk.setting_name to current_value
-
-    # Show success message if changed
     if st.session_state["changed_inputs"].get(key, False):
-        st.success(f"You changed **{label}** to `{current_value}`") #prints that a bulk setting has been changed and what value it has been changed to
-
-
+        st.success(f"You changed **{setting['label']}** to `{current_value}`")
 
 
 if st.button("🔄 Reset to module defaults (double click)"): #when user clicks reset button, 
@@ -126,24 +138,24 @@ if st.button("🔄 Reset to module defaults (double click)"): #when user clicks 
 
 
 
-st.subheader("Ice I Layer Steps")
-Planet.Steps.nIceI = st.number_input("Number of Ice I Layer steps", value = planet_module.Planet.Steps.nIceI, step = 1)
-st.write("Defines the number of steps for the Ice I layer. Number of steps for other layers will be calculated based on mass, radius, and moment of inertia inputs.")
-st.markdown("---")
+#st.subheader("Ice I Layer Steps")
+#Planet.Steps.nIceI = st.number_input("Number of Ice I Layer steps", value = planet_module.Planet.Steps.nIceI, step = 1)
+#st.write("Defines the number of steps for the Ice I layer. Number of steps for other layers will be calculated based on mass, radius, and moment of inertia inputs.")
+#st.markdown("---")
 
-st.subheader("Ocean Pressure Step Size")
-Planet.Ocean.deltaP = st.number_input("Step Size for Ocean Pressure $\Delta P$ (MPa)", value = planet_module.Planet.Ocean.deltaP)
-st.write("Increment of pressure in MPa between each layer in lower hydrosphere/ocean (sets profile resolution)")
-st.markdown("---")
+#st.subheader("Ocean Pressure Step Size")
+#Planet.Ocean.deltaP = st.number_input("Step Size for Ocean Pressure $\Delta P$ (MPa)", value = planet_module.Planet.Ocean.deltaP)
+#st.write("Increment of pressure in MPa between each layer in lower hydrosphere/ocean (sets profile resolution)")
+#st.markdown("---")
 
-st.subheader("Temperature Step Size")
-Planet.Ocean.deltaT = st.number_input("Step size for Temperature $\Delta T$ ($^\circ K$)", value = planet_module.Planet.Ocean.deltaT)
-st.write("Step size in $^\circ K$ for temperature values used in generating ocean EOS functions. If set, overrides calculations that otherwise use the specified precision in user-set temperature at the bottom $^\circ K$ to determine this.")
-st.markdown("---")
+#st.subheader("Temperature Step Size")
+#Planet.Ocean.deltaT = st.number_input("Step size for Temperature $\Delta T$ ($^\circ K$)", value = planet_module.Planet.Ocean.deltaT)
+#st.write("Step size in $^\circ K$ for temperature values used in generating ocean EOS functions. If set, overrides calculations that otherwise use the specified precision in user-set temperature at the bottom $^\circ K$ to determine this.")
+#st.markdown("---")
 
-st.subheader("Hydrosphere Maximum Pressure")
-Planet.Ocean.PHydroMax_MPa = st.number_input("Maximum Pressure of the Hydrosphere (MPa)", value = planet_module.Planet.Ocean.PHydroMax_MPa)
-st.write("Guessed maximum pressure of the hydrosphere in MPa. Must be greater than the actual pressure, but ideally not by much.")
-st.markdown("---")
+#st.subheader("Hydrosphere Maximum Pressure")
+#Planet.Ocean.PHydroMax_MPa = st.number_input("Maximum Pressure of the Hydrosphere (MPa)", value = planet_module.Planet.Ocean.PHydroMax_MPa)
+#st.write("Guessed maximum pressure of the hydrosphere in MPa. Must be greater than the actual pressure, but ideally not by much.")
+#st.markdown("---")
 
 #os.chdir('PlanetProfileApp') #changing back to app directory so people can navigate between other pages
