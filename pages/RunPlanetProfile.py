@@ -75,7 +75,8 @@ for filename in pdf_files:
     label = match.group(1) if match else filename.replace(".pdf", "")
     figure_dict[label] = os.path.join(figures_folder, filename)
 
-selected_label = st.radio("Select a figure to view", sorted_labels, horizontal=True)
+figure_labels = list(figure_dict.keys()) 
+selected_label = st.radio("Select a figure to view", figure_labels, horizontal=True)
 
 selected_pdf_path = figure_dict[selected_label]
 
