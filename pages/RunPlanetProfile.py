@@ -76,12 +76,15 @@ for filename in pdf_files:
     figure_dict[label] = os.path.join(figures_folder, filename)
 
 figure_labels = list(figure_dict.keys()) 
-selected_label = st.radio("Select a figure to view", figure_labels, horizontal=True)
+tabs = st.tabs(labels)
 
-selected_pdf_path = figure_dict[selected_label]
+for tab, label in zip(tabs, labels):
+    with tab:
+        pdf_path = figure_dict[label]
+        with st.spinner(f"Rendering figure: {label}..."):
+            images = convert_from_path(pdf_path)
+            st.image(images[0], use_column_width=True)
+            st.caption(f"**{label}**")
 
-with st.spinner(f"Rendering figure: {selected_label}..."):
-    images = convert_from_path(selected_pdf_path)
-    st.image(images[0], use_column_width=True)
-    st.caption(f"**{selected_label}**")    
+
 
