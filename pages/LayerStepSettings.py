@@ -56,9 +56,9 @@ planet_step_defaults = {"Planet.Steps.nIceI": planet_module.Planet.Steps.nIceI,
 step_settings = {
     key: (label, planet_step_defaults[key]) for key, label in {
         "Planet.Steps.nIceI": "Number of Ice I Layer steps",
-        "Planet.Ocean.deltaP" : "Step Size for Ocean Pressure $\Delta P$ (MPa)"
+        "Planet.Ocean.deltaP" : "Step Size for Ocean Pressure $\Delta P$ (MPa)",
         "Planet.Ocean.deltaT": "Step size for Temperature $\Delta T$ ($^\circ K$)",
-        "Planet.Ocean.PHydroMax_MPa}" : "Maximum Pressure of the Hydrosphere (MPa)"
+        "Planet.Ocean.PHydroMax_MPa}" : "Maximum Pressure of the Hydrosphere (MPa)",
         }.items()
 }
 
