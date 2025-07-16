@@ -1,5 +1,42 @@
 import streamlit as st
 import os
+from pdf2image import convert_from_path
+from PIL import Image
+import re
+import tempfile
+
+
+# Get the path to the current script's directory
+# /PlanetProfile/PlanetProfileApp/BulkPlanetarySettings.py
+RunPlanetProfile_directory = os.path.dirname(os.path.abspath(__file__))
+#st.write(BulkPlanertarySettings_directory)
+
+# Get the app directory (/PlanetProfile/PlanetProfileAPP)
+app_directory = os.path.dirname(RunPlanetProfile_directory)
+# Get the parent directory (/PlanetProfile)
+parent_directory  = os.path.dirname(app_directory)
+# Add the parent directory to Python's search path.
+if parent_directory not in sys.path:
+    sys.path.append(parent_directory)
+
+
+#os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
+
+# Get the planet name from the environment variable
+Planet = os.getenv("Planet") # e.g., "Venus"
+
+if not Planet:
+    st.error("Please Select a Planet on the Planet Profile Main Settings Page")
+    st.stop()
+
+# making sure the Planet folder is in the path so can find PPPlanet
+#planet_run_folder_string = '/'+str(Planet)
+#full_planet_run_folder_string = parent_directory + planet_run_folder_string
+#planet_run_folder = sys.path.append(os.path.join(full_planet_run_folder_string))
+#figures_folder_string = full_planet_run_folder_string+ "/figures"
+#planet_run_figures_folder = sys.path.append(os.path.join(figures_folder_string))
+# Build path: /PlanetProfile/{Planet}/figures
+figures_folder = os.path.join(parent_directory, Planet, "figures") #this does all of the commented out part above but in one step
 
 st.set_page_config(page_title="Run Planet Profile")
 
@@ -20,8 +57,29 @@ if st.button("Run Planet Profile with my Choices", type = "primary"):
 else:
     st.write("Choices have not yet been pushed to Planet Profile")
 
+st.markdown("---")
 
+st.subheader("Figures Produced by Planet Profile will Appear Below")
 
+pdf_files = [f for f in os.listdir(figures_folder) if f.endswith(".pdf")]
 
+if not pdf_files:
+    st.warning(f"No figure PDFs found in: {figures_folder}")
+    st.stop()
 
+figure_dict = {}
+for filename in pdf_files:
+    # Extract the part between TbXXXK and Figure
+    match = re.search(r'Tb\d+\.\d+K(.*?)Figure\.pdf', filename)
+    label = match.group(1) if match else filename.replace(".pdf", "")
+    figure_dict[label] = os.path.join(figures_folder, filename)
+
+selected_label = st.radio("Select a figure to view", sorted_labels, horizontal=True)
+
+selected_pdf_path = figure_dict[selected_label]
+
+with st.spinner(f"Rendering figure: {selected_label}..."):
+    images = convert_from_path(selected_pdf_path)
+    st.image(images[0], use_column_width=True)
+    st.caption(f"**{selected_label}**")    
 
