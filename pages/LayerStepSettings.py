@@ -95,9 +95,9 @@ if st.session_state["reset_step_flag"]: #if flag is true (if user presses reset 
     st.rerun()  # 🔁 ensures Streamlit restarts before widgets render
 
 
-for key, (_, default_val) in step_settings.items(): #initializes variables into session_state 
-    if key not in st.session_state: #this means only not already created keys will be added to session state
-        st.session_state[key] = default_val
+for key, setting in step_settings.items():
+    if key not in st.session_state:
+        st.session_state[key] = setting["default"]
 
 
 #Initializing the changed_inputs to keep track of what variables the user has changed
