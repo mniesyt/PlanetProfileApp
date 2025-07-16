@@ -3,6 +3,7 @@ import os
 import importlib
 import sys
 import numpy as np
+from functools import partial
 
 st.set_page_config(page_title="Layer Step Settings")
 st.title("Layer Step Settings")
