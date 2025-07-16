@@ -76,9 +76,9 @@ for filename in pdf_files:
     figure_dict[label] = os.path.join(figures_folder, filename)
 
 figure_labels = list(figure_dict.keys()) 
-tabs = st.tabs(labels)
+tabs = st.tabs(figure_labels)
 
-for tab, label in zip(tabs, labels):
+for tab, label in zip(tabs, figure_labels):
     with tab:
         pdf_path = figure_dict[label]
         with st.spinner(f"Rendering figure: {label}..."):
