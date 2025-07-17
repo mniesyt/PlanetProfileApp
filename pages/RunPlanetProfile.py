@@ -84,14 +84,19 @@ tabs = st.tabs(figure_labels)
 captions = {
     "Wedge": "Shows an interior wedge diagram showing the calculations of the radii of each planet layer",
     "Gravity": "Gravitational acceleration (g) and Pressure profiles as a function of radius",
-    "Hydrosphere": "Interior Properties- Left:  Left: Phase diagram as a funciton of pressure and density. Right(Top): Temperature profile across different depths."
-    "Right(center): Longitudinal (p-wave) sound velocity Vp for each layer in km/s and shear (s-wave) sound velocity Vs for each layer in km/s as a funciton of depth, Right(Bottom): Electrical conductivity as a funciton of depth",
+    "Hydrosphere": (
+        "Interior Properties- Left:  Left: Phase diagram as a funciton of pressure and density. "
+        "Right(Top): Temperature profile across different depths."
+        "Right(center): Longitudinal (p-wave) sound velocity Vp for each layer in km/s and shear (s-wave) sound velocity Vs for each layer in km/s as a funciton of depth, "
+        "Right(Bottom): Electrical conductivity as a funciton of depth"),
 
     "CoreMantTrade": "Silicate–core size tradeoﬀ - Based on given Moment of Inertia, calculates all profiles of silicate and core size pairs that fit within that gien MOI. The one determined by Planet Profile to most closely match the given MOI is marked on the figure",
     "MantleDens": "Silicate radius-density tradeoff - Based on given Moment of Inertia, calculates all profiles of silicate radii and densities that fit within that gien MOI. The one determined by Planet Profile to most closely match the given MOI is marked on the figure",
     "Porosity" : "Left: Porosity as a funciton of depth. Right: Porosity as a funciton of pressure",
     "Viscosity" : "Viscosity of the planet layers as a funciton of radius",
-    "Seismic" : "Seismic Properties. Top Left - Bulk & shear moduli Ks & Gs as a function of radius. Top Right - Temperature, Pressure, and density as a funciton of radius. Bottom Left - Sound speeds Vp and Vs as a function of radius. Bottom Right - Seismic quality factor Qs as a funcito of raidus"
+    "Seismic" : (
+        "Seismic Properties. Top Left - Bulk & shear moduli Ks & Gs as a function of radius. "
+        "Top Right - Temperature, Pressure, and density as a funciton of radius. Bottom Left - Sound speeds Vp and Vs as a function of radius. Bottom Right - Seismic quality factor Qs as a funcito of raidus")
     
 }
 
@@ -106,8 +111,7 @@ for tab, label in zip(tabs, figure_labels):
 
             caption = captions.get(label, f"{label}")
             st.caption(f"**{caption}**")
-            #If wanted later-- add caption messages describing what the images are showing
-            #st.caption(f"**{label}**")
+
 
 
 
