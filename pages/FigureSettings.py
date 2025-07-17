@@ -23,13 +23,14 @@ if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
 # Import config
-from configPP import configAssign  # This brings in the current config state
+from configPP import configAssign  # This brings in the current config state from the configPP.py file
 # Call the function to get Params and ExploreParams
-Params, ExploreParams = configAssign()
+Params, ExploreParams = configAssign() #configAssign creates the ParamsStruct and ExploreParamsStruct
 
-# Optionally: Skip all plots
-Params.SKIP_PLOTS = st.checkbox("❌ Skip All Plots", value=getattr(Params, "SKIP_PLOTS", False))
-st.markdown("---")
+# Optional: Skip all plots
+Params.SKIP_PLOTS = st.checkbox("❌ Skip All Plots", value=getattr(Params, "SKIP_PLOTS", False)) #the getattr loads the checkbox to default to whatever is in the config file originally
+st.markdown("---") #if the user cheks taht they wantt o skip plots, then params.SKIP_PLOTS is set to true
+st.write(Params.SKIP_PLOTS)
 
 # Automatically find all Params attributes that start with "PLOT_"
 plot_attributes = sorted([attr for attr in dir(Params)
