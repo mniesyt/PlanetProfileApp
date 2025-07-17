@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import sys
-
+import re
 
 st.set_page_config(page_title="Figure Settings")
 st.title("Figure Settings")
