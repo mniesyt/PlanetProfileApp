@@ -7,7 +7,7 @@ layer_step_settings = st.Page("pages/LayerStepSettings.py", title="Layer Step Se
 figure_settings = st.Page("pages/FigureSettings.py", title="Layer Step Settings", icon="📈")
 run_PlanetProfile = st.Page("pages/RunPlanetProfile.py", title="Run Planet Profile", icon="🚀")
 # Set up navigation
-pg = st.navigation([main_settings, bulk_planetary_settings, layer_step_settings, run_PlanetProfile])
+pg = st.navigation([main_settings, bulk_planetary_settings, layer_step_settings, figure_settings, run_PlanetProfile])
 
 # Run the selected page
 pg.run()
