@@ -94,7 +94,7 @@ captions = {
     "CoreMantTrade": "Silicate–core size tradeoﬀ - Based on given Moment of Inertia, calculates all profiles of silicate and core size pairs that fit within that gien MOI. The one determined by Planet Profile to most closely match the given MOI is marked on the figure",
     "MantleDens": "Silicate radius-density tradeoff - Based on given Moment of Inertia, calculates all profiles of silicate radii and densities that fit within that gien MOI. The one determined by Planet Profile to most closely match the given MOI is marked on the figure",
     "Porosity" : "Left: Porosity as a funciton of depth. Right: Porosity as a funciton of pressure",
-    "Porosity2Axes": "Displays Porosity both as a function of depth and as a funciton of pressure on one figure" ,
+    "Porosity2axes": "Displays Porosity both as a function of depth and as a funciton of pressure on one figure" ,
     "Viscosity" : "Viscosity of the planet layers as a funciton of radius",
     "Seismic" : (
         "Seismic Properties. \n\n"

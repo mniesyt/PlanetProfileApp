@@ -11,11 +11,11 @@ st.write("OPTIONAL -- Choose your Layer Step Settings Below")
 
 # Get the path to the current script's directory
 # /PlanetProfile/PlanetProfileApp/BulkPlanetarySettings.py
-BulkPlanertarySettings_directory = os.path.dirname(os.path.abspath(__file__))
+LayerStepSettings_directory = os.path.dirname(os.path.abspath(__file__))
 #st.write(BulkPlanertarySettings_directory)
 
 # Get the app directory (/PlanetProfile/PlanetProfileAPP)
-app_directory = os.path.dirname(BulkPlanertarySettings_directory)
+app_directory = os.path.dirname(LayerStepSettings_directory)
 # Get the parent directory (/PlanetProfile)
 parent_directory  = os.path.dirname(app_directory)
 # Add the parent directory to Python's search path.
