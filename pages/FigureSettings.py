@@ -58,6 +58,11 @@ with open(config_path, "r") as file:
             comment = match.group(3).strip()  # e.g., Whether to plot Gravity...
             toggle_descriptions[param_name] = comment
 
+            if comment.lower().startswith("whether to "):
+                comment = comment[11:]  # Remove "Whether to " from the descriptions in configPP
+            comment = comment.replace("plot", "Plot", 1)  # Capitalize the first "plot" only in the description
+    
+
 
 # Optional: You can provide nicer labels using a mapping or just auto-format them
 for attr in plot_attributes:
