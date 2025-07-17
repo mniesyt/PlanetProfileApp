@@ -10,10 +10,8 @@ st.write("Choose which figures you would like to produce below as well as settin
 Planet = os.getenv("Planet") # e.g., "Europa"
 
 # Get the path to the current script's directory
-# /PlanetProfile/PlanetProfileApp/BulkPlanetarySettings.py
+# /PlanetProfile/PlanetProfileApp/FigureSettings.py
 FigureSettings_directory = os.path.dirname(os.path.abspath(__file__))
-#st.write(BulkPlanertarySettings_directory)
-
 # Get the app directory (/PlanetProfile/PlanetProfileAPP)
 app_directory = os.path.dirname(FigureSettings_directory)
 # Get the parent directory (/PlanetProfile)
@@ -21,6 +19,9 @@ parent_directory  = os.path.dirname(app_directory)
 # Add the parent directory to Python's search path.
 if parent_directory not in sys.path:
     sys.path.append(parent_directory)
+
+config_path = os.path.join(FigureSettings_directory, "configPP.py") #path to configPP.py
+
 
 # Import config
 from configPP import configAssign  # This brings in the current config state from the configPP.py file
