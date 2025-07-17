@@ -70,7 +70,7 @@ if not pdf_files:
 
 figure_dict = {}
 for filename in pdf_files:
-    match = re.search(r'([A-Za-z0-9_]+)\.pdf$', filename)
+    match = re.search(r'([A-Z][a-zA-Z0-9_]*)\.pdf$', filename)
     if match:
         label = match.group(1)
     else:
