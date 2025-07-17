@@ -23,8 +23,9 @@ if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
 # Import config
-from configPP import Params  # This brings in the current config state
-
+from configPP import configAssign  # This brings in the current config state
+# Call the function to get Params and ExploreParams
+Params, ExploreParams = configAssign()
 
 # Optionally: Skip all plots
 Params.SKIP_PLOTS = st.checkbox("❌ Skip All Plots", value=getattr(Params, "SKIP_PLOTS", False))
