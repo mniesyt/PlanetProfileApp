@@ -49,6 +49,9 @@ plot_attributes = [attr for attr in dir(Params)
 updated_params = {} #if users update a params object, it will get stored here to later be passed back into configPP
 
 toggle_descriptions = {} #this grabs the comments from the configPP file for what each plot is
+with open(configPP_file_path, "r") as f:
+    lines = f.readlines()
+
 
 with open(config_path, "r") as file:
     for line in file:
