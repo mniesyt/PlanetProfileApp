@@ -85,7 +85,7 @@ for tab, label in zip(tabs, figure_labels):
         pdf_path = figure_dict[label]
         with st.spinner(f"Rendering figure: {label}..."):
             images = convert_from_path(pdf_path)
-            st.image(images[0], use_column_width=True)
+            st.image(images[0], use_container_width=True)
             st.caption(f"**{label}**")
 
 
