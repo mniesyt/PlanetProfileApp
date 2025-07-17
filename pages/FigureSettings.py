@@ -47,10 +47,21 @@ plot_attributes = [attr for attr in dir(Params)
 # Dictionary to store updated values
 updated_params = {} #if users update a params object, it will get stored here to later be passed back into configPP
 
+toggle_descriptions = {} #this grabs the comments from the configPP file for what each plot is
+
+with open(config_path, "r") as file:
+    for line in file:
+        match = re.match(r"\s*Params\.(PLOT_[A-Z_]+)\s*=\s*(True|False)\s*#\s*(.+)", line)
+        if match:
+            param_name = match.group(1)  # e.g., PLOT_GRAVITY
+            comment = match.group(3).strip()  # e.g., Whether to plot Gravity...
+            toggle_descriptions[param_name] = comment
+
+
 # Optional: You can provide nicer labels using a mapping or just auto-format them
 for attr in plot_attributes:
     # Format label from the attribute name (e.g., PLOT_GRAVITY → Gravity)
-    label = attr.replace("PLOT_", "").replace("_", " ").title()
+    label = toggle_descriptions.get(attr, attr.replace("PLOT_", "").title())
     current_val = getattr(Params, attr) #loads in the current value form the configPP file
     new_val = st.toggle(label, value=current_val) #saves whatever the user sets as 
     updated_params[attr] = new_val
