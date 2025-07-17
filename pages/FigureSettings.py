@@ -28,7 +28,7 @@ from configPP import configAssign  # This brings in the current config state fro
 Params, ExploreParams = configAssign() #configAssign creates the ParamsStruct and ExploreParamsStruct
 
 
-st.subtitle("General Figure Settings")
+st.subheader("General Figure Settings")
 # Optional: Skip all plots
 Params.SKIP_PLOTS = st.checkbox("Skip All Plots", value=getattr(Params, "SKIP_PLOTS", False)) #the getattr loads the checkbox to default to whatever is in the config file originally
 #if the user cheks that they want to skip plots, then params.SKIP_PLOTS is set to true
@@ -37,7 +37,7 @@ Params.TITLES = st.checkbox("Include Titles on Plots", value=getattr(Params, "TI
 st.markdown("---") 
 
 
-st.subtitle("Figure Selection")
+st.subheader("Figure Selection")
 
 # Automatically find all Params attributes that start with "PLOT_"
 plot_attributes = [attr for attr in dir(Params)
