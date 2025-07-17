@@ -59,12 +59,11 @@ with open(config_path, "r") as file:
         if match:
             param_name = match.group(1)  # e.g., PLOT_GRAVITY
             comment = match.group(3).strip()  # e.g., Whether to plot Gravity...
-            toggle_descriptions[param_name] = comment
 
             if comment.lower().startswith("whether to "):
                 comment = comment[11:]  # Remove "Whether to " from the descriptions in configPP
             comment = comment.replace("plot", "Plot", 1)  # Capitalize the first "plot" only in the description
-    
+            toggle_descriptions[param_name] = comment 
 
 
 # Optional: You can provide nicer labels using a mapping or just auto-format them
@@ -89,7 +88,7 @@ if st.button("Save Plot Settings"): #if user clicks the button
                 lines[i] = f"    Params.{key} = {val}\n" #if the line is one of the params.PLOT, the current_val gets overwritten with the new_val for that line
 
     # Write back to file
-    with open(file_path, "w") as f: 
+    with open(configPP_file_path, "w") as f: 
         f.writelines(lines) #whichever lines have been changed are written back to configPP
 
     st.success("Settings saved") #displays if configPP has successfully been updated
