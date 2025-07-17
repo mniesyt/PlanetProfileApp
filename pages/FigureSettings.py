@@ -20,7 +20,7 @@ parent_directory  = os.path.dirname(app_directory)
 if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
-config_path = os.path.join(parent_directory_directory, "configPP.py") #path to configPP.py
+config_path = os.path.join(parent_directory, "configPP.py") #path to configPP.py
 
 
 # Import config
