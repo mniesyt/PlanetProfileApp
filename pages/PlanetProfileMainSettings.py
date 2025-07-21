@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import importlib
 import sys
-from Utilities.planet_loader import load_planet_module
+
 
 # Main page content
 st.set_page_config(page_title="Planet Profile Main")
@@ -46,6 +46,7 @@ PlanetProfileMainSettings_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Get the app directory (/PlanetProfile/PlanetProfileApp)
 app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
+from Utilities.planet_loader import load_planet_module
 
 # Get the parent directory (/PlanetProfile)
 parent_directory  = os.path.dirname(app_directory)
