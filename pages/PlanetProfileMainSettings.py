@@ -47,6 +47,9 @@ PlanetProfileMainSettings_directory = os.path.dirname(os.path.abspath(__file__))
 # Get the app directory (/PlanetProfile/PlanetProfileApp)
 app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
 
+if app_directory not in sys.path:
+    sys.path.append(app_directory)
+
 
 # Get the parent directory (/PlanetProfile)
 parent_directory  = os.path.dirname(app_directory)
