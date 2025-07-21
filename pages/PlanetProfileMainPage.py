@@ -9,15 +9,19 @@ st.set_page_config(page_title="Planet Profile Main", page_icon="🌙",)
 st.title("Planet Profile")
 st.write("Let's Start by Setting Up Your Planet")
 
-st.subheader("Body Selection")
-
+st.subheader("Run fully custom Planet?")
+st.write("Planet Profile has many profiles of moons ready for you to use. If you want to play around and create your own moon, check the box below. If you want to proceed with" \
+    "pre-existing moons and their properties, proceed below to select your planetary body")
 run_custom_body = st.checkbox("Create fully custom Planet?", value=False)
 
+
+
 if run_custom_body:
-    st.write("Create your fully custom planet. Set you bottom temperature and ocean compositions below, then set your Bulk Planetary Settings,Laer Step Settings, and Figure Settings on the other tabs")
+    st.write("Let's create your fully custom planet. Set you bottom temperature and ocean compositions below, then set your Bulk Planetary Settings,Laer Step Settings, and Figure Settings on the other tabs")
     os.environ["Planet"] = "Custom"
 
 if not run_custom_body:
+    st.subheader("Body Selection")
     os.environ["Planet"] = st.selectbox("Choose your Planetary Body below", 
                                     ("Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
                                      "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
