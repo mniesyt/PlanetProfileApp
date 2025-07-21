@@ -65,22 +65,19 @@ if parent_directory not in sys.path:
 
 
 
-# Get the planet name from the environment variable
-
-
+# Get the planet name from the session state
 Planet = st.session_state["Planet"]
 if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
+#loading Planet default data for user
 if Planet and Planet != "Custom":
     try:
-        planet_module = load_planet_module(parent_directory, Planet)
+        planet_module = load_planet_module(parent_directory, Planet) #loading the data 
         st.success(f"{Planet} data loaded.")
-        st.write(dir(planet_module))  # Optional: shows what was loaded
     except Exception as e:
         st.error(f"Error loading planet module: {e}")
-
 
 
 
