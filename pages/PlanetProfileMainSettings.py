@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import importlib
 import sys
-
+from Utilities.planet_loader import load_planet_module
 
 # Main page content
 st.set_page_config(page_title="Planet Profile Main")
@@ -40,24 +40,25 @@ if not run_custom_body:
 #Setting up the fle path for all future pages here
 
 # Get the path to the current script's directory
-# /PlanetProfile/PlanetProfileApp/PlanetProfileMainSettings.py
+# /PlanetProfile/PlanetProfileApp/pages/PlanetProfileMainSettings.py
 PlanetProfileMainSettings_directory = os.path.dirname(os.path.abspath(__file__))
-st.write(PlanetProfileMainSettings_directory)
+
 
 # Get the app directory (/PlanetProfile/PlanetProfileApp)
 app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
-st.write(app_directory)
 
 # Get the parent directory (/PlanetProfile)
 parent_directory  = os.path.dirname(app_directory)
-st.write(parent_directory)
+
 # Add the parent directory to Python's search path.
 if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
 #now, setting up session state to manage 
 # Get the planet name from the environment variable
-Planet = os.getenv("Planet") # e.g., "Europa"
+
+
+Planet = st.session_state["Planet"]
 if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
@@ -74,13 +75,17 @@ thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set 
 
 if thickness_or_Tb == "Input Ice Shell thickness":
     st.number_input("Select the thickness of your Ice I Shell (in  $m$) below")
-    st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the bottom temperature ")
+    st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the temperature at the bottom of the Ice shell will be calculated")
+    #Planet.Do.ICEIh_THICKNESS = True
+    #Planet.Bulk.zb_approximate_km = 30 # The approximate ice shell thickness desired (edited) 
+
+
 
 if thickness_or_Tb == "Input Bottom Temperature Tb_K":
-    st.number_input("Select Your Bottom Temperature (in  $^\circ K$)")
+    st.number_input("Select Your Bottom Temperature (in  $^\circ K$) - Primarily for PlanetProfile Developers")
     # User Passes in a Temperature of the bottom of the ocean
-    st.write("The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile to ...")
-
+    st.write("The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile to determine the thickness of the Ice Shell thickness. Behind the scenes, this sets Planet.Bulk.Tb_K")
+    #Planet.Bulk.Tb_K = 
 
 
 st.markdown("---")
