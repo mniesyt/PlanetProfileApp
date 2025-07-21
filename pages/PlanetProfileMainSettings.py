@@ -42,7 +42,7 @@ if not run_custom_body:
 # Get the path to the current script's directory
 # /PlanetProfile/PlanetProfileApp/pages/PlanetProfileMainSettings.py
 PlanetProfileMainSettings_directory = os.path.dirname(os.path.abspath(__file__))
-from Utilities.planet_loader import load_planet_module
+
 
 # Get the app directory (/PlanetProfile/PlanetProfileApp)
 app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
@@ -54,8 +54,11 @@ parent_directory  = os.path.dirname(app_directory)
 # Add the parent directory to Python's search path.
 if parent_directory not in sys.path:
     sys.path.append(parent_directory)
-
 #now, setting up session state to manage 
+
+from Utilities.planet_loader import load_planet_module
+
+
 # Get the planet name from the environment variable
 
 
