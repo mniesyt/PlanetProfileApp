@@ -29,7 +29,6 @@ if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
 
-#os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 
 # Get the planet name from the environment variable
 Planet = os.getenv("Planet") # e.g., "Europa"

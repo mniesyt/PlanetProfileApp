@@ -1,13 +1,18 @@
 import streamlit as st
 import os
+import importlib
+import sys
+
 
 # Main page content
-st.set_page_config(page_title="Planet Profile Main", page_icon="🌙",)
+st.set_page_config(page_title="Planet Profile Main")
 
 
 
 st.title("Planet Profile")
 st.write("Let's Start by Setting Up Your Planet")
+st.markdown("---")
+
 
 st.subheader("Run fully custom Planet?")
 st.write("Planet Profile has many profiles of moons ready for you to use. If you want to play around and create your own moon, check the box below. If you want to use " \
@@ -18,26 +23,66 @@ run_custom_body = st.checkbox("Create fully custom Planet?", value=False)
 
 
 if run_custom_body:
-    st.write("Let's create your fully custom planet. Set you bottom temperature and ocean compositions below, then set your Bulk Planetary Settings,Laer Step Settings, and Figure Settings on the other tabs")
-    os.environ["Planet"] = "Custom"
+    st.write("Let's create your fully custom planet. Set the main Planet Profile settings below, then set your Bulk Planetary Settings,Laer Step Settings, and Figure Settings on the other tabs")
+    st.session_state["Planet"] = "Custom"
     
 
 if not run_custom_body:
+    st.markdown("---")
     st.subheader("Body Selection")
-    os.environ["Planet"] = st.selectbox("Choose your Planetary Body below", 
+    st.write("Please select a planetary body from the list of profiles below")
+    st.session_state["Planet"]= st.selectbox("Choose your Planetary Body:", 
                                     ("Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
                                      "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
                                      "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"))
 # will eventually have to have an actual call to the list of available moons from planet profile directly
 
+#Setting up the fle path for all future pages here
+
+# Get the path to the current script's directory
+# /PlanetProfile/PlanetProfileApp/PlanetProfileMainSettings.py
+PlanetProfileMainSettings_directory = os.path.dirname(os.path.abspath(__file__))
+st.write(PlanetProfileMainSettings_directory)
+
+# Get the app directory (/PlanetProfile/PlanetProfileApp)
+app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
+st.write(app_directory)
+
+# Get the parent directory (/PlanetProfile)
+parent_directory  = os.path.dirname(app_directory)
+st.write(parent_directory)
+# Add the parent directory to Python's search path.
+if parent_directory not in sys.path:
+    sys.path.append(parent_directory)
+
+#now, setting up session state to manage 
+# Get the planet name from the environment variable
+Planet = os.getenv("Planet") # e.g., "Europa"
+if not Planet:
+    st.error("Please Select a Planet on the Planet Profile Main Settings Page")
+    st.stop()
+
+
+
 
 #Planet = os.getenv("Planet") -> how to call the chosen planet in other parts of the code later
 
 st.markdown("---")
-st.subheader("Temperature Setup")
-st.number_input("Select Your Bottom Temperature (in  $^\circ K$)")
-# User Passes in a Temperature of the bottom of the ocean
-st.write("The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile to ...")
+st.subheader("Ice Layer Thickness")
+
+thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set up your Ice Shell. Descriptions of each type display when selected for more information", ("Input Ice I Layer thickness ", "Input Bottom Temperature Tb_K"))
+
+if thickness_or_Tb == "Input Ice Shell thickness":
+    st.number_input("Select the thickness of your Ice I Shell (in  $m$) below")
+    st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the bottom temperature ")
+
+if thickness_or_Tb == "Input Bottom Temperature Tb_K":
+    st.number_input("Select Your Bottom Temperature (in  $^\circ K$)")
+    # User Passes in a Temperature of the bottom of the ocean
+    st.write("The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile to ...")
+
+
+
 st.markdown("---")
 
 st.subheader("Ocean Composition")
