@@ -75,7 +75,7 @@ if not Planet:
 
 if Planet and Planet != "Custom":
     try:
-        planet_module = load_planet_module(app_directory, Planet)
+        planet_module = load_planet_module(parent_directory, Planet)
         st.success(f"{Planet} data loaded.")
         st.write(dir(planet_module))  # Optional: shows what was loaded
     except Exception as e:
