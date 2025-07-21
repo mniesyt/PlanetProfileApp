@@ -50,7 +50,8 @@ app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
 if app_directory not in sys.path:
     sys.path.append(app_directory)
 
-from Utilities.planet_loader import load_planet_module
+from Utilities.PlanetLoader import load_planet_module
+
 
 
 # Get the parent directory (/PlanetProfile)
@@ -72,7 +73,9 @@ if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
-
+if "planet_data" in st.session_state:
+    st.success(f"{st.session_state.Planet} data loaded.")
+    st.write(dir(st.session_state.planet_data))  # Shows available attributes
 
 
 #Planet = os.getenv("Planet") -> how to call the chosen planet in other parts of the code later
