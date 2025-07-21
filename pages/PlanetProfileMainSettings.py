@@ -73,9 +73,15 @@ if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
-if "planet_data" in st.session_state:
-    st.success(f"{st.session_state.Planet} data loaded.")
-    st.write(dir(st.session_state.planet_data))  # Shows available attributes
+if Planet and Planet != "Custom":
+    try:
+        planet_module = load_planet_module(app_directory, Planet)
+        st.success(f"{Planet} data loaded.")
+        st.write(dir(planet_module))  # Optional: shows what was loaded
+    except Exception as e:
+        st.error(f"Error loading planet module: {e}")
+
+
 
 
 #Planet = os.getenv("Planet") -> how to call the chosen planet in other parts of the code later
