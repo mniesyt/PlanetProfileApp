@@ -13,7 +13,7 @@ st.subheader("Run fully custom Planet?")
 st.write("Planet Profile has many profiles of moons ready for you to use. If you want to play around and create your own moon, check the box below. If you want to use " \
     "pre-existing moons and their properties, skip the checkbox and proceed below to select your planetary body")
 run_custom_body = st.checkbox("Create fully custom Planet?", value=False)
-st.markdown("---")
+
 
 
 
