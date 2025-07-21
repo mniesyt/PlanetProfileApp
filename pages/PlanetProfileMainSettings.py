@@ -50,6 +50,8 @@ app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
 if app_directory not in sys.path:
     sys.path.append(app_directory)
 
+from Utilities.planet_loader import load_planet_module
+
 
 # Get the parent directory (/PlanetProfile)
 parent_directory  = os.path.dirname(app_directory)
@@ -59,7 +61,7 @@ if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 #now, setting up session state to manage 
 
-from Utilities.planet_loader import load_planet_module
+
 
 
 # Get the planet name from the environment variable
