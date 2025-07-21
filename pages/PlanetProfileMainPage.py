@@ -11,19 +11,27 @@ st.write("Let's Start by Setting Up Your Planet")
 
 st.subheader("Body Selection")
 
-os.environ["Planet"] = st.selectbox("Choose your Planetary Body below", 
+run_custom_body = st.checkbox("Create fully custom Planet?", value=False)
+
+if run_custom_body:
+    st.write("Create your fully custom planet. Set you bottom temperature and ocean compositions below, then set your Bulk Planetary Settings,Laer Step Settings, and Figure Settings on the other tabs")
+    os.environ["Planet"] = "Custom"
+
+if not run_custom_body:
+    os.environ["Planet"] = st.selectbox("Choose your Planetary Body below", 
                                     ("Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
                                      "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
                                      "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"))
 # will eventually have to have an actual call to the list of available moons from planet profile directly
-#st.write(os.environ["Planet"])
 
-#Planet = os.getenv("Planet")
+
+#Planet = os.getenv("Planet") -> how to call the chosen planet in other parts of the code later
 
 st.markdown("---")
 st.subheader("Temperature Setup")
 st.number_input("Select Your Bottom Temperature (in  $^\circ K$)")
 # User Passes in a Temperature of the bottom of the ocean
+st.write("The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile to ...")
 st.markdown("---")
 
 st.subheader("Ocean Composition")

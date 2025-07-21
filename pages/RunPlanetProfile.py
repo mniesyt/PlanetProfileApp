@@ -7,21 +7,19 @@ import re
 import tempfile
 
 
+
+
 # Get the path to the current script's directory
 # /PlanetProfile/PlanetProfileApp/BulkPlanetarySettings.py
 RunPlanetProfile_directory = os.path.dirname(os.path.abspath(__file__))
 #st.write(BulkPlanertarySettings_directory)
-
-# Get the app directory (/PlanetProfile/PlanetProfileAPP)
+# Get the app directory (/PlanetProfile/PlanetProfileApp)
 app_directory = os.path.dirname(RunPlanetProfile_directory)
 # Get the parent directory (/PlanetProfile)
 parent_directory  = os.path.dirname(app_directory)
 # Add the parent directory to Python's search path.
 if parent_directory not in sys.path:
     sys.path.append(parent_directory)
-
-
-#os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 
 # Get the planet name from the environment variable
 Planet = os.getenv("Planet") # e.g., "Venus"
