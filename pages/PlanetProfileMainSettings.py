@@ -2,8 +2,7 @@ import streamlit as st
 import os
 import importlib
 import sys
-#from Utilities.planet_sidebar import show_planet_status
-#show_planet_status()
+
 
 # Main page content
 st.set_page_config(page_title="Planet Profile Main")

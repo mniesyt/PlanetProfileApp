@@ -2,9 +2,8 @@ import streamlit as st
 import os
 import sys
 import re
-
-
-st.write("DEBUG SESSION STATE:", dict(st.session_state))
+from Utilities.planet_sidebar import show_planet_status
+show_planet_status()
 
 st.set_page_config(page_title="Figure Settings")
 st.title("Figure Settings")
