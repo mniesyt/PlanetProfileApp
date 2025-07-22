@@ -4,20 +4,19 @@ import importlib
 import sys
 
 
-# Main page content
+"""Setting up Main Page"""
 st.set_page_config(page_title="Planet Profile Main")
-
-
-
 st.title("Planet Profile")
 st.write("Let's Start by Setting Up Your Planet")
 st.markdown("---")
 
+
+"""Planet Selection - Custom or from dropdown"""
 planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
                "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
                "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"]
 
-# --- Ensure defaults are set ---
+# Initialzing all of the things to session state
 if "Planet" not in st.session_state:
     st.session_state["Planet"] = "-- Select a Planet --"
 
@@ -27,7 +26,7 @@ if "planet_selectbox" not in st.session_state:
 if "run_custom_body" not in st.session_state:
     st.session_state["run_custom_body"] = False
 
-# --- UI begins here ---
+# Option for user to select fully custom planet
 st.subheader("Run fully custom Planet?")
 st.write(
     "Planet Profile has profiles of many moons ready for you to use. "
@@ -35,13 +34,14 @@ st.write(
     "Otherwise, choose from existing planetary bodies."
 )
 
-# Use a separate key for the checkbox
+# Checkbox manages if the user wants to run a custom planet or not
 run_custom_body = st.checkbox("Create fully custom Planet?", value=st.session_state["run_custom_body"], key="run_custom_body")
 
 # Custom Planet path
 if run_custom_body:
     st.session_state["Planet"] = "Custom"
     st.success("Using Custom Planet. Configure settings in other tabs.")
+
 else:
     st.markdown("---")
     st.subheader("Body Selection")
@@ -54,11 +54,11 @@ else:
         key="planet_selectbox"
     )
 
-    # Only update if a real planet is selected
+    # Updates the session state to the chosen planet
     if selected_planet != "-- Select a Planet --":
         st.session_state["Planet"] = selected_planet
 
-# Final Planet value
+# Planet 
 Planet = st.session_state.get("Planet", "-- Select a Planet --")
 
 if Planet == "-- Select a Planet --":
@@ -69,22 +69,20 @@ else:
     st.success(f"Using Planet: {Planet}")
 
 
-#Setting up the fle path for all future pages here
+"""File Path Management as well as loading of planet default data"""
 
 # Get the path to the current script's directory
 # /PlanetProfile/PlanetProfileApp/pages/PlanetProfileMainSettings.py
 PlanetProfileMainSettings_directory = os.path.dirname(os.path.abspath(__file__))
 
-
 # Get the app directory (/PlanetProfile/PlanetProfileApp)
 app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
-
 if app_directory not in sys.path:
     sys.path.append(app_directory)
 
+
+#This manages the actual loading of the planet default data
 from Utilities.PlanetLoader import load_planet_module
-
-
 
 # Get the parent directory (/PlanetProfile)
 parent_directory  = os.path.dirname(app_directory)
@@ -92,15 +90,6 @@ parent_directory  = os.path.dirname(app_directory)
 # Add the parent directory to Python's search path.
 if parent_directory not in sys.path:
     sys.path.append(parent_directory)
-#now, setting up session state to manage 
-
-
-
-
-# Get the planet name from the session state
-#Planet = st.session_state["Planet"]
-
-
 
 #loading Planet default data for user
 if Planet and Planet != "Custom":
@@ -110,9 +99,11 @@ if Planet and Planet != "Custom":
     except Exception as e:
         st.error(f"Error loading planet module: {e}")
 
+# need to add what happens if the user selects custom here
 
 
-#Planet = os.getenv("Planet") -> how to call the chosen planet in other parts of the code later
+
+"""Main Settings Options Begin here- Tb_K and  Ocean Compositions"""
 
 st.markdown("---")
 st.subheader("Ice Layer Thickness")
@@ -122,7 +113,7 @@ thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set 
 if thickness_or_Tb == "Input Ice Shell thickness":
     st.number_input("Select the thickness of your Ice I Shell (in  $m$) below")
     st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the temperature at the bottom of the Ice shell will be calculated")
-    #Planet.Do.ICEIh_THICKNESS = True
+    Planet.Do.ICEIh_THICKNESS = True #user is inputting the thickness instead of Tb_K so this flag is set to true
     #Planet.Bulk.zb_approximate_km = 30 # The approximate ice shell thickness desired (edited) 
 
 
