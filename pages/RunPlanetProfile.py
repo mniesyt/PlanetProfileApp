@@ -5,8 +5,10 @@ from pdf2image import convert_from_path
 from PIL import Image
 import re
 import tempfile
+from Utilities.planet_sidebar import show_planet_status
+show_planet_status()
 
-
+st.write("DEBUG SESSION STATE:", dict(st.session_state))
 
 
 # Get the path to the current script's directory
@@ -21,10 +23,12 @@ parent_directory  = os.path.dirname(app_directory)
 if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
-Planet = st.session_state["Planet"]
+# Get the planet name from the session state
+Planet = st.session_state.get("Planet", None)
 if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
+
 
 # making sure the Planet folder is in the path so can find PPPlanet
 #planet_run_folder_string = '/'+str(Planet)

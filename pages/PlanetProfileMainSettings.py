@@ -2,7 +2,8 @@ import streamlit as st
 import os
 import importlib
 import sys
-
+from Utilities.planet_sidebar import show_planet_status
+show_planet_status()
 
 # Main page content
 st.set_page_config(page_title="Planet Profile Main")
@@ -13,10 +14,7 @@ st.title("Planet Profile")
 st.write("Let's Start by Setting Up Your Planet")
 st.markdown("---")
 
-#Initializing selected_planet and Planet into session state
-if "selected_planet" not in st.session_state:
-    st.session_state["selected_planet"] = "-- Select a Planet --"
-
+#Initializing Planet into session state
 if "Planet" not in st.session_state:
     st.session_state["Planet"] = "-- Select a Planet --"
 
@@ -46,15 +44,18 @@ if not run_custom_body:
     selected_planet = st.selectbox(
         "Choose your Planetary Body:", 
         planet_list,
-        key="Planet" #this sets a key for the Planet that the user has selected- the session state will use this key to keep track of the planet taht has been picked
-)
-    #Safe read from session_state
-    Planet = st.session_state.get("Planet", "-- Select a Planet --")
+        key="Planet"
+    )
 
-    if Planet == "-- Select a Planet --":
-        st.warning("Please select a planetary body to continue.")
-        st.stop()
 
+# Planet is now safe to use
+Planet = st.session_state["Planet"]
+if Planet == "-- Select a Planet --":
+    st.warning("Please select a planetary body to continue.")
+    st.stop()
+
+st.success(f"Using Planet: {Planet}")
+st.write("DEBUG — Planet:", st.session_state.get("Planet"))
 
 
 #Setting up the fle path for all future pages here

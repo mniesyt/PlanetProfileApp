@@ -4,6 +4,10 @@ import importlib
 import sys
 import numpy as np
 from functools import partial
+from Utilities.planet_sidebar import show_planet_status
+show_planet_status()
+
+st.write("DEBUG SESSION STATE:", dict(st.session_state))
 
 st.set_page_config(page_title="Layer Step Settings")
 st.title("Layer Step Settings")
@@ -26,10 +30,13 @@ if parent_directory not in sys.path:
 #os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
 
 # Get the planet name from the environment variable
-Planet = st.session_state["Planet"]
+# Get the planet name from the session state
+Planet = st.session_state.get("Planet", None)
 if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
+
+
 
 # making sure the Planet folder is in the path so can find PPPlanet
 planet_folder_string = '/PlanetProfile/Default/'+str(Planet)

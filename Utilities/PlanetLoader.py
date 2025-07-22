@@ -8,8 +8,9 @@ def load_planet_module(parent_dir, Planet):
     Stores the result in session_state so it only loads once per session.
     """
     #This checks if a planet has actualle been selected, and if not, it stops the code
-    Planet = st.session_state.get("Planet")
-    if Planet == "-- Select a Planet --":
+    # Get the planet from session_state
+    Planet = st.session_state.get("Planet", None)
+    if Planet in (None, "-- Select a Planet --"):
         st.warning("No planet selected.")
         st.stop()
 

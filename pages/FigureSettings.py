@@ -2,15 +2,21 @@ import streamlit as st
 import os
 import sys
 import re
+from Utilities.planet_sidebar import show_planet_status
+show_planet_status()
+
+st.write("DEBUG SESSION STATE:", dict(st.session_state))
 
 st.set_page_config(page_title="Figure Settings")
 st.title("Figure Settings")
 st.write("Choose which figures you would like to produce below as well as settings for your chosen figures")
 
-Planet = st.session_state["Planet"]
+# Get the planet name from the session state
+Planet = st.session_state.get("Planet", None)
 if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
+
 
 # Get the path to the current script's directory
 # /PlanetProfile/PlanetProfileApp/FigureSettings.py
