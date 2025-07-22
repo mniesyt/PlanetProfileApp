@@ -107,7 +107,7 @@ if Planet and Planet != "Custom":
 st.markdown("---")
 st.subheader("Ice Layer Thickness")
 
-thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set up your Ice Shell. Descriptions of each type display when selected for more information", ("Input Ice I Layer thickness ", "Input Bottom Temperature Tb_K"))
+thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set up your Ice Shell. Descriptions of each type display when selected for more information", ("Input Ice Shell thickness", "Input Bottom Temperature Tb_K"))
 
 if thickness_or_Tb == "Input Ice Shell thickness":
     st.number_input("Select the thickness of your Ice I Shell (in  $m$) below")
