@@ -2,8 +2,8 @@ import streamlit as st
 import os
 import importlib
 import sys
-from Utilities.planet_sidebar import show_planet_status
-show_planet_status()
+#from Utilities.planet_sidebar import show_planet_status
+#show_planet_status()
 
 # Main page content
 st.set_page_config(page_title="Planet Profile Main")
@@ -14,48 +14,60 @@ st.title("Planet Profile")
 st.write("Let's Start by Setting Up Your Planet")
 st.markdown("---")
 
-#Initializing Planet into session state
+planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
+               "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
+               "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"]
+
+# --- Ensure defaults are set ---
 if "Planet" not in st.session_state:
     st.session_state["Planet"] = "-- Select a Planet --"
 
-#Allowing user to select fully custom planet option
+if "planet_selectbox" not in st.session_state:
+    st.session_state["planet_selectbox"] = "-- Select a Planet --"
+
+if "run_custom_body" not in st.session_state:
+    st.session_state["run_custom_body"] = False
+
+# --- UI begins here ---
 st.subheader("Run fully custom Planet?")
-st.write("Planet Profile has profiles of many moons ready for you to use. If you want to play around and create your own moon, check the box below. If you want to use " \
-    "pre-existing moons and their properties, skip the checkbox and proceed below to select your planetary body")
-run_custom_body = st.checkbox("Create fully custom Planet?", value=False)
+st.write(
+    "Planet Profile has profiles of many moons ready for you to use. "
+    "If you want to create your own moon, check the box below. "
+    "Otherwise, choose from existing planetary bodies."
+)
 
+# Use a separate key for the checkbox
+run_custom_body = st.checkbox("Create fully custom Planet?", value=st.session_state["run_custom_body"], key="run_custom_body")
 
+# Custom Planet path
 if run_custom_body:
-    st.write("Let's create your fully custom planet. Set the main Planet Profile settings below, then set your Bulk Planetary Settings,Laer Step Settings, and Figure Settings on the other tabs")
     st.session_state["Planet"] = "Custom"
-
-    
-# will eventually have to have an actual call to the list of available moons from planet profile directly
-planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
-                                     "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
-                                     "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"]
-
-
-#If user wants to use an already existing planet, they select here
-if not run_custom_body:
+    st.success("Using Custom Planet. Configure settings in other tabs.")
+else:
     st.markdown("---")
     st.subheader("Body Selection")
     st.write("Please select a planetary body from the list of profiles below")
+    
     selected_planet = st.selectbox(
-        "Choose your Planetary Body:", 
+        "Choose your Planetary Body:",
         planet_list,
-        key="Planet"
+        index=planet_list.index(st.session_state["planet_selectbox"]),
+        key="planet_selectbox"
     )
 
+    # Only update if a real planet is selected
+    if selected_planet != "-- Select a Planet --":
+        st.session_state["Planet"] = selected_planet
 
-# Planet is now safe to use
-Planet = st.session_state["Planet"]
+# Final Planet value
+Planet = st.session_state.get("Planet", "-- Select a Planet --")
+
 if Planet == "-- Select a Planet --":
     st.warning("Please select a planetary body to continue.")
     st.stop()
-
-st.success(f"Using Planet: {Planet}")
-st.write("DEBUG — Planet:", st.session_state.get("Planet"))
+else:
+    st.sidebar.markdown(f"**Current Planet:**  {Planet}")
+    st.success(f"Using Planet: {Planet}")
 
 
 #Setting up the fle path for all future pages here

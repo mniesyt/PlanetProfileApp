@@ -4,8 +4,7 @@ import importlib
 import sys
 import numpy as np
 from functools import partial
-from Utilities.planet_sidebar import show_planet_status
-show_planet_status()
+
 
 st.write("DEBUG SESSION STATE:", dict(st.session_state))
 

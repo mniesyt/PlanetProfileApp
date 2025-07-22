@@ -2,8 +2,7 @@ import streamlit as st
 import os
 import sys
 import re
-from Utilities.planet_sidebar import show_planet_status
-show_planet_status()
+
 
 st.write("DEBUG SESSION STATE:", dict(st.session_state))
 

@@ -5,8 +5,7 @@ from pdf2image import convert_from_path
 from PIL import Image
 import re
 import tempfile
-from Utilities.planet_sidebar import show_planet_status
-show_planet_status()
+
 
 st.write("DEBUG SESSION STATE:", dict(st.session_state))
 

@@ -21,7 +21,7 @@ def load_planet_module(parent_dir, Planet):
 
     # Path to the module file -> this does what te commented out lines do below but in one step 
     planet_default_module_path = os.path.join(parent_dir, "PlanetProfile", "Default", Planet, f"PP{Planet}.py")   
-    st.write(planet_default_module_path)
+    st.write("Looking for planet defaults at the following path: "+planet_default_module_path)
 # making sure the Planet folder is in the path so can find PPPlanet
 #planet_folder_string = '/PlanetProfile/Default/'+str(Planet) #string to /PlanetProfile/Default/Planet
 #full_planet_folder_string = parent_directory + planet_folder_string
@@ -38,7 +38,7 @@ def load_planet_module(parent_dir, Planet):
     spec.loader.exec_module(planet_module) #Execute the module's code inside the module object
 
     # Store in session_state so other pages can use it
-    st.session_state["Planet"] = Planet
+    #st.session_state["Planet"] = Planet
     st.session_state["planet_data"] = planet_module
     st.session_state["planet_loaded"] = module_name
 
