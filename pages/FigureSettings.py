@@ -7,7 +7,10 @@ st.set_page_config(page_title="Figure Settings")
 st.title("Figure Settings")
 st.write("Choose which figures you would like to produce below as well as settings for your chosen figures")
 
-Planet = os.getenv("Planet") # e.g., "Europa"
+Planet = st.session_state["Planet"]
+if not Planet:
+    st.error("Please Select a Planet on the Planet Profile Main Settings Page")
+    st.stop()
 
 # Get the path to the current script's directory
 # /PlanetProfile/PlanetProfileApp/FigureSettings.py

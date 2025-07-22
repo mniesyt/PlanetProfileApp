@@ -21,9 +21,7 @@ parent_directory  = os.path.dirname(app_directory)
 if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
-# Get the planet name from the environment variable
-Planet = os.getenv("Planet") # e.g., "Venus"
-
+Planet = st.session_state["Planet"]
 if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
