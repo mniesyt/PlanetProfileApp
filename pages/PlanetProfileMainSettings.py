@@ -20,22 +20,34 @@ st.write("Planet Profile has many profiles of moons ready for you to use. If you
 run_custom_body = st.checkbox("Create fully custom Planet?", value=False)
 
 
-
-
 if run_custom_body:
     st.write("Let's create your fully custom planet. Set the main Planet Profile settings below, then set your Bulk Planetary Settings,Laer Step Settings, and Figure Settings on the other tabs")
     st.session_state["Planet"] = "Custom"
     
+# will eventually have to have an actual call to the list of available moons from planet profile directly
+planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
+                                     "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
+                                     "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"]
+
+
 
 if not run_custom_body:
     st.markdown("---")
     st.subheader("Body Selection")
     st.write("Please select a planetary body from the list of profiles below")
-    st.session_state["Planet"]= st.selectbox("Choose your Planetary Body:", 
-                                    ("Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
-                                     "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
-                                     "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"))
-# will eventually have to have an actual call to the list of available moons from planet profile directly
+    selected_planet = st.selectbox(
+        "Choose your Planetary Body:", 
+        planet_list,
+        key="Planet" #this sets a key for the Planet that the user has selected- the session state will use this key to keep track of the planet taht has been picked
+)
+    #Safe read from session_state
+    Planet = st.session_state.get("Planet", "-- Select a Planet --")
+
+    if Planet == "-- Select a Planet --":
+        st.warning("Please select a planetary body to continue.")
+        st.stop()
+
+
 
 #Setting up the fle path for all future pages here
 

@@ -7,6 +7,12 @@ def load_planet_module(parent_dir, Planet):
     Dynamically loads a module (e.g. PPEuropa.py) from PlanetProfile/PlanetProfile/Default/Planet based on planet_name.
     Stores the result in session_state so it only loads once per session.
     """
+    #This checks if a planet has actualle been selected, and if not, it stops the code
+    Planet = st.session_state.get("Planet")
+    if Planet == "-- Select a Planet --":
+        st.warning("No planet selected.")
+        st.stop()
+
 # This checks if the planet info has already been loaded/stored in the session state and will not reload if they have already been loaded
     if "planet_data" in st.session_state and st.session_state.get("planet_loaded") == Planet:
         return st.session_state.planet_data
