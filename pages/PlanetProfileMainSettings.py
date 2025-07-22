@@ -4,14 +4,14 @@ import importlib
 import sys
 
 
-"Setting up Main Page"
+# --- Setting up Main Page ---
 st.set_page_config(page_title="Planet Profile Main")
 st.title("Planet Profile")
 st.write("Let's Start by Setting Up Your Planet")
 st.markdown("---")
 
 
-"Planet Selection - Custom or from dropdown"
+#--- Planet Selection - Custom or from dropdown ---
 planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
                "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
                "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"]
@@ -69,7 +69,7 @@ else:
     st.success(f"Using Planet: {Planet}")
 
 
-"File Path Management as well as loading of planet default data"
+# --- File Path Management as well as loading of planet default data ---
 
 # Get the path to the current script's directory
 # /PlanetProfile/PlanetProfileApp/pages/PlanetProfileMainSettings.py
@@ -102,7 +102,7 @@ if Planet and Planet != "Custom":
 # need to add what happens if the user selects custom here
 
 
-"Main Settings Options Begin here- Tb_K and  Ocean Compositions"
+# --- Main Settings Options Begin here- Tb_K and  Ocean Compositions ---
 
 st.markdown("---")
 st.subheader("Ice Layer Thickness")
@@ -113,6 +113,7 @@ if thickness_or_Tb == "Input Ice Shell thickness":
     st.number_input("Select the thickness of your Ice I Shell (in  $m$) below")
     st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the temperature at the bottom of the Ice shell will be calculated")
     Planet.Do.ICEIh_THICKNESS = True #user is inputting the thickness instead of Tb_K so this flag is set to true
+    st.write(Planet.Do.ICEIh_THICKNESS)
     #Planet.Bulk.zb_approximate_km = 30 # The approximate ice shell thickness desired (edited) 
 
 
