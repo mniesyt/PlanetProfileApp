@@ -13,9 +13,16 @@ st.title("Planet Profile")
 st.write("Let's Start by Setting Up Your Planet")
 st.markdown("---")
 
+#Initializing selected_planet and Planet into session state
+if "selected_planet" not in st.session_state:
+    st.session_state["selected_planet"] = "-- Select a Planet --"
 
+if "Planet" not in st.session_state:
+    st.session_state["Planet"] = "-- Select a Planet --"
+
+#Allowing user to select fully custom planet option
 st.subheader("Run fully custom Planet?")
-st.write("Planet Profile has many profiles of moons ready for you to use. If you want to play around and create your own moon, check the box below. If you want to use " \
+st.write("Planet Profile has profiles of many moons ready for you to use. If you want to play around and create your own moon, check the box below. If you want to use " \
     "pre-existing moons and their properties, skip the checkbox and proceed below to select your planetary body")
 run_custom_body = st.checkbox("Create fully custom Planet?", value=False)
 
@@ -23,6 +30,7 @@ run_custom_body = st.checkbox("Create fully custom Planet?", value=False)
 if run_custom_body:
     st.write("Let's create your fully custom planet. Set the main Planet Profile settings below, then set your Bulk Planetary Settings,Laer Step Settings, and Figure Settings on the other tabs")
     st.session_state["Planet"] = "Custom"
+
     
 # will eventually have to have an actual call to the list of available moons from planet profile directly
 planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
@@ -30,7 +38,7 @@ planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus
                                      "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"]
 
 
-
+#If user wants to use an already existing planet, they select here
 if not run_custom_body:
     st.markdown("---")
     st.subheader("Body Selection")
@@ -78,10 +86,9 @@ if parent_directory not in sys.path:
 
 
 # Get the planet name from the session state
-Planet = st.session_state["Planet"]
-if not Planet:
-    st.error("Please Select a Planet on the Planet Profile Main Settings Page")
-    st.stop()
+#Planet = st.session_state["Planet"]
+
+
 
 #loading Planet default data for user
 if Planet and Planet != "Custom":
