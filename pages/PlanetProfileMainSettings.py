@@ -50,7 +50,7 @@ else:
     selected_planet = st.selectbox(
         "Choose your Planetary Body:",
         planet_list,
-        index=planet_list.index(st.session_state["planet_selectbox"]),
+        #index=planet_list.index(st.session_state["planet_selectbox"]),
         key="planet_selectbox"
     )
 
