@@ -32,7 +32,6 @@ if parent_directory not in sys.path:
 
 # Get the planet name from the session state
 Planet = st.session_state.get("Planet", None)
-st.write("DEBUG — Planet:", st.session_state.get("Planet"))
 if Planet in (None, "-- Select a Planet --"):
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
