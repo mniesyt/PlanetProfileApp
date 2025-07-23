@@ -102,8 +102,11 @@ if Planet and Planet != "Custom":
 
 # importing PlanetStruct and making Planet object
 from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
-Planet =PlanetStruct(Planet)
+Planet = PlanetStruct(Planet)
 
+if "PlanetObject" not in st.session_state:
+    st.session_state.PlanetObject = Planet # or however you construct it
+st.write(st.session_state.PlanetObject)
 
 # need to add what happens if the user selects custom here
 
@@ -137,7 +140,7 @@ if thickness_or_Tb == "Input Bottom Temperature Tb_K":
     st.number_input("Select Your Bottom Temperature (in  $^\circ K$) - Primarily for PlanetProfile Developers")
     # User Passes in a Temperature of the bottom of the ocean
     st.write("The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile to determine the thickness of the Ice Shell thickness. Behind the scenes, this sets Planet.Bulk.Tb_K")
-    
+
     #Planet.Bulk.Tb_K =
 
 
