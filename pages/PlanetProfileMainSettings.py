@@ -99,6 +99,12 @@ if Planet and Planet != "Custom":
     except Exception as e:
         st.error(f"Error loading planet module: {e}")
 
+
+# importing PlanetStruct and making Planet object
+from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
+Planet =PlanetStruct(Planet)
+
+
 # need to add what happens if the user selects custom here
 
 
