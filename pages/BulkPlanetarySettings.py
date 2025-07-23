@@ -63,14 +63,16 @@ st.write(Planet)
 #keeping track of defaults for the planet with this dicitonary {"key": value}
 #to get to the values, call the key form the dicitonary (planet_defaults["Planet.Bulk.R_m"] returns the value of planet_module.Planet.Bulk.R_m
 planet_bulk_defaults = {
-    "Planet.Bulk.R_m": planet_module.Planet.Bulk.R_m,
+    "Planet.Bulk.R_m": Planet.Bulk.R_m}
+
+    """
     "Planet.Bulk.M_kg": planet_module.Planet.Bulk.M_kg,
     "Planet.Bulk.Tsurf_K": planet_module.Planet.Bulk.Tsurf_K,
     "Planet.Bulk.Psurf_MPa": planet_module.Planet.Bulk.Psurf_MPa,
     "Planet.Bulk.Cmeasured": planet_module.Planet.Bulk.Cmeasured,
     "Planet.Bulk.Cuncertainty": planet_module.Planet.Bulk.Cuncertainty,
     #"Planet.Bulk.Tb_K": planet_module.Planet.Bulk.Tb_K, THIS IS INSTEAD SET ON THE MAIN SETTINGS PAGE
-}
+}"""
 
 # Bulk Settings dictionary
 # e.g. "Planet.Bulk.R_m": ("Radius of the body (m)", 6.378e6),

@@ -128,10 +128,9 @@ if thickness_or_Tb == "Input Ice Shell thickness":
 
     # Ensure Planet.Do exists and is a dictionary
     if not hasattr(Planet.Do, "ICEIh_THICKNESS"):
-        Planet.Do.ICEIh_THICKNESS = True
+        Planet.Do.ICEIh_THICKNESS = True #if the attribute doesn't exitst, this is making it and setting it to true
     else:
         Planet.Do.ICEIh_THICKNESS = True  #  #user is inputting the thickness instead of Tb_K so this flag is set to true
-    st.write("Type of Planet.Do:", type(Planet.Do))
     #Planet.Bulk.zb_approximate_km = 30 # The approximate ice shell thickness desired (edited)
 
 
