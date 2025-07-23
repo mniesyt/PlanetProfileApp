@@ -17,11 +17,11 @@ planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus
                "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"]
 
 # Initialzing all of the things to session state
-if "Planet" not in st.session_state:
-    st.session_state["Planet"] = "-- Select a Planet --"
-
 if "planet_selectbox" not in st.session_state:
-    st.session_state["planet_selectbox"] = "-- Select a Planet --"
+    st.session_state["ChosenPlanet"] = "-- Select a Planet --"
+
+if "Planet" not in st.session_state:
+    st.session_state["Planet"] = None
 
 if "run_custom_body" not in st.session_state:
     st.session_state["run_custom_body"] = False
@@ -39,7 +39,8 @@ run_custom_body = st.checkbox("Create fully custom Planet?", value=st.session_st
 
 # Custom Planet path
 if run_custom_body:
-    st.session_state["Planet"] = "Custom"
+    st.session_state["ChosenPlanet"] = "Custom"
+    st.session_state["Planet"] = None  # Custom settings handled elsewhere
     st.success("Using Custom Planet. Configure settings in other tabs.")
 
 else:
@@ -54,19 +55,17 @@ else:
         key="planet_selectbox"
     )
 
-    # Updates the session state to the chosen planet
-    if selected_planet != "-- Select a Planet --":
-        st.session_state["Planet"] = selected_planet
 
-# Planet
-Planet = st.session_state.get("Planet", "-- Select a Planet --")
+# Updates the session state to the chosen planet
+chosen_planet = st.session_state["planet_selectbox"]
 
-if Planet == "-- Select a Planet --":
+# --- Checks and load planet ---
+if chosen_planet == "-- Select a Planet --":
     st.warning("Please select a planetary body to continue.")
     st.stop()
 else:
-    st.sidebar.markdown(f"**Current Planet:**  {Planet}")
-    st.success(f"Using Planet: {Planet}")
+    st.sidebar.markdown(f"**Current Planet:**  {chosen_planet}")
+    st.success(f"Using Planet: {chosen_planet}")
 
 
 # --- File Path Management as well as loading of planet default data ---
@@ -81,9 +80,6 @@ if app_directory not in sys.path:
     sys.path.append(app_directory)
 
 
-#This manages the actual loading of the planet default data
-from Utilities.PlanetLoader import load_planet_module
-
 # Get the parent directory (/PlanetProfile)
 parent_directory  = os.path.dirname(app_directory)
 
@@ -91,22 +87,25 @@ parent_directory  = os.path.dirname(app_directory)
 if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
-#loading Planet default data for user
-if Planet and Planet != "Custom":
+# --- Load planet module ---
+if chosen_planet != "Custom":
+    from Utilities.PlanetLoader import load_planet_module
+
     try:
-        planet_module = load_planet_module(parent_directory, Planet) #loading the data
-        st.success(f"{Planet} data loaded.")
+        planet_module = load_planet_module(parent_directory, chosen_planet)
+        st.success(f"{chosen_planet} data loaded.")
     except Exception as e:
         st.error(f"Error loading planet module: {e}")
+        st.stop()
 
 
-# importing PlanetStruct and making Planet object
-from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
-Planet = PlanetStruct(Planet)
+    # Construct the Planet object
+    #from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants
+    # Store the planet object in session state
+    st.session_state["Planet"] = planet_module.Planet
+    #st.write(st.session_state["Planet"])
 
-if "PlanetObject" not in st.session_state:
-    st.session_state.PlanetObject = Planet # or however you construct it
-
+Planet = st.session_state.get("Planet", None)
 
 # need to add what happens if the user selects custom here
 

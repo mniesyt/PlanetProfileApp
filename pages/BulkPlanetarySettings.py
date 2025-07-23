@@ -30,49 +30,30 @@ if parent_directory not in sys.path:
 
 
 
-# Get the planet name from the session state
+# Get the planet object from the session state
 Planet = st.session_state.get("Planet", None)
 if Planet in (None, "-- Select a Planet --"):
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
-Planet = st.session_state.PlanetObject
-st.write(Planet)
-# making sure the Planet folder is in the path so can find PPPlanet
-#planet_folder_string = '/PlanetProfile/Default/'+str(Planet) #string to /PlanetProfile/Default/Planet
-#full_planet_folder_string = parent_directory + planet_folder_string
-#default_folder = sys.path.append(os.path.join(full_planet_folder_string)) # this gets to the folder where the defaults for the planet is
-
-
-
-# Construct the module name as a string
-# e.g., if Planet is "Europa", this becomes "PPEuropa"
-#module_to_import = f"PP{Planet}"
-
-# Use importlib to import the module
-#planet_module = importlib.import_module(module_to_import)
-
 
 
 # Pulls default values into the app for each PPPlanet, if the user sets a new
 # value then it is saved as a session state variable
-#from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
-#Planet =PlanetStruct(Planet)
 
 # planet_defaults dictionary
 #keeping track of defaults for the planet with this dicitonary {"key": value}
 #to get to the values, call the key form the dicitonary (planet_defaults["Planet.Bulk.R_m"] returns the value of planet_module.Planet.Bulk.R_m
 planet_bulk_defaults = {
-    "Planet.Bulk.R_m": Planet.Bulk.R_m}
-
-    """
-    "Planet.Bulk.M_kg": planet_module.Planet.Bulk.M_kg,
-    "Planet.Bulk.Tsurf_K": planet_module.Planet.Bulk.Tsurf_K,
-    "Planet.Bulk.Psurf_MPa": planet_module.Planet.Bulk.Psurf_MPa,
-    "Planet.Bulk.Cmeasured": planet_module.Planet.Bulk.Cmeasured,
-    "Planet.Bulk.Cuncertainty": planet_module.Planet.Bulk.Cuncertainty,
+    "Planet.Bulk.R_m": Planet.Bulk.R_m,
+    "Planet.Bulk.M_kg": Planet.Bulk.M_kg,
+    "Planet.Bulk.Tsurf_K": Planet.Bulk.Tsurf_K,
+    "Planet.Bulk.Psurf_MPa": Planet.Bulk.Psurf_MPa,
+    "Planet.Bulk.Cmeasured": Planet.Bulk.Cmeasured,
+    "Planet.Bulk.Cuncertainty": Planet.Bulk.Cuncertainty,
     #"Planet.Bulk.Tb_K": planet_module.Planet.Bulk.Tb_K, THIS IS INSTEAD SET ON THE MAIN SETTINGS PAGE
-}"""
+}
+
 
 # Bulk Settings dictionary
 # e.g. "Planet.Bulk.R_m": ("Radius of the body (m)", 6.378e6),
