@@ -37,20 +37,20 @@ if Planet in (None, "-- Select a Planet --"):
     st.stop()
 
 Planet = st.session_state.PlanetObject
-
+st.write(Planet)
 # making sure the Planet folder is in the path so can find PPPlanet
-planet_folder_string = '/PlanetProfile/Default/'+str(Planet) #string to /PlanetProfile/Default/Planet
-full_planet_folder_string = parent_directory + planet_folder_string
-default_folder = sys.path.append(os.path.join(full_planet_folder_string)) # this gets to the folder where the defaults for the planet is
+#planet_folder_string = '/PlanetProfile/Default/'+str(Planet) #string to /PlanetProfile/Default/Planet
+#full_planet_folder_string = parent_directory + planet_folder_string
+#default_folder = sys.path.append(os.path.join(full_planet_folder_string)) # this gets to the folder where the defaults for the planet is
 
 
 
 # Construct the module name as a string
 # e.g., if Planet is "Europa", this becomes "PPEuropa"
-module_to_import = f"PP{Planet}"
+#module_to_import = f"PP{Planet}"
 
 # Use importlib to import the module
-planet_module = importlib.import_module(module_to_import)
+#planet_module = importlib.import_module(module_to_import)
 
 
 
