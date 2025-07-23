@@ -109,17 +109,22 @@ st.subheader("Ice Layer Thickness")
 
 thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set up your Ice Shell. Descriptions of each type display when selected for more information", ("Input Ice Shell thickness", "Input Bottom Temperature Tb_K"))
 
+
+
+#Planet is currently just a string. In other pages we turn it into an object with attributes but we have not done that here
 if thickness_or_Tb == "Input Ice Shell thickness":
     st.number_input("Select the thickness of your Ice I Shell (in  $m$) below")
     st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the temperature at the bottom of the Ice shell will be calculated")
+
+    st,write(Planet)
     # Ensure Planet.Do exists and is a dictionary
-    if not hasattr(Planet, "Do") or not isinstance(Planet.Do, dict):
-        Planet.Do = {}
+    #if not hasattr(Planet, "Do") or not isinstance(Planet.Do, dict):
+        #Planet.Do = {}
     # Now safely set ICEIh_THICKNESS
-    Planet.Do["ICEIh_THICKNESS"] = True #user is inputting the thickness instead of Tb_K so this flag is set to true
+    #Planet.Do["ICEIh_THICKNESS"] = True #user is inputting the thickness instead of Tb_K so this flag is set to true
     
     #Planet.Do.ICEIh_THICKNESS = True 
-    st.write(Planet.Do.ICEIh_THICKNESS)
+    #st.write(Planet.Do.ICEIh_THICKNESS)
     #Planet.Bulk.zb_approximate_km = 30 # The approximate ice shell thickness desired (edited) 
 
 
