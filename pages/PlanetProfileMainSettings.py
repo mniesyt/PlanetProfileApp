@@ -106,7 +106,7 @@ Planet = PlanetStruct(Planet)
 
 if "PlanetObject" not in st.session_state:
     st.session_state.PlanetObject = Planet # or however you construct it
-st.write(st.session_state.PlanetObject)
+
 
 # need to add what happens if the user selects custom here
 

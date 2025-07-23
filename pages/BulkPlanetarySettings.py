@@ -36,6 +36,8 @@ if Planet in (None, "-- Select a Planet --"):
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
+Planet = st.session_state.PlanetObject
+
 # making sure the Planet folder is in the path so can find PPPlanet
 planet_folder_string = '/PlanetProfile/Default/'+str(Planet) #string to /PlanetProfile/Default/Planet
 full_planet_folder_string = parent_directory + planet_folder_string
@@ -54,8 +56,8 @@ planet_module = importlib.import_module(module_to_import)
 
 # Pulls default values into the app for each PPPlanet, if the user sets a new
 # value then it is saved as a session state variable
-from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
-Planet =PlanetStruct(Planet)
+#from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants #grabbing what we need so user can change what variables they need to
+#Planet =PlanetStruct(Planet)
 
 # planet_defaults dictionary
 #keeping track of defaults for the planet with this dicitonary {"key": value}
