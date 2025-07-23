@@ -25,9 +25,6 @@ if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
 
-#os.chdir('..') #From the PlanetProfile/PlanetProfileApp, going to PlanetProfile
-
-# Get the planet name from the environment variable
 # Get the planet name from the session state
 Planet = st.session_state.get("Planet", None)
 if not Planet:
@@ -40,8 +37,6 @@ if not Planet:
 planet_folder_string = '/PlanetProfile/Default/'+str(Planet)
 full_planet_folder_string = parent_directory + planet_folder_string
 default_folder = sys.path.append(os.path.join(full_planet_folder_string))
-#st.write(sys.path)
-#planet_folder = sys.path.append(Planet)
 
 
 # Construct the module name as a string
@@ -137,32 +132,6 @@ for key, setting in step_settings.items():
         st.success(f"You changed **{setting['label']}** to `{current_value}`")
 
 
-if st.button("🔄 Reset to module defaults (double click)"): #when user clicks reset button, 
+if st.button("🔄 Reset to module defaults (double click)"): #when user clicks reset button,
     st.session_state["reset_step_flag"] = True #"reset_step_flag" is set to true in the session_state,
     # which triggers the if st.session_state["reset_step_flag"] function above
-
-
-
-
-
-#st.subheader("Ice I Layer Steps")
-#Planet.Steps.nIceI = st.number_input("Number of Ice I Layer steps", value = planet_module.Planet.Steps.nIceI, step = 1)
-#st.write("Defines the number of steps for the Ice I layer. Number of steps for other layers will be calculated based on mass, radius, and moment of inertia inputs.")
-#st.markdown("---")
-
-#st.subheader("Ocean Pressure Step Size")
-#Planet.Ocean.deltaP = st.number_input("Step Size for Ocean Pressure $\Delta P$ (MPa)", value = planet_module.Planet.Ocean.deltaP)
-#st.write("Increment of pressure in MPa between each layer in lower hydrosphere/ocean (sets profile resolution)")
-#st.markdown("---")
-
-#st.subheader("Temperature Step Size")
-#Planet.Ocean.deltaT = st.number_input("Step size for Temperature $\Delta T$ ($^\circ K$)", value = planet_module.Planet.Ocean.deltaT)
-#st.write("Step size in $^\circ K$ for temperature values used in generating ocean EOS functions. If set, overrides calculations that otherwise use the specified precision in user-set temperature at the bottom $^\circ K$ to determine this.")
-#st.markdown("---")
-
-#st.subheader("Hydrosphere Maximum Pressure")
-#Planet.Ocean.PHydroMax_MPa = st.number_input("Maximum Pressure of the Hydrosphere (MPa)", value = planet_module.Planet.Ocean.PHydroMax_MPa)
-#st.write("Guessed maximum pressure of the hydrosphere in MPa. Must be greater than the actual pressure, but ideally not by much.")
-#st.markdown("---")
-
-#os.chdir('PlanetProfileApp') #changing back to app directory so people can navigate between other pages

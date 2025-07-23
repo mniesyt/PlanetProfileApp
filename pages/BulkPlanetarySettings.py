@@ -67,12 +67,12 @@ planet_bulk_defaults = {
     "Planet.Bulk.Psurf_MPa": planet_module.Planet.Bulk.Psurf_MPa,
     "Planet.Bulk.Cmeasured": planet_module.Planet.Bulk.Cmeasured,
     "Planet.Bulk.Cuncertainty": planet_module.Planet.Bulk.Cuncertainty,
-    "Planet.Bulk.Tb_K": planet_module.Planet.Bulk.Tb_K,
+    #"Planet.Bulk.Tb_K": planet_module.Planet.Bulk.Tb_K, THIS IS INSTEAD SET ON THE MAIN SETTINGS PAGE
 }
 
 # Bulk Settings dictionary
 # e.g. "Planet.Bulk.R_m": ("Radius of the body (m)", 6.378e6),
-# the keys are the same as in planet_defaults ("Planet.Bulk.R_m"), the 'value' is (label, value) with label 
+# the keys are the same as in planet_defaults ("Planet.Bulk.R_m"), the 'value' is (label, value) with label
 # being the string listed (e.g. "Radius of the body (m)") and value being the default value from planet_defaults (e.g. planet_module.Planet.Bulk.R_m)
 bulk_settings = {
     key: (label, planet_bulk_defaults[key]) for key, label in {
@@ -82,7 +82,7 @@ bulk_settings = {
         "Planet.Bulk.Psurf_MPa": "Pressure at the surface (MPa)",
         "Planet.Bulk.Cmeasured": "Normalized Axial Moment of Inertia $C$",
         "Planet.Bulk.Cuncertainty": "Uncertainty in $C$",
-        "Planet.Bulk.Tb_K": "Temperature at the bottom ($^\circ K$)",
+        #"Planet.Bulk.Tb_K": "Temperature at the bottom ($^\circ K$) -
     }.items() #The .items() method is used on the dictionary, which returns an iterable of key-value pairs like: ("Planet.Bulk.R_m", "Radius of the body (m)"),
 }
 
@@ -101,14 +101,14 @@ if st.session_state["reset_bulk_flag"]: #if flag is true (if user presses reset 
     st.session_state["changed_inputs"] = {} #clears blank dictionary for changed inputs to go into later
     st.session_state["reset_bulk_flag"] = False #reset_bulk_flag now is set to false
     st.rerun()  # 🔁 ensures Streamlit restarts before widgets render
+#_______NEED TO INPUT CODE HERE THAT DOES STUFF WHEN THE USER PICKS A NON DEFAULT VALUE (IE WHEN "changed_inputs" isn't empty)
 
 
-
-# Initialize session state for all bulk_settings -> the key is the first part in the dictionary, this initialization 
+# Initialize session state for all bulk_settings -> the key is the first part in the dictionary, this initialization
 # loop prevents having to initialize every variable individually as below
 
 #this block runs every time the page loads
-for key, (_, default_val) in bulk_settings.items(): #initializes variables into session_state 
+for key, (_, default_val) in bulk_settings.items(): #initializes variables into session_state
     if key not in st.session_state: #this means only not already created keys will be added to session state
         st.session_state[key] = default_val
 
@@ -118,38 +118,21 @@ if "changed_inputs" not in st.session_state:
 
 
 
-# Initializing the session state of all the variables
-#if "Planet.Bulk.R_m" not in st.session_state:
-    #st.session_state["Planet.Bulk.R_m"]= planet_module.Planet.Bulk.R_m  # Initialize the session state
-#if "Planet.Bulk.M_kg" not in st.session_state:
-    #st.session_state["Planet.Bulk.M_kg"] = planet_module.Planet.Bulk.M_kg
-#if "Planet.Bulk.Tsurf_K" not in st.session_state:
-    #st.session_state["Planet.Bulk.Tsurf_K"] = planet_module.Planet.Bulk.Tsurf_K
-#if "Planet.Bulk.Psurf_MPa" not in st.session_state:
-    #st.session_state["Planet.Bulk.Psurf_MPa"] = planet_module.Planet.Bulk.Psurf_MPa
-#if "Planet.Bulk.Cmeasured" not in st.session_state:
-    #st.session_state["Planet.Bulk.Cmeasured"] = planet_module.Planet.Bulk.Cmeasured
-#if "Planet.Bulk.Cuncertainty" not in st.session_state:
-    #st.session_state["Planet.Bulk.Cuncertainty"] = planet_module.Planet.Bulk.Cuncertainty
-#if "Planet.Bulk.Tb_K" not in st.session_state:
-    #st.session_state["Planet.Bulk.Tb_K"] = planet_module.Planet.Bulk.Tb_K
-
-
-# This function is used to keep track of what settings the user has changed, so that the 
+# This function is used to keep track of what settings the user has changed, so that the
 # code can print out what settings have been changed
 def on_change_bulk_setting(bulk_setting_key):
-    st.session_state["changed_inputs"][bulk_setting_key] = True #if a user changes an input, 
+    st.session_state["changed_inputs"][bulk_setting_key] = True #if a user changes an input,
     # This looks up the "changed_inputs" dictionary inside st.session_state and
     # adds a new entry to this dictionary with the key bulk_setting_key (the name of the setting that was changed),
     #then sets the value to True, which marks that the setting has been changed.
 
 
-    
+
 # Create number inputs dynamically
 for key, (label, _) in bulk_settings.items():
     #iterating over all of the key, (label,_) pairs in bulk_settings.items()
     #we are only doing things with they key and label, so the actual value is ignored with _
-    setting_name = key.split(".")[-1] # this grabs just the key i.e. just Tb_K from "Planet.Bulk.Tb_K" 
+    setting_name = key.split(".")[-1] # this grabs just the key i.e. just Tb_K from "Planet.Bulk.Tb_K"
     #(key.split(".") splits the key into ["Planet", "Bulk", "R_m"] amd [-1] grabs the last object "R_m" in the list )
 
     # Create input widgets
@@ -169,22 +152,6 @@ for key, (label, _) in bulk_settings.items():
         st.success(f"You changed **{label}** to `{current_value}`") #prints that a bulk setting has been changed and what value it has been changed to
 
 
-if st.button("🔄 Reset to module defaults (double click)"): #when user clicks reset button, 
+if st.button("🔄 Reset to module defaults (double click)"): #when user clicks reset button,
     st.session_state["reset_bulk_flag"] = True #"reset_bulk_flag" is set to true in the session_state,
     # which triggers the if st.session_state["reset_bulk_flag"] function above
-
-
-# These individual inputs are all overwritten by the for loop above
-
-#Planet.Bulk.R_m = st.number_input("Radius of the body (m)", value =  st.session_state["Planet.Bulk.R_m"], key = "Planet.Bulk.R_m", on_change = user_input_a_variable)
-#Planet.Bulk.M_kg = st.number_input("Mass of the body (kg)", value = planet_module.Planet.Bulk.M_kg, on_change = user_input_a_variable)
-#Planet.Bulk.Tsurf_K = st.number_input("Temperature at the surface ($^\circ K$)", value = planet_module.Planet.Bulk.Tsurf_K,on_change = user_input_a_variable)
-#Planet.Bulk.Psurf_MPa = st.number_input("Pressure at the surface (MPa)", value = planet_module.Planet.Bulk.Psurf_MPa, on_change = user_input_a_variable)
-#Planet.Bulk.Cmeasured = st.number_input("Normalized Axial Moment of Inertia $C$", value = planet_module.Planet.Bulk.Cmeasured,  on_change = user_input_a_variable)
-#Planet.Bulk.Cuncertainty = st.number_input("Uncertainty in $C$", value = planet_module.Planet.Bulk.Cuncertainty, on_change = user_input_a_variable)
-#Planet.Bulk.Tb_K = st.number_input("Temperature at the bottom ($^\circ K$)", value = planet_module.Planet.Bulk.Tb_K, on_change = user_input_a_variable)
-#os.environ["Planet.Bulk.Tb_K"] = str(st.number_input("Temperature at the bottom ($^\circ K$)", value = planet_module.Planet.Bulk.Tb_K))
-
-#need to make it so that custom runs save to /PlanetProfile/Planet, and that these runs will be available for the user to load their custom runs later
-
-#os.chdir('PlanetProfileApp') #changing back to app directory so people can navigate between other pages

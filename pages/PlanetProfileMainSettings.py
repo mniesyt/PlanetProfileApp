@@ -12,8 +12,8 @@ st.markdown("---")
 
 
 #--- Planet Selection - Custom or from dropdown ---
-planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede", 
-               "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto", 
+planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede",
+               "Iapetus", "Io", "Luna", "Mimas", "Miranda", "Oberon", "Pluto",
                "Rhea", "Tethys", "Titan", "Titania", "Triton", "Umbriel"]
 
 # Initialzing all of the things to session state
@@ -46,7 +46,7 @@ else:
     st.markdown("---")
     st.subheader("Body Selection")
     st.write("Please select a planetary body from the list of profiles below")
-    
+
     selected_planet = st.selectbox(
         "Choose your Planetary Body:",
         planet_list,
@@ -58,7 +58,7 @@ else:
     if selected_planet != "-- Select a Planet --":
         st.session_state["Planet"] = selected_planet
 
-# Planet 
+# Planet
 Planet = st.session_state.get("Planet", "-- Select a Planet --")
 
 if Planet == "-- Select a Planet --":
@@ -94,7 +94,7 @@ if parent_directory not in sys.path:
 #loading Planet default data for user
 if Planet and Planet != "Custom":
     try:
-        planet_module = load_planet_module(parent_directory, Planet) #loading the data 
+        planet_module = load_planet_module(parent_directory, Planet) #loading the data
         st.success(f"{Planet} data loaded.")
     except Exception as e:
         st.error(f"Error loading planet module: {e}")
@@ -129,7 +129,7 @@ if thickness_or_Tb == "Input Ice Shell thickness":
     else:
         Planet.Do.ICEIh_THICKNESS = True  #  #user is inputting the thickness instead of Tb_K so this flag is set to true
     st.write("Type of Planet.Do:", type(Planet.Do))
-    #Planet.Bulk.zb_approximate_km = 30 # The approximate ice shell thickness desired (edited) 
+    #Planet.Bulk.zb_approximate_km = 30 # The approximate ice shell thickness desired (edited)
 
 
 
@@ -137,7 +137,8 @@ if thickness_or_Tb == "Input Bottom Temperature Tb_K":
     st.number_input("Select Your Bottom Temperature (in  $^\circ K$) - Primarily for PlanetProfile Developers")
     # User Passes in a Temperature of the bottom of the ocean
     st.write("The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile to determine the thickness of the Ice Shell thickness. Behind the scenes, this sets Planet.Bulk.Tb_K")
-    #Planet.Bulk.Tb_K = 
+    
+    #Planet.Bulk.Tb_K =
 
 
 st.markdown("---")
@@ -154,7 +155,7 @@ if user_ocean_type == "Use pre-defined ocean composition":
 
 if user_ocean_type == "Define your own ocean composition":
     st.write("Define Your Ocean Below")
-# will have to add an option to select concentration units  
+# will have to add an option to select concentration units
     species_concentration_unit = st.selectbox("Choose Salt Species Concentration Units", ("absolute mol/kg", "relative ratios"))
     num_salts = st.number_input("Input number of salt species", min_value = 1)
     num_salts_list = [int(digit) for digit in str(num_salts)]
@@ -169,5 +170,3 @@ if user_ocean_type == "Define your own ocean composition":
     #st.write(salt_name_list)
     #st.write(salt_conc_list)
     #st.write(species_concentration_unit)
- 
-
