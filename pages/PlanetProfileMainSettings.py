@@ -128,9 +128,7 @@ if thickness_or_Tb == "Input Ice Shell thickness":
         Planet.Do.ICEIh_THICKNESS = True
     else:
         Planet.Do.ICEIh_THICKNESS = True  #  #user is inputting the thickness instead of Tb_K so this flag is set to true
-
-    st.write(Planet.Do.ICEIh_THICKNESS)
-    st.write(Planet)
+    st.write("Type of Planet.Do:", type(Planet.Do))
     #Planet.Bulk.zb_approximate_km = 30 # The approximate ice shell thickness desired (edited) 
 
 
