@@ -27,6 +27,7 @@ if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
+chosen_planet = st.session_state.get("ChosenPlanet", None)
 
 # making sure the Planet folder is in the path so can find PPPlanet
 #planet_run_folder_string = '/'+str(Planet)
@@ -35,7 +36,7 @@ if not Planet:
 #figures_folder_string = full_planet_run_folder_string+ "/figures"
 #planet_run_figures_folder = sys.path.append(os.path.join(figures_folder_string))
 # Build path: /PlanetProfile/{Planet}/figures
-figures_folder = os.path.join(parent_directory, Planet, "figures") #this does all of the commented out part above but in one step
+figures_folder = os.path.join(parent_directory, chosen_planet, "figures") #this does all of the commented out part above but in one step
 
 st.set_page_config(page_title="Run Planet Profile")
 
@@ -49,7 +50,7 @@ if st.button("Run Planet Profile with my Choices", type = "primary"):
     current_directory = os.getcwd()
     st.write(f"Current working directory: {current_directory}")
     Planet = os.getenv("Planet")
-    os.system('python PlanetProfileCLI.py ' + str(Planet))
+    os.system('python PlanetProfileCLI.py ' + str(chosen_planet))
 
 
 
@@ -75,7 +76,7 @@ for filename in pdf_files:
         label = filename[:-4] if filename.endswith('.pdf') else filename
     figure_dict[label] = os.path.join(figures_folder, filename)
 
-figure_labels = list(figure_dict.keys()) 
+figure_labels = list(figure_dict.keys())
 tabs = st.tabs(figure_labels)
 
 #Below are descriptive captions for the figures
@@ -100,8 +101,8 @@ captions = {
         "Top Right - Temperature, Pressure, and density as a funciton of radius. \n\n"
         "Bottom Left - Sound speeds Vp and Vs as a function of radius. \n\n"
         "Bottom Right - Seismic quality factor Qs as a funciton of raidus")
-    
-    
+
+
 }
 
 
@@ -115,7 +116,3 @@ for tab, label in zip(tabs, figure_labels):
 
             caption = captions.get(label, f"{label}")
             st.caption(f"**{caption}**")
-
-
-
-

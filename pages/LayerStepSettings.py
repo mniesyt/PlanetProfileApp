@@ -11,22 +11,16 @@ st.set_page_config(page_title="Layer Step Settings")
 st.title("Layer Step Settings")
 st.write("OPTIONAL -- Choose your Layer Step Settings Below")
 
-
-
 # Get the planet name from the session state
 Planet = st.session_state.get("Planet", None)
 if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
-
-
-
 planet_step_defaults = {"Planet.Steps.nIceI": Planet.Steps.nIceI,
                         "Planet.Ocean.deltaP": Planet.Ocean.deltaP,
                         "Planet.Ocean.deltaT": Planet.Ocean.deltaT,
                         "Planet.Ocean.PHydroMax_MPa": Planet.Ocean.PHydroMax_MPa}
-
 
 # dictionary of dictionaries that each hold the label, defaults, subheaders, and descriptions of the step settings
 step_settings = {

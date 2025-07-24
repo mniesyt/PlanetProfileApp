@@ -1,7 +1,7 @@
 import streamlit
 def show_planet_status():
-    planet = streamlit.session_state.get("Planet", None)
-    if planet:
-        streamlit.sidebar.markdown(f"**Current Planet:** {planet}")
+    chosen = streamlit.session_state.get("ChosenPlanet", "-- Select a Planet --")
+    if chosen and chosen != "-- Select a Planet --":
+        streamlit.sidebar.markdown(f"**Current Planet:** {chosen}")
     else:
         streamlit.sidebar.markdown("⚠️ **Current Planet:** ❌ Not Set")

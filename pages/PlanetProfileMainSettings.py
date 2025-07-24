@@ -54,16 +54,17 @@ else:
         #index=planet_list.index(st.session_state["planet_selectbox"]),
         key="planet_selectbox"
     )
+    if selected_planet != "-- Select a Planet --":
+        st.session_state["ChosenPlanet"] = selected_planet
 
-
-# Updates the session state to the chosen planet
-chosen_planet = st.session_state["planet_selectbox"]
+chosen_planet = st.session_state.get("ChosenPlanet", None)
 
 # --- Checks and load planet ---
 if chosen_planet == "-- Select a Planet --":
     st.warning("Please select a planetary body to continue.")
     st.stop()
 else:
+    # Updates the session state to the chosen planet
     st.sidebar.markdown(f"**Current Planet:**  {chosen_planet}")
     st.success(f"Using Planet: {chosen_planet}")
 
@@ -121,25 +122,25 @@ thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set 
 
 #Planet is currently just a string. In other pages we turn it into an object with attributes but we have not done that here
 if thickness_or_Tb == "Input Ice Shell thickness":
-    st.number_input("Select the thickness of your Ice I Shell (in  $m$) below")
+    Planet.Bulk.zb_approximate_km = st.number_input("Select the thickness of your Ice I Shell (in  $km$) below")
     st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the temperature at the bottom of the Ice shell will be calculated")
 
 
     # Ensure Planet.Do exists and is a dictionary
     if not hasattr(Planet.Do, "ICEIh_THICKNESS"):
-        Planet.Do.ICEIh_THICKNESS = True #if the attribute doesn't exitst, this is making it and setting it to true
+        Planet.Do.ICEIh_THICKNESS = True #if the attribute doesn't exist, this is making it and setting it to true
     else:
-        Planet.Do.ICEIh_THICKNESS = True  #  #user is inputting the thickness instead of Tb_K so this flag is set to true
-    #Planet.Bulk.zb_approximate_km = 30 # The approximate ice shell thickness desired (edited)
+        Planet.Do.ICEIh_THICKNESS = True  #  #user is inputting the thickness instead of Tb_K so the thickness flag is set to true
+
 
 
 
 if thickness_or_Tb == "Input Bottom Temperature Tb_K":
-    st.number_input("Select Your Bottom Temperature (in  $^\circ K$) - Primarily for PlanetProfile Developers")
+    Planet.Bulk.Tb_K =st.number_input("Select Your Bottom Temperature (in  $^\circ K$) - Primarily for PlanetProfile Developers")
     # User Passes in a Temperature of the bottom of the ocean
     st.write("The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile to determine the thickness of the Ice Shell thickness. Behind the scenes, this sets Planet.Bulk.Tb_K")
 
-    #Planet.Bulk.Tb_K =
+
 
 
 st.markdown("---")
