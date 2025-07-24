@@ -10,6 +10,7 @@ show_planet_status()
 st.set_page_config(page_title="Layer Step Settings")
 st.title("Layer Step Settings")
 st.write("OPTIONAL -- Choose your Layer Step Settings Below")
+st.set_page_config(page_icon="./PPlogo.ico")
 
 # Get the planet name from the session state
 Planet = st.session_state.get("Planet", None)

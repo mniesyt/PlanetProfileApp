@@ -10,6 +10,7 @@ show_planet_status()
 st.set_page_config(page_title="Bulk Planetary Settings")
 
 st.title("Bulk Planetary Settings")
+st.set_page_config(page_icon="./PPlogo.ico")
 st.write("Default values for your selected body are displayed below.")
 st.write("You may also change the Bulk Planetary Settings to custom values")
 st.write("Reset to defualt values with the button at the bottom of the page")

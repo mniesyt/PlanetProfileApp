@@ -23,9 +23,8 @@ def load_planet_module(parent_dir, planet_name):
         return st.session_state["planet_data"]
 
 
-    # Path to the module file -> this does what te commented out lines do below but in one step
+    # Path to the module file
     planet_default_module_path = os.path.join(parent_dir, "PlanetProfile", "Default", planet_name, f"PP{planet_name}.py")
-    st.write("Looking for planet defaults at the following path: "+ planet_default_module_path)
 
 
     if not os.path.exists(planet_default_module_path):

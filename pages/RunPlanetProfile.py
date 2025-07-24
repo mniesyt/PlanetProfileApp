@@ -38,6 +38,7 @@ chosen_planet = st.session_state.get("ChosenPlanet", None)
 # Build path: /PlanetProfile/{Planet}/figures
 figures_folder = os.path.join(parent_directory, chosen_planet, "figures") #this does all of the commented out part above but in one step
 
+st.set_page_config(page_icon="./PPlogo.ico")
 st.set_page_config(page_title="Run Planet Profile")
 
 

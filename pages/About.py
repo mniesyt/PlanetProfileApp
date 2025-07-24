@@ -1,9 +1,10 @@
 import streamlit as st
 
 st.set_page_config(page_title="About")
+st.set_page_config(page_icon="./PPlogo.ico")
 
 
-st.title("About Planet Profile")         
+st.title("About Planet Profile")
 st.subheader("Key Funcitonality")
 st.write("Radial models of planetary interiors are generated from bulk properties based on geophysical models, lab data, and minimal assumptions")
 
