@@ -11,6 +11,25 @@ st.set_page_config(page_icon="./PPlogo.ico")
 st.write("Let's Start by Setting Up Your Planet")
 st.markdown("---")
 
+# --- File Path Management ---
+
+# Get the path to the current script's directory
+# /PlanetProfile/PlanetProfileApp/pages/PlanetProfileMainSettings.py
+PlanetProfileMainSettings_directory = os.path.dirname(os.path.abspath(__file__))
+
+# Get the app directory (/PlanetProfile/PlanetProfileApp)
+app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
+if app_directory not in sys.path:
+    sys.path.append(app_directory)
+
+
+# Get the parent directory (/PlanetProfile)
+parent_directory  = os.path.dirname(app_directory)
+
+# Add the parent directory to Python's search path.
+if parent_directory not in sys.path:
+    sys.path.append(parent_directory)
+
 
 #--- Planet Selection - Custom or from dropdown ---
 planet_list = ["-- Select a Planet --", "Ariel", "Callisto", "Dione", "Enceladus", "Europa", "Ganymede",
@@ -40,9 +59,25 @@ run_custom_body = st.checkbox("Create fully custom Planet?", value=st.session_st
 
 # Custom Planet path
 if run_custom_body:
+    from Utilities.CustomPlanetGenerator import generate_custom_pp_template
     st.session_state["ChosenPlanet"] = "Custom"
     st.session_state["Planet"] = None  # Custom settings handled elsewhere
     st.success("Using Custom Planet. Configure settings in other tabs.")
+    # Define folder and file paths (with capital 'Custom')
+    custom_dir = os.path.join(parent_directory, "PlanetProfile", "Default", "Custom")
+    custom_file = os.path.join(custom_dir, "PPCustom.py")
+
+    # Create folder if it doesn't exist
+    if not os.path.exists(custom_dir):
+        os.makedirs(custom_dir)
+        st.info("Created 'Custom' folder for custom planet.")
+
+    # Create PPCustom.py with default contents if it doesn't exist
+    if not os.path.isfile(custom_file):
+        generate_custom_pp_template(parent_directory)
+        st.info("Created PPCustom.py with default custom planet config.")
+
+
 
 else:
     st.markdown("---")
@@ -69,42 +104,21 @@ else:
     st.sidebar.markdown(f"**Current Planet:**  {chosen_planet}")
     st.success(f"Using Planet: {chosen_planet}")
 
-
-# --- File Path Management as well as loading of planet default data ---
-
-# Get the path to the current script's directory
-# /PlanetProfile/PlanetProfileApp/pages/PlanetProfileMainSettings.py
-PlanetProfileMainSettings_directory = os.path.dirname(os.path.abspath(__file__))
-
-# Get the app directory (/PlanetProfile/PlanetProfileApp)
-app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
-if app_directory not in sys.path:
-    sys.path.append(app_directory)
-
-
-# Get the parent directory (/PlanetProfile)
-parent_directory  = os.path.dirname(app_directory)
-
-# Add the parent directory to Python's search path.
-if parent_directory not in sys.path:
-    sys.path.append(parent_directory)
-
 # --- Load planet module ---
-if chosen_planet != "Custom":
-    from Utilities.PlanetLoader import load_planet_module
+from Utilities.PlanetLoader import load_planet_module
 
-    try:
-        planet_module = load_planet_module(parent_directory, chosen_planet)
-        st.success(f"{chosen_planet} data loaded.")
-    except Exception as e:
-        st.error(f"Error loading planet module: {e}")
-        st.stop()
-
+try:
+    planet_module = load_planet_module(parent_directory, chosen_planet)
+    st.success(f"{chosen_planet} data loaded.")
+    st.session_state["Planet"] = planet_module.Planet
+except Exception as e:
+    st.error(f"Error loading planet module: {e}")
+    st.stop()
 
     # Construct the Planet object
     #from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants
     # Store the planet object in session state
-    st.session_state["Planet"] = planet_module.Planet
+
     #st.write(st.session_state["Planet"])
 
 Planet = st.session_state.get("Planet", None)
@@ -144,85 +158,7 @@ if thickness_or_Tb == "Input Bottom Temperature Tb_K":
 
 
 
-st.markdown("---")
 
-st.subheader("Ocean Composition")
-user_ocean_type = st.selectbox("Use Predefined Ocean or Define own Ocean Composition", ("Use pre-defined ocean composition","Define your own ocean composition"),index = None, placeholder = "Select Ocean Type")
-#User selects which water they want to use, will have to call from prespecified options list
-
-if user_ocean_type == "Use pre-defined ocean composition":
-   Planet.Ocean.comp = st.selectbox("Choose Predefined Ocean", ("Pure H2O", "Seawater", "MgSO4", "NaCl"))
-
-
-# Maybe to add later- dynamic loading of reaktoro salt databases
-reaktoro_supported_databases = ["frezchem", "frezchemNH3", "frezchemSiCH4"]
-
-
-if user_ocean_type == "Define your own ocean composition":
-    #st.write("Define Your Ocean Below")
-
-    st.write("Planet Profile uses reaktoro databases to define aqueous salt species. Please select a reaktoro database to pull salts from. Frezchem is the default. frezchemNH3 supports ammonia species. frezchemSiCH4 supports methane species")
-
-
-    from Utilities.SaltLoader import read_salt_db
-    # Lets user pick whcih reaktoro database they want to run salts from
-    selected_salt = st.selectbox("Choose a salt database:", reaktoro_supported_databases, index =0) #defaults to frezchem database
-
-    # When selected, load the database
-    if selected_salt:
-        st.write(f"Loading species from `{selected_salt}.dat`...")
-        try:
-            species = read_salt_db(selected_salt + ".dat")
-            st.success(f"Loaded {len(species)} aqueous species.")
-        except Exception as e:
-            st.error(f"Failed to load database: {e}")
-        st.markdown("---")
-
-
-# to add - the concentration units actually get passed to the planet object
-    st.markdown("### Salt Concentration Settings")
-    species_concentration_unit = st.selectbox("Choose Salt Species Concentration Units", ("absolute mol/kg", "relative ratios"))
-
-
-    num_salts = st.number_input("Input number of salt species", min_value = 1)
-    if species_concentration_unit == "relative ratios":
-        Planet.Ocean.wOcean_ppt = st.number_input("Please input your desired parts per thousand (ppt) for you salts")
-
-    else:
-        Planet.Ocean.wOcean_ppt = None
-
-
-
-
-
-    num_salts_list = [int(digit) for digit in str(num_salts)]
-    salt_species_list = []
-    salt_conc_list = []
-    st.markdown("---")
-    for i in range(int(num_salts)):
-        st.write(f"Salt Species {i + 1}")
-        selected_species = st.selectbox(f"Select Salt Species {i + 1}", species, key=f"species_select_{i}")
-        concentration = st.number_input(f"Input Concentration of Salt {i + 1}", key=f"conc_input_{i}")
-
-        salt_species_list.append(selected_species)
-        salt_conc_list.append(concentration)
-        st.markdown("---")
-
-# Step 8: Create and display the summary string
-if salt_species_list and salt_conc_list:
-    salt_string = ", ".join(
-        f"{species}: {conc}" for species, conc in zip(salt_species_list, salt_conc_list)
-    )
-    st.markdown("### Salt Configuration")
-    st.write(f"Selected salt concentration unit: `{species_concentration_unit}`")
-    #st.write(salt_string)
-
-    solution_name = st.text_input("Please create a name for how you would like to save your custom ocean (ex. MgSO4)", value = "Please name you custom ocean solution here")
-
-    #st.write(solution_name)
-
-Planet.Ocean.comp = "CustomSolution" + solution_name + " = " + salt_string
-st.write(Planet.Ocean.comp)
 
 
 #These are what will be updated once the user selects what salts they want
