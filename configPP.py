@@ -66,11 +66,11 @@ def configAssign():
     Params.PLOT_PVT_HYDRO = False
     Params.PLOT_PVT_ISOTHERMAL_HYDRO = False
     Params.PLOT_PVT_INNER = False
-    Params.PLOT_BDIP = False
+    Params.PLOT_BDIP = True
     Params.PLOT_BSURF = True
     Params.PLOT_ASYM = False
     Params.PLOT_TRAJECS = False
-    Params.PLOT_BINVERSION = False
+    Params.PLOT_BINVERSION = True
     Params.LEGEND =           True  # Whether to plot legends
     Params.TITLES =           True  # Whether to include a (sup)title on plots
 

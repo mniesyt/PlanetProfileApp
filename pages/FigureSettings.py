@@ -40,7 +40,7 @@ st.markdown("---")
 st.subheader("Optional: Skip All Plots")
 st.write("Making figures will increase how long it takes for Planet Profile to run. If you are interested only in computational outputs, skip all figure generation here.")
 # Optional: Skip all plots
-Params.SKIP_PLOTS = st.checkbox("Skip All Plots", value=getattr(Params, "SKIP_PLOTS", False)) #the getattr loads the checkbox to default to whatever is in the config file originally
+Params.SKIP_PLOTS = st.toggle("Skip All Plots", value=getattr(Params, "SKIP_PLOTS", False)) #the getattr loads the checkbox to default to whatever is in the config file originally
 #if the user cheks that they want to skip plots, then params.SKIP_PLOTS is set to true
 
 
