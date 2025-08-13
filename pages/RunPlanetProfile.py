@@ -7,12 +7,20 @@ import re
 import tempfile
 from Utilities.planet_sidebar import show_planet_status
 show_planet_status()
+from copy import deepcopy
+
+
+# ----- Page setup stuff -----
+st.set_page_config(page_icon="./PPlogo.ico")
+st.set_page_config(page_title="Run Planet Profile")
+st.title("Run Planet Profile")
+st.subheader("Summary of Your Planet and Changes you have made from Defaults:")
+
 
 
 # Get the path to the current script's directory
 # /PlanetProfile/PlanetProfileApp/BulkPlanetarySettings.py
 RunPlanetProfile_directory = os.path.dirname(os.path.abspath(__file__))
-#st.write(BulkPlanertarySettings_directory)
 # Get the app directory (/PlanetProfile/PlanetProfileApp)
 app_directory = os.path.dirname(RunPlanetProfile_directory)
 # Get the parent directory (/PlanetProfile)
@@ -27,19 +35,112 @@ if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
+# This initializes the changed settings dictionaries in the event that the user did not visit that particular page
+for key in ["changed_bulk_settings_flags", "custom_ocean_flag", "changed_step_settings_flags", "changed_core_settings"]:
+    if key not in st.session_state:
+        # For the boolean custom_ocean_flag, initialize as False; for the others, use empty dict
+        st.session_state[key] = False if key == "custom_ocean_flag" else {}
+
+
 chosen_planet = st.session_state.get("ChosenPlanet", None)
 
-# making sure the Planet folder is in the path so can find PPPlanet
-#planet_run_folder_string = '/'+str(Planet)
-#full_planet_run_folder_string = parent_directory + planet_run_folder_string
-#planet_run_folder = sys.path.append(os.path.join(full_planet_run_folder_string))
-#figures_folder_string = full_planet_run_folder_string+ "/figures"
-#planet_run_figures_folder = sys.path.append(os.path.join(figures_folder_string))
-# Build path: /PlanetProfile/{Planet}/figures
-figures_folder = os.path.join(parent_directory, chosen_planet, "figures") #this does all of the commented out part above but in one step
+# If the user has changed any inputs, we will create a semi-custom Planet object here to push their changes to
+# Check if *any* setting has been changed
+any_changes_made = (
+    st.session_state["custom_ocean_flag"]
+    or any(st.session_state["changed_bulk_settings_flags"].values())
+    or any(st.session_state["changed_step_settings_flags"].values())
+    or any(st.session_state["changed_core_settings"].values())
+)
 
-st.set_page_config(page_icon="./PPlogo.ico")
-st.set_page_config(page_title="Run Planet Profile")
+# Conditionally create SemiCustomPlanet
+if any_changes_made:
+    SemiCustomPlanet = deepcopy(Planet)
+    st.markdown("### Creating modified Planet based on user settings...")
+    st.markdown("---")
+else:
+    SemiCustomPlanet = Planet  # No changes, use original
+    st.info("No settings were modified. Running with default Planet.")
+    st.markdown("---")
+
+figures_folder = os.path.join(parent_directory, chosen_planet, "figures")
+
+
+
+# ----- Summary of Changes Made and Updating of SemiCustomPlanet with new changes -----
+if any_changes_made:
+
+    st.markdown("## Custom Bulk Settings Applied")
+    # If the user has changed any bulk planetary settings, they will be updated into the SemiCustomPlanet object here
+    for key, changed in st.session_state["changed_bulk_settings_flags"].items():
+        if changed:
+            setting_name = key.split(".")[-1]
+            value = st.session_state["changed_bulk_settings"][key]
+            setattr(SemiCustomPlanet.Bulk, setting_name, value)
+
+
+    # This prints out for the user any of the bulk planetary settings they have changed from the default here
+    if any(st.session_state["changed_bulk_settings_flags"].values()):
+        st.warning("You have changed the following settings from the defaults: ")
+        for key, was_changed in st.session_state["changed_bulk_settings_flags"].items():
+            if was_changed:
+                bulk_setting_name = key.split(".")[-1]
+                bulk_new_val = st.session_state["changed_bulk_settings"][key]
+                bulk_default_val = getattr(Planet.Bulk, bulk_setting_name, "N/A")
+
+                st.markdown(f"- **{bulk_setting_name}**: `{bulk_default_val}` → `{bulk_new_val}`")
+    else:
+        st.info("No bulk settings have been changed. Using default bulk planetary settings.")
+    st.markdown("---")
+
+
+
+    # If the user has changed any ocean settings, they will be updated into the SemiCustomPlanet object here and printed for the user
+    st.markdown("## Custom Ocean Settings Applied")
+    running_custom_ocean = st.session_state.get("custom_ocean_flag")
+    if running_custom_ocean == True:
+        st.warning("You are using an ocean different than the default ocean")
+        custom_ocean_comp = st.session_state.get("custom_ocean_comp")
+        st.write("Your current ocean configuration is: " + custom_ocean_comp)
+        SemiCustomPlanet.Ocean.comp = custom_ocean_comp
+
+    if running_custom_ocean == False:
+        st.info("No ocean settings have been changed. Using default ocean.")
+
+
+    st.markdown("---")
+
+
+    st.markdown("## Custom Layer Step Settings Applied")
+    # If the user has changed any layer step settings, they will be updated into the SemiCustomPlanet object here and printed for the user
+    if any(st.session_state["changed_step_settings_flags"].values()):
+        st.warning("You have changed the following settings from the defaults: ")
+        for key, changed in st.session_state["changed_step_settings_flags"].items():
+            if changed:
+                label = step_settings[key]["label"]
+                setting_name = key.split(".")[-1]
+                default_val = step_settings[key]["default"]
+                new_val = st.session_state["changed_step_settings"][key]
+                st.markdown(f"- **{label}** (`{setting_name}`): `{default_val}` → `{new_val}`")
+    else:
+        st.info("No step settings have been changed. All values are defaults.")
+    st.markdown("---")
+
+
+    st.markdown("## Custom Core and Silicate Settings Applied")
+    # If the user has changed any core and silicate settings, they will be updated into the SemiCustomPlanet object here and printed for the user
+    changed_core_settings = st.session_state.get("changed_core_settings", {})
+    if changed_core_settings:
+        st.warning("You have changed the following settings from the defaults:")
+        for key, data in changed_core_settings.items():
+            label = data["label"]
+            default_val = data["default"]
+            new_val = data["new_value"]
+            setting_name = key.split(".")[-1]
+            st.markdown(f"- **{label}** (`{setting_name}`): `{default_val}` → `{new_val}`")
+    else:
+        st.info("No core or silicate settings have been changed. All values are defaults.")
+        st.markdown("---")
 
 
 if st.button("Run Planet Profile with my Choices", type = "primary"):
@@ -50,7 +151,7 @@ if st.button("Run Planet Profile with my Choices", type = "primary"):
     # have to move up one step out of PPApp into PP to run PP
     current_directory = os.getcwd()
     st.write(f"Current working directory: {current_directory}")
-    Planet = os.getenv("Planet")
+    #Planet = os.getenv("Planet")
     os.system('python PlanetProfileCLI.py ' + str(chosen_planet))
 
 
@@ -59,6 +160,8 @@ else:
     st.write("Choices have not yet been pushed to Planet Profile")
 
 st.markdown("---")
+
+# ----- Figure Printing in Streamlit -----
 
 st.subheader("Figures Produced by Planet Profile will Appear Below")
 
