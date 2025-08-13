@@ -49,7 +49,7 @@ chosen_planet = st.session_state.get("ChosenPlanet", None)
 any_changes_made = (
     st.session_state["custom_ocean_flag"]
     or any(st.session_state["changed_bulk_settings_flags"].values())
-    or any(st.session_state["changed_step_settings"].values())
+    or any(st.session_state["changed_step_settings_flags"].values())
     or any(st.session_state["changed_core_settings"].values())
 )
 
@@ -65,6 +65,9 @@ else:
 
 figures_folder = os.path.join(parent_directory, chosen_planet, "figures")
 
+
+
+# ----- Summary of Changes Made and Updating of SemiCustomPlanet with new changes -----
 if any_changes_made:
 
     st.markdown("## Custom Bulk Settings Applied")
@@ -126,18 +129,18 @@ if any_changes_made:
 
     st.markdown("## Custom Core and Silicate Settings Applied")
     # If the user has changed any core and silicate settings, they will be updated into the SemiCustomPlanet object here and printed for the user
-    if any(st.session_state["changed_core_settings"].values()):
-        st.warning("You have changed the following settings from the defaults: ")
-        for key, changed in st.session_state["changed_core_settings"].items():
-            if changed:
-                label = step_settings[key]["label"]
-                setting_name = key.split(".")[-1]
-                default_val = step_settings[key]["default"]
-                new_val = st.session_state["changed_core_settings"][key]
-                st.markdown(f"- **{label}** (`{setting_name}`): `{default_val}` → `{new_val}`")
+    changed_core_settings = st.session_state.get("changed_core_settings", {})
+    if changed_core_settings:
+        st.warning("You have changed the following settings from the defaults:")
+        for key, data in changed_core_settings.items():
+            label = data["label"]
+            default_val = data["default"]
+            new_val = data["new_value"]
+            setting_name = key.split(".")[-1]
+            st.markdown(f"- **{label}** (`{setting_name}`): `{default_val}` → `{new_val}`")
     else:
-        st.info("No step settings have been changed. All values are defaults.")
-    st.markdown("---")
+        st.info("No core or silicate settings have been changed. All values are defaults.")
+        st.markdown("---")
 
 
 if st.button("Run Planet Profile with my Choices", type = "primary"):

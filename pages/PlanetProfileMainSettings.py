@@ -133,13 +133,10 @@ st.subheader("Ice Layer Thickness")
 
 thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set up your Ice Shell. Descriptions of each type display when selected for more information", ("Input Ice Shell thickness", "Input Bottom Temperature Tb_K"))
 
-
-
 #Planet is currently just a string. In other pages we turn it into an object with attributes but we have not done that here
 if thickness_or_Tb == "Input Ice Shell thickness":
     Planet.Bulk.zb_approximate_km = st.number_input("Select the thickness of your Ice I Shell (in  $km$) below")
     st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the temperature at the bottom of the Ice shell will be calculated")
-
 
     # Ensure Planet.Do exists and is a dictionary
     if not hasattr(Planet.Do, "ICEIh_THICKNESS"):
@@ -147,29 +144,7 @@ if thickness_or_Tb == "Input Ice Shell thickness":
     else:
         Planet.Do.ICEIh_THICKNESS = True  #  #user is inputting the thickness instead of Tb_K so the thickness flag is set to true
 
-
-
-
 if thickness_or_Tb == "Input Bottom Temperature Tb_K":
     Planet.Bulk.Tb_K =st.number_input("Select Your Bottom Temperature (in  $^\circ K$) - Primarily for PlanetProfile Developers")
     # User Passes in a Temperature of the bottom of the ocean
     st.write("The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile to determine the thickness of the Ice Shell thickness. Behind the scenes, this sets Planet.Bulk.Tb_K")
-
-
-
-
-
-
-
-#These are what will be updated once the user selects what salts they want
-
-#"" Hydrosphere assumptions/settings """
-
-# If using a custom solution, specify the species in the solution and the mol/kg of water.
-# All desired species must be specified except H2O, which is assumed to be in solution at 1 mol equivalent for 1kg
-
-
-
-    #st.write(salt_name_list)
-    #st.write(salt_conc_list)
-    #st.write(species_concentration_unit)

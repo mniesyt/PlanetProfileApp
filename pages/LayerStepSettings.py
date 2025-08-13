@@ -67,6 +67,7 @@ if "reset_step_flag" not in st.session_state:
 if st.session_state["reset_step_flag"]: #if flag is true (if user presses reset button)
     for key, val in planet_step_defaults.items():
         st.session_state[key] = val  # reloads all of the planet_defaults into session_state
+
     st.session_state["changed_step_settings_flags"] = {} #clears the changed_step_settings dictionary
     st.session_state["changed_step_settings"] = {} #clears blank dictionary for changed inputs to go into later
     st.session_state["reset_step_flag"] = False #reset_bulk_flag now is set to false
@@ -102,6 +103,6 @@ for key, setting in step_settings.items():
 
 
 
-if st.button("🔄 Reset to module defaults (double click)"): #when user clicks reset button,
+if st.button("🔄 Reset to default step settings (double click)"): #when user clicks reset button,
     st.session_state["reset_step_flag"] = True #"reset_step_flag" is set to true in the session_state,
     # which triggers the if st.session_state["reset_step_flag"] function above

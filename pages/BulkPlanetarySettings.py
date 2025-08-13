@@ -76,8 +76,6 @@ for key, (_, default_val) in bulk_settings.items(): #initializes variables into 
         st.session_state[key] = default_val #now, all bulk settings are in the session state
 
 
-
-
 #initializing the reset_bulk_flag in the session state as False
 if "reset_bulk_flag" not in st.session_state:
     st.session_state["reset_bulk_flag"] = False
@@ -90,7 +88,7 @@ if st.session_state["reset_bulk_flag"]: #if flag is true (if user presses reset 
     st.session_state["changed_bulk_settings_flags"] = {} #clears the changed_bulk_settings_flags dictionary
     st.session_state["changed_bulk_settings"] = {} #clears the changed_bulk_settings dictionary
     st.session_state["reset_bulk_flag"] = False #reset_bulk_flag now is set to false
-    st.rerun()  # 🔁 ensures Streamlit restarts before widgets render
+    st.rerun()  # ensures Streamlit restarts before widgets render
 
 
 
@@ -119,7 +117,7 @@ for key, (label, _) in bulk_settings.items():
     # Create input widgets
     st.number_input(
         label, #this prints the label for what the number_input widget shows
-        key = key, #this loads the default value into the widget -> the key calls the defualt value from the session state
+        key = key, #this loads the default value into the widget -> the key calls the default value from the session state
         on_change = partial(on_change_bulk_setting, key) #using partial funciton because you can only pass a callable here, not a function call
         #if the user changes the value, then on_change_bulk_setting is called
     )
@@ -131,6 +129,6 @@ for key, (label, _) in bulk_settings.items():
 
 
 
-if st.button("🔄 Reset to module defaults (double click)"): #when user clicks reset button,
+if st.button("🔄 Reset to default bulk settings (double click)"): #when user clicks reset button,
     st.session_state["reset_bulk_flag"] = True #"reset_bulk_flag" is set to true in the session_state,
     # which triggers the if st.session_state["reset_bulk_flag"] function above

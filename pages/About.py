@@ -20,7 +20,7 @@ st.write("Use the Main Settings Page to select your planet or design a custom bo
 "See below for more information on Planet Profile.")
 st.markdown("---")
 
-st.subheader("Key Funcitonality")
+st.subheader("Key Functionality")
 st.write("Radial models of planetary interiors are generated from bulk properties based on geophysical models, lab data, and minimal assumptions")
 st.markdown("---")
 
