@@ -45,6 +45,7 @@ Params.SKIP_PLOTS = st.checkbox("Skip All Plots", value=getattr(Params, "SKIP_PL
 
 
 
+
 if not Params.SKIP_PLOTS:
     st.markdown("---")
     st.subheader("General Figure Settings")
@@ -80,6 +81,9 @@ if not Params.SKIP_PLOTS:
                 comment = comment.replace("plot", "Plot", 1)  # Capitalize the first "plot" only in the description
                 toggle_descriptions[param_name] = comment
 
+    # Ensure changed_inputs exists
+    if "changed_inputs" not in st.session_state:
+        st.session_state["changed_inputs"] = {}
 
     # Optional: You can provide nicer labels using a mapping or just auto-format them
     for attr in plot_attributes:
@@ -89,10 +93,20 @@ if not Params.SKIP_PLOTS:
         new_val = st.toggle(label, value=current_val) #saves whatever the user sets as
         updated_params[attr] = new_val
 
+        # Track changes in session_state["changed_inputs"]
+        key = f"Params.{attr}"
+        if new_val != current_val:
+            st.session_state["changed_inputs"][key] = new_val
+        elif key in st.session_state["changed_inputs"]:
+            # Remove from changed_inputs if reverted to original
+            del st.session_state["changed_inputs"][key]
+
+
+
 
     # Save back to configPP.py
     if st.button("Save Plot Settings"): #if user clicks the button
-        configPP_file_path = os.path.join(os.path.dirname(__file__), "../configPP.py") #this loads the path that configPP.py is in
+        configPP_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "configPP.py")) #this loads the absolute path that configPP.py is in
         with open(configPP_file_path, "r") as f: #opens configPP
             lines = f.readlines() #reads in configPP
 
