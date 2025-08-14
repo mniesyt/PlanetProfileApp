@@ -19,7 +19,7 @@ if not Planet:
 
 # Check if the planet is set to have no ocean by default
 planet_has_ocean = not getattr(Planet.Do, "NO_H2O", False) # Default to False if attribute doesn't exist
-
+#Initializing user_wants_ocean into session state
 if "user_wants_ocean" not in st.session_state:
     st.session_state["user_wants_ocean"] = planet_has_ocean
 
@@ -154,7 +154,7 @@ if user_wants_ocean:
         #This needs to get passed to Planet.Ocean.comp
         st.write(st.session_state["custom_ocean_comp"])
 
-        
+
 st.markdown("---")
 if st.button("🔄 Reset to default ocean (double click)"): #when user clicks reset button,
     st.session_state["reset_ocean_flag"] = True #"reset_ocean_flag" is set to true in the session_state,

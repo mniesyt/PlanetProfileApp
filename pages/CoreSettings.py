@@ -40,7 +40,20 @@ core_and_sil_defaults = {
     "Planet.Sil.rhoSilWithCore_kgm3" : Planet.Sil.rhoSilWithCore_kgm3
 }
 
-
+core_settings = {
+    key: (label, core_and_sil_defaults[key]) for key, label in {
+    "Planet.Do.Fe_CORE" : "Include an Iron Core?",
+    "Planet.Core.rhoFe_kgm3" : "Density of Iron (Fe), (kg/m³)",
+    "Planet.Core.rhoFeS_kgm3" : "Density of Iron Sulfide (FeS), (kg/m³)",
+    "Planet.Core.coreEOS" : "EOS file for the core",
+    "Planet.Core.QScore" : "Quality Factor Qs; describes how efficiently the core absorbs or dissipates energy",
+    "Planet.Core.wFe_ppt" : "Mass fraction of Iron in the core (ppt)",
+    "Planet.Core.rhoFeS_kgm3" : "Density of Iron Sulfide (FeS), (kg/m³)",
+    "Planet.Core.xFeSmeteoritic" : "Molar Fraction of Iron Sulfide (FeS), meteoritic",
+    "Planet.Core.xFeS" : "Molar Fraction of Iron Sulfide (FeS) in the core",
+    "Planet.Core.xFeCore" : "Molar Fraction of Iron (Fe)in the core",
+    "Planet.Core.xH2O" : "Molar Fraction of Water in the core"}.items()
+}
 
 #Initializing the changed_inputs to keep track of what variables the user has changed
 if "changed_core_settings_flags" not in st.session_state:
@@ -65,9 +78,6 @@ if "reset_core_flag" not in st.session_state:
 def on_change_core_setting(core_setting_key):
     st.session_state["changed_core_settings_flags"][core_setting_key] = True
     st.session_state["changed_core_settings"][core_setting_key] = st.session_state[core_setting_key]
-    st.write(st.session_state["changed_core_settings_flags"])
-    st.write(st.session_state["changed_core_settings"])
-
 
 # This block is only executed when the user clicks the “Reset” button.
 if st.session_state["reset_core_flag"]: #if flag is true (if user presses reset button)

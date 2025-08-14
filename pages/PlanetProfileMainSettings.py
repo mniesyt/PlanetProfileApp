@@ -5,8 +5,8 @@ import sys
 import reaktoro as rkt
 
 # --- Setting up Main Page ---
-st.set_page_config(page_title="Planet Profile Main")
-st.title("Planet Profile")
+st.set_page_config(page_title="PlanetProfile Main")
+st.title("PlanetProfile")
 st.set_page_config(page_icon="./PPlogo.ico")
 st.write("Let's Start by Setting Up Your Planet")
 st.markdown("---")

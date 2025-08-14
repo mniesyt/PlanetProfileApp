@@ -1,21 +1,21 @@
 import streamlit as st
 
-st.set_page_config(page_title = " Welcome to Planet Profile!")
+st.set_page_config(page_title = " Welcome to PlanetProfile!")
 st.set_page_config(page_icon = "./PPlogo.ico")
 
 
-st.title("Welcome to Planet Profile!")
+st.title("Welcome to PlanetProfile!")
 
 st.subheader("Getting Started")
-st.write("Planet Profile generates simulations of the interiors of planetary bodies. Navigate the tabs to the left to set up your planet.")
+st.write("PlanetProfile generates simulations of the interiors of planetary bodies. Navigate the tabs to the left to set up your planet.")
 st.markdown("---")
 
 st.subheader("Page Navigation")
 st.write("Use the Main Settings Page to select your planet or design a custom body.\n\n"
 "Designate properties such as the mass and radius on the Bulk Planetary Settings Page. \n\n"
 "Use the Ocean Settings page to configure your ocean by using a pre-defined ocean or setting your own salt species and concentrations. \n\n"
+"Configre the core and mantle of your planet with the  Core and Silicate Settings Page. \n\n"
 "Designate the granularity of your simulation with the Layer Step Settings page. \n\n"
-"Choose what figures you would like printed in the Figure Settings Page. \n\n"
 "Run your simulation on the final page, Run Planet Profile \n\n"
 "See below for more information on Planet Profile.")
 st.markdown("---")
