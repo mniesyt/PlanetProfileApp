@@ -354,34 +354,53 @@ if not pdf_files:
     st.stop()
 
 figure_dict = {}
+figure_types = {
+    "Gravity" : "Gravity and Pressure",
+    "Wedge" : "Interior Wedge Diagram",
+    "Hydrosphere" : "Hydrosphere Properties",
+    "CoreMantTrade" : "Silicate-Core Size Tradeoff",
+    "MantleDens" : "Silicate Radius-Density Handoff",
+    "Seismic" : "Seismic Properties",
+    "Viscosity" : "Viscosity",
+    "Porosity2axes": "Porosity with 2 axes",
+    "Porosity" : "Porosity"}
+
+
+
 for filename in pdf_files:
-    match = re.search(r'([A-Z][a-zA-Z0-9_]*)\.pdf$', filename)
-    if match:
-        label = match.group(1)
-    else:
-        label = filename[:-4] if filename.endswith('.pdf') else filename
-    figure_dict[label] = os.path.join(figures_folder, filename)
+    if filename.endswith('.pdf'):
+        name_only = filename[:-4]
+        matched_keyword = None
+
+        for keyword in figure_types:
+            if keyword in name_only:
+                matched_keyword = keyword
+                break
+
+        # Use descriptive title if available
+        label = figure_types.get(matched_keyword, matched_keyword if matched_keyword else name_only)
+        figure_dict[label] = os.path.join(figures_folder, filename)
 
 figure_labels = list(figure_dict.keys())
 tabs = st.tabs(figure_labels)
 
 #Below are descriptive captions for the figures
 captions = {
-    "Wedge": "Shows an interior wedge diagram showing the calculations of the radii of each planet layer",
-    "Gravity": "Gravitational acceleration (g) and Pressure profiles as a function of radius",
-    "Hydrosphere": (
+    "Interior Wedge Diagram": "Shows an interior wedge diagram showing the calculations of the radii of each planet layer",
+     "Gravity and Pressure": "Gravitational acceleration (g) and Pressure profiles as a function of radius",
+    "Hydrosphere Properties": (
         "Interior Properties- \n\n"
         "Left: Phase diagram as a funciton of pressure and density. \n\n"
         "Right(Top): Temperature profile across different depths.\n\n"
         "Right(center): Longitudinal (p-wave) sound velocity Vp for each layer in km/s and shear (s-wave) sound velocity Vs for each layer in km/s as a funciton of depth, \n\n"
         "Right(Bottom): Electrical conductivity as a funciton of depth"),
 
-    "CoreMantTrade": "Silicate–core size tradeoﬀ - Based on given Moment of Inertia, calculates all profiles of silicate and core size pairs that fit within that gien MOI. The one determined by Planet Profile to most closely match the given MOI is marked on the figure",
-    "MantleDens": "Silicate radius-density tradeoff - Based on given Moment of Inertia, calculates all profiles of silicate radii and densities that fit within that gien MOI. The one determined by Planet Profile to most closely match the given MOI is marked on the figure",
+    "Silicate-Core Size Tradeoff" : "Silicate–core size tradeoff - Based on given Moment of Inertia, calculates all profiles of silicate and core size pairs that fit within that gien MOI. The one determined by Planet Profile to most closely match the given MOI is marked on the figure",
+    "Silicate Radius-Density Handoff" : "Silicate radius-density tradeoff - Based on given Moment of Inertia, calculates all profiles of silicate radii and densities that fit within that gien MOI. The one determined by Planet Profile to most closely match the given MOI is marked on the figure",
     "Porosity" : "Left: Porosity as a funciton of depth. Right: Porosity as a funciton of pressure",
-    "Porosity2axes": "Displays Porosity both as a function of depth and as a funciton of pressure on one figure" ,
+    "Porosity with 2 axes": "Displays Porosity both as a function of depth and as a funciton of pressure on one figure" ,
     "Viscosity" : "Viscosity of the planet layers as a funciton of radius",
-    "Seismic" : (
+    "Seismic Properties" : (
         "Seismic Properties. \n\n"
         "Top Left - Bulk & shear moduli Ks & Gs as a function of radius. \n\n"
         "Top Right - Temperature, Pressure, and density as a funciton of radius. \n\n"
