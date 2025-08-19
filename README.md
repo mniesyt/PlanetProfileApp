@@ -11,6 +11,8 @@ GUI for PlanetProfile, found here: git@github.com:vancesteven/PlanetProfile.git
    ```
    $ pip install streamlit
    $ pip install pdf2image
+   $ pip install Pillow
+   $ pip install pandas
    $ conda install poppler  # if you're on macOS
    # On Windows, you’ll need to download Poppler from: https://github.com/oschwartz10612/poppler-windows,
    # Then add its /bin folder to your PATH.
