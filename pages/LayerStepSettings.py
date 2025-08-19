@@ -5,11 +5,12 @@ import sys
 import numpy as np
 from functools import partial
 from Utilities.planet_sidebar import show_planet_status
-show_planet_status()
 
+# ----- Streamlit Page Setup -----
+show_planet_status()
 st.set_page_config(page_title="Layer Step Settings")
-st.title("Layer Step Settings (Optional)")
-st.write("OPTIONAL -- Choose your Layer Step Settings Below. Step setings determine the granularity of your simulations. Large numbers of steps will provide a more detailed planet interior, but the simulation will take longer to run.")
+st.title("Layer Step Settings")
+st.write("Choose your Layer Step Settings Below. Step setings determine the granularity of your simulations. Large numbers of steps will provide a more detailed planet interior, but the simulation will take longer to run.")
 st.set_page_config(page_icon="./PPlogo.ico")
 
 # Get the planet name from the session state
@@ -18,6 +19,7 @@ if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
+# Dictionary to hold default step settings
 planet_step_defaults = {"Planet.Steps.nIceI": Planet.Steps.nIceI,
                         "Planet.Ocean.deltaP": Planet.Ocean.deltaP,
                         "Planet.Ocean.deltaT": Planet.Ocean.deltaT,
@@ -73,13 +75,13 @@ if st.session_state["reset_step_flag"]: #if flag is true (if user presses reset 
     st.session_state["reset_step_flag"] = False #reset_bulk_flag now is set to false
     st.rerun()  # 🔁 ensures Streamlit restarts before widgets render
 
-
+# Initializing the default values into the session state
 for key, setting in step_settings.items():
     if key not in st.session_state:
         st.session_state[key] = setting["default"]
 
 
-
+# Function to keep track of changes from defaults
 def on_change_step_setting(step_setting_key):
     st.session_state["changed_step_settings_flags"][step_setting_key] = True
     st.session_state["changed_step_settings"][step_setting_key] = st.session_state[step_setting_key]
@@ -89,7 +91,7 @@ for key, setting in step_settings.items():
     setting_name = key.split(".")[-1]
 
     st.subheader(setting["subheader"]) # this makes a subheader for each setting
-
+    #this creates the number inputs
     st.number_input(
         label=setting["label"],
         key=key,
@@ -102,7 +104,7 @@ for key, setting in step_settings.items():
     st.markdown("---")
 
 
-
+# Actual reset button widget at the bottom of the page
 if st.button("🔄 Reset to default step settings (double click)"): #when user clicks reset button,
     st.session_state["reset_step_flag"] = True #"reset_step_flag" is set to true in the session_state,
     # which triggers the if st.session_state["reset_step_flag"] function above

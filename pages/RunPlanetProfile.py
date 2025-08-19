@@ -4,9 +4,7 @@ import sys
 from pdf2image import convert_from_path
 from PIL import Image
 import re
-import tempfile
 import subprocess
-import time
 from Utilities.planet_sidebar import show_planet_status
 show_planet_status()
 from copy import deepcopy
@@ -196,7 +194,7 @@ for attr in dir(Params):
 #st.write("Updated CALC parameters in Params:", calc_attrs)
 
 
-# ----- Functions for reading PP terminal output tabulars and configuring them into tables ----
+# ----- Functions for reading PP terminal output LaTeX tabulars and configuring them into tables int he GUI ----
 
 def strip_ansi_codes(s):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*[a-zA-Z]')
@@ -312,7 +310,7 @@ if st.button("Run PlanetProfile with my Choices", type = "primary"):
                 st.subheader(title)
                 st.dataframe(df)
 
-    # Remove LaTeX tables from the output
+    # Remove LaTeX tables from the terminal output box, they just show up as tables above the box
     clean_output = remove_latex_tables(output_str)
 
     # Escape HTML characters for safe rendering
@@ -339,11 +337,9 @@ else:
 
 st.markdown("---")
 
+
+
 # ----- Figure Printing in Streamlit -----
-
-
-
-
 
 st.subheader("Figures Produced by PlanetProfile will Appear Below")
 
@@ -353,7 +349,9 @@ if not pdf_files:
     st.warning(f"No figure PDFs found in: {figures_folder}")
     st.stop()
 
-figure_dict = {}
+figure_dict = {} #empty so we can update it later
+
+# This dictionary is used to parse the figure file names and link them to figure titles in the GUI
 figure_types = {
     "Gravity" : "Gravity and Pressure",
     "Wedge" : "Interior Wedge Diagram",
@@ -366,7 +364,7 @@ figure_types = {
     "Porosity" : "Porosity"}
 
 
-
+# This does the actual parsing of the figure file names
 for filename in pdf_files:
     if filename.endswith('.pdf'):
         name_only = filename[:-4]
@@ -377,14 +375,14 @@ for filename in pdf_files:
                 matched_keyword = keyword
                 break
 
-        # Use descriptive title if available
+        # Uses slightly more descriptive title from the figure_types dictionary above
         label = figure_types.get(matched_keyword, matched_keyword if matched_keyword else name_only)
         figure_dict[label] = os.path.join(figures_folder, filename)
 
 figure_labels = list(figure_dict.keys())
 tabs = st.tabs(figure_labels)
 
-#Below are descriptive captions for the figures
+#Below are descriptive captions for the figures, linked via dictionary to the titles for those figures
 captions = {
     "Interior Wedge Diagram": "Shows an interior wedge diagram showing the calculations of the radii of each planet layer",
      "Gravity and Pressure": "Gravitational acceleration (g) and Pressure profiles as a function of radius",
@@ -406,12 +404,10 @@ captions = {
         "Top Right - Temperature, Pressure, and density as a funciton of radius. \n\n"
         "Bottom Left - Sound speeds Vp and Vs as a function of radius. \n\n"
         "Bottom Right - Seismic quality factor Qs as a funciton of raidus")
-
-
 }
 
 
-
+# This actually prints the figures in the GUI with the titles, tabs, and captions
 for tab, label in zip(tabs, figure_labels):
     with tab:
         pdf_path = figure_dict[label]

@@ -5,8 +5,9 @@ import re
 from Utilities.planet_sidebar import show_planet_status
 from functools import partial
 from PIL import Image
-show_planet_status()
 
+# ----- Streamlit Page Setup -----
+show_planet_status()
 st.set_page_config(page_title="Core and Silicate Settings")
 st.title("Core and Silicate Settings")
 st.set_page_config(page_icon="./PPlogo.ico")
@@ -19,7 +20,7 @@ if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
-
+# Dictionary of core and silicate defaults
 core_and_sil_defaults = {
     "Planet.Do.Fe_CORE" : Planet.Do.Fe_CORE,
     "Planet.Core.rhoFe_kgm3" : Planet.Core.rhoFe_kgm3,
@@ -40,6 +41,10 @@ core_and_sil_defaults = {
     "Planet.Sil.rhoSilWithCore_kgm3" : Planet.Sil.rhoSilWithCore_kgm3
 }
 
+# Core Settings dictionary
+# e.g. "Planet.Core.rhoFe_kgm3" : ("Density of Iron (Fe), (kg/m³)", 6.378e6),
+# the keys are the same as in core_and_sil_defaults (core_and_sil), the 'value' is (label, value) with label
+# being the string listed (e.g. "Density of Iron (Fe), (kg/m³)") and value being the default value from core_and_sil_defaults (e.g. planet_module.Planet.Core.rhoFe_kgm3)
 core_settings = {
     key: (label, core_and_sil_defaults[key]) for key, label in {
     "Planet.Do.Fe_CORE" : "Include an Iron Core?",
@@ -98,7 +103,7 @@ st.write("If you choose not to include an iron core, your planet's core will be 
 
 user_do_core_flag = st.toggle("Does your planet have a core?", key = "Planet.Do.Fe_CORE", on_change = partial(on_change_core_setting, "Planet.Do.Fe_CORE"))
 
-
+# Wedge images of core/no core from test runs 6 and 7
 st.write("The following wedge diagrams show the difference of including an iron core or not on the planet interior. If an iron core is diabled, then silicates populate the entire planet core.")
 # Diagram to show different wedges with/without core
 no_core_wedge = Image.open('wedgenocore.png')
@@ -124,6 +129,7 @@ eos_folder = os.path.abspath(
 eos_files = [f for f in os.listdir(eos_folder) if f.endswith(".tab")]
 eos_descriptions = [f for f in os.listdir(eos_folder) if f.endswith(".txt")]
 
+# mapping of EOS files to their readme descriptions made by Mohit
 eos_mapping = {
     "CI_undifferentiated_hhph_DEW17_nofluid_nomelt_685.tab" : "CI chondrite readme.txt",
     "Comet_67P_CG_v7_excluding_fluid_properties.tab" : "Comet 67PCG readme.txt",
@@ -132,6 +138,7 @@ eos_mapping = {
     "CV_undifferentiated_v4_687_DEW17_nofluid_nomelt_v2.tab" : "CV chondrite readme.txt"
 }
 
+# This reads the readmes into the GUI for users to see
 eos_info = {}
 for tab_file, txt_file in eos_mapping.items():
     txt_path = os.path.join(eos_folder, txt_file)
@@ -145,10 +152,10 @@ for tab_file, txt_file in eos_mapping.items():
 default_core_eos = getattr(Planet.Core, "coreEOS", "")
 default_mode = "Use Equation of State file" if default_core_eos else "Manually enter densities"
 
-# 2. Use session state or fall back to default_mode
+# This loads the chosen EOS or density choice from the session state or from the default for that planet
 use_eos_mode = st.session_state.get("use_core_definition", default_mode) # this adds the seletion of using EOS or manually entering desnities into session state or updates it into session state
 
-# 3. Get index for the selectbox based on current value
+# Gets the index for the selectbox based on current value
 eos_options = ["Use Equation of State file", "Manually enter densities"]
 use_eos_default_index = eos_options.index(use_eos_mode)
 
@@ -188,9 +195,9 @@ if user_do_core_flag:
 
         st.markdown("#### Manually Enter Core Densities")
         for var, label, default in [
-            ("Planet.Core.rhoFe_kgm3", "Density of Iron (Fe), (kg/m³)", Planet.Core.rhoFe_kgm3),
+            ("Planet.Core.rhoFe_kgm3", "Density of Iron (Fe), (kg/m³)", Planet.Core.rhoFe_kgm3), # pulls default of densities from the planet
             ("Planet.Core.rhoFeS_kgm3", "Density of Iron Sulfide (FeS), (kg/m³)", Planet.Core.rhoFeS_kgm3)
-            #("Planet.Core.rhoPoFeFCC", "Density of PoFeFCC (kg/m³)", Planet.Core.rhoPoFeFCC)  --> Marshall started implementing this, but so far it is never actually used for anything
+            #("Planet.Core.rhoPoFeFCC", "Density of PoFeFCC (kg/m³)", Planet.Core.rhoPoFeFCC)  --> Marshall started implementing this, but so far it is never actually used for anything according to Scott
         ]:
             val = st.number_input(
             label,
@@ -271,6 +278,7 @@ Qrad = st.number_input("Average radiogenic heating rate for silicates in W/kg.",
 
 
 # Diagrams of wedges with/without porosity enabled
+# Using test wedges 1 and 11
 st.write("The following wedge diagrams show the difference of including porosity or not on the planet interior. If porosity is enabled, then water will populate the available porous holes in the silicate layers beneath the ocean (visible as a gradient beneath the ocean layer).")
 no_porous_wedge = Image.open('wedgenoporous.png')
 with_porous_wedge = Image.open('wedgewithporous.png')
@@ -283,13 +291,14 @@ with colb:
 # Rock porosity toggle
 porous_flag = st.toggle("Enable Porous Rock - If the rock is porous and you have an ocean, water from the ocean will be able to flow into the porous areas", key = "Planet.Do.POROUS_ROCK", on_change = partial(on_change_core_setting,"Planet.Do.POROUS_ROCK"))
 
-
+# If user wants porosity, then porosity settings appear
 if porous_flag:
     default_porosType = Planet.Sil.porosType
     poros_options = ['Han et al. 2014', 'Vitovtova et al. 2014', 'Chen et al. 2020'] #these are the current porosity models we have available. If we expect to have many more, we can add dynamic loading here.
 
 
-    phiRockMax_frac = st.number_input("Porosity (void fraction) of the rocks in vacuum.", key = "Planet.Sil.phiRockMax_frac", on_change = partial(on_change_core_setting,"Planet.Sil.phiRockMax_frac"))
+    phiRockMax_frac = st.number_input("Porosity (void fraction) of the rocks in vacuum. This is the expected value for core-less bodies, and porosity is modeled for a range around here to find a matching MoI. For bodies with a core, this is a fixed value for rock porosity at P=0.",
+        key = "Planet.Sil.phiRockMax_frac", on_change = partial(on_change_core_setting,"Planet.Sil.phiRockMax_frac"))
 
     Pclosure_MPa = st.number_input("Pressure threshold in MPa beyond which pores in silicates shut completely and porosity drops to zero, for use in Han et al. (2014) model.", key = "Planet.Sil.Pclosure_MPa", on_change = partial(on_change_core_setting,"Planet.Sil.Pclosure_MPa"))
     #st.selectbox requires using indexing for the default value that shows up in the selectbox, so this loop looks for the index of the default porosity model from the list and passes it to the selectbox
@@ -304,11 +313,7 @@ if porous_flag:
     index=default_index,
     on_change = partial(on_change_core_setting,"Planet.Sil.porosType"))
 
+# Actual reset button widget at the bottom of the page
 st.markdown("---")
 if st.button("🔄 Reset to default core  (double click)"):
     st.session_state["reset_core_flag"] = True
-
-
-#self.phiRockMax_frac = None # Porosity (void fraction) of the rocks in vacuum. This is the expected value for core-less bodies, and porosity is modeled for a range around here to find a matching MoI. For bodies with a core, this is a fixed value for rock porosity at P=0.
-#self.Pclosure_MPa = 350 # Pressure threshold in MPa beyond which pores in silicates shut completely and porosity drops to zero, for use in Han et al. (2014) model. See Saito et al. (2016) for evidence of values up to ~750 MPa: https://doi.org/10.1016/j.tecto.2016.03.044
-#self.porosType = 'Han2014'  # Porosity model to apply for silicates. Options are 'Han2014', 'Vitovtova2014', 'Chen2020'.

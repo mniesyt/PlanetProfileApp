@@ -5,8 +5,9 @@ import sys
 import numpy as np
 from functools import partial
 from Utilities.planet_sidebar import show_planet_status
-show_planet_status()
 
+# ----- Streamlit Page Setup -----
+show_planet_status()
 st.set_page_config(page_title="Bulk Planetary Settings")
 
 st.title("Bulk Planetary Settings")
@@ -92,8 +93,6 @@ if st.session_state["reset_bulk_flag"]: #if flag is true (if user presses reset 
 
 
 
-
-
 # This function is used to keep track of what settings the user has changed, so that the
 # code can print out what settings have been changed
 def on_change_bulk_setting(bulk_setting_key):
@@ -128,7 +127,7 @@ for key, (label, _) in bulk_settings.items():
     #setattr(Planet.Bulk, setting_name, current_value) #setattr(object, attribute, value) -> sets Planet.Bulk.setting_name to current_value
 
 
-
+# Actual reset button widget at the bottom of the page
 if st.button("🔄 Reset to default bulk settings (double click)"): #when user clicks reset button,
     st.session_state["reset_bulk_flag"] = True #"reset_bulk_flag" is set to true in the session_state,
     # which triggers the if st.session_state["reset_bulk_flag"] function above

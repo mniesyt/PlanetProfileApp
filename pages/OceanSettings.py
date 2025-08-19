@@ -3,8 +3,9 @@ import os
 import sys
 import re
 from Utilities.planet_sidebar import show_planet_status
-show_planet_status()
 
+# ----- Streamlit Page Setup -----
+show_planet_status()
 st.set_page_config(page_title="Ocean Settings")
 st.title("Ocean Settings")
 st.set_page_config(page_icon="./PPlogo.ico")
@@ -41,8 +42,7 @@ if st.session_state["reset_ocean_flag"]: #if flag is true (if user presses reset
 
 
 
-
-# Step 2: User toggle for whether they want to generate an ocean
+# ----- Toggle for Ocean/No ocean -----
 st.subheader("Include an Ocean for your Planet?")
 st.write("Determine whether your planet has a liquid water ocean.")
 
@@ -50,7 +50,6 @@ st.write("Determine whether your planet has a liquid water ocean.")
 # If the default is to have an ocean, then this is set to true and the rest of the ocean settings pop up
 user_wants_ocean = st.toggle("Include an ocean?",  value = st.session_state["user_wants_ocean"])
 st.session_state["user_wants_ocean"] = user_wants_ocean  # update session state with toggle value
-
 
 
 
@@ -117,10 +116,11 @@ if user_wants_ocean:
                 st.error(f"Failed to load database: {e}")
             st.markdown("---")
 
+        # User selection for which concentration units they want for their salts
         st.markdown("### Salt Concentration Settings")
         species_concentration_unit = st.selectbox("Choose Salt Species Concentration Units", ("absolute mol/kg", "relative ratios"))
 
-
+        # User can pick how many salt species they want here
         num_salts = st.number_input("Input number of salt species", min_value = 1)
         if species_concentration_unit == "relative ratios":
             Planet.Ocean.wOcean_ppt = st.number_input("Please input your desired parts per thousand (ppt) for you salts")
@@ -134,7 +134,7 @@ if user_wants_ocean:
         salt_conc_list = []
         st.markdown("---")
 
-        #Depending on how many salt species the user wants, they get an option to set each sepcies and their concentrations
+        # Depending on how many salt species the user wants, they get an option to set each sepcies and their concentrations
         for i in range(int(num_salts)):
             st.write(f"Salt Species {i + 1}")
             selected_species = st.selectbox(f"Select Salt Species {i + 1}", species, key=f"species_select_{i}")
@@ -143,18 +143,19 @@ if user_wants_ocean:
             salt_species_list.append(selected_species)
             salt_conc_list.append(concentration)
             st.markdown("---")
-
+        # This creates a summary of the salt configuration and lets the user name their solution
         if salt_species_list and salt_conc_list:
             salt_string = ", ".join(f"{species}: {conc}" for species, conc in zip(salt_species_list, salt_conc_list)) # this is all to format the salts and concentrations properly for PP to use
             st.markdown("### Salt Configuration")
             st.write(f"Selected salt concentration unit: `{species_concentration_unit}`")
-            solution_name = st.text_input("Please name you custom ocean solution here (ex. MgSO4)") #user gets to pick how they want to name their ocean composition - this will get passed
+            solution_name = st.text_input("Please name you custom ocean solution here (ex. MgSO4)") #user gets to pick how they want to name their ocean composition - this will get passed to Planet Profile
 
+        #This produces the custom ocean composition string in the format that Planet Profile needs
         st.session_state["custom_ocean_comp"] = "CustomSolution" + solution_name + " = " + salt_string
-        #This needs to get passed to Planet.Ocean.comp
+        #This gets passed to Planet.Ocean.comp
         st.write(st.session_state["custom_ocean_comp"])
 
-
+# Actual reset button widget at the bottom of the page
 st.markdown("---")
 if st.button("🔄 Reset to default ocean (double click)"): #when user clicks reset button,
     st.session_state["reset_ocean_flag"] = True #"reset_ocean_flag" is set to true in the session_state,
