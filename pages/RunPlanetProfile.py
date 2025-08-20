@@ -5,41 +5,50 @@ from pdf2image import convert_from_path
 from PIL import Image
 import re
 import subprocess
-from Utilities.planet_sidebar import show_planet_status
-show_planet_status()
 from copy import deepcopy
 import pandas as pd
 import re
-
+from pathlib import Path
+from dataclasses import asdict, is_dataclass
+import pprint
 
 
 # ----- Page setup stuff -----
+from Utilities.planet_sidebar import show_planet_status
+show_planet_status()
 st.set_page_config(page_icon="./PPlogo.ico")
 st.set_page_config(page_title="Run PlanetProfile")
 st.title("Run PlanetProfile")
 st.subheader("Summary of Your Planet and Changes you have made from Defaults:")
 
-
-
-# Get the path to the current script's directory
-# /PlanetProfile/PlanetProfileApp/BulkPlanetarySettings.py
-RunPlanetProfile_directory = os.path.dirname(os.path.abspath(__file__))
-# Get the app directory (/PlanetProfile/PlanetProfileApp)
-app_directory = os.path.dirname(RunPlanetProfile_directory)
-# Get the parent directory (/PlanetProfile)
-parent_directory  = os.path.dirname(app_directory)
-# Add the parent directory to Python's search path.
-if parent_directory not in sys.path:
-    sys.path.append(parent_directory)
-
+# ----- File Path management -----
 # Get the planet name from the session state
 Planet = st.session_state.get("Planet", None)
 if not Planet:
     st.error("Please Select a Planet on the Planet Profile Main Settings Page")
     st.stop()
 
+chosen_planet = st.session_state.get("ChosenPlanet", None)
 
-# ----- Changed Settings Summary -----
+# Get the path to the current script's directory
+# /PlanetProfile/PlanetProfileApp/RunPlanetProfile.py
+RunPlanetProfile_directory = os.path.dirname(os.path.abspath(__file__))
+
+# Get the app directory (/PlanetProfile/PlanetProfileApp)
+app_directory = os.path.dirname(RunPlanetProfile_directory)
+
+# Get the parent directory (/PlanetProfile)
+parent_directory  = os.path.dirname(app_directory)
+
+# Add the parent directory to Python's search path.
+if parent_directory not in sys.path:
+    sys.path.append(parent_directory)
+
+figures_folder = os.path.join(parent_directory, chosen_planet, "figures")
+
+
+
+# ----- Setting Up SemiCustomPlanet object and Module Saving  -----
 
 # This initializes the changed settings dictionaries in the event that the user did not visit that particular page
 for key in ["changed_bulk_settings_flags", "custom_ocean_flag", "changed_step_settings_flags", "changed_core_settings"]:
@@ -47,11 +56,26 @@ for key in ["changed_bulk_settings_flags", "custom_ocean_flag", "changed_step_se
         # For the boolean custom_ocean_flag, initialize as False; for the others, use empty dict
         st.session_state[key] = False if key == "custom_ocean_flag" else {}
 
+# Clean name and build module name if user is doing a SemiCustom run
+def sanitize_filename(name):
+    return re.sub(r"[^\w\-]", "_", name)
 
-chosen_planet = st.session_state.get("ChosenPlanet", None)
+# Serializes the attributes of SemiCustomPlanet into a .py file when users do a SemiCustom run
+def object_to_dict(obj):
+    if is_dataclass(obj):
+        return asdict(obj)
+    elif hasattr(obj, "__dict__"):
+        return {
+            key: object_to_dict(val)
+            for key, val in obj.__dict__.items()
+            if not key.startswith("_") and not callable(val)
+        }
+    else:
+        return obj
+
 
 # If the user has changed any inputs, we will create a semi-custom Planet object here to push their changes to
-# Check if *any* setting has been changed
+# Check if any setting has been changed
 any_changes_made = (
     st.session_state["custom_ocean_flag"]
     or any(st.session_state["changed_bulk_settings_flags"].values())
@@ -59,17 +83,46 @@ any_changes_made = (
     or any(st.session_state["changed_core_settings"].values())
 )
 
-# Conditionally create SemiCustomPlanet
+# Conditionally create SemiCustomPlanet if any settings have been changed and PPSemiCustomPlanet.py file for running
 if any_changes_made:
     SemiCustomPlanet = deepcopy(Planet)
-    st.markdown("### Creating modified Planet based on user settings...")
+
+    # Default name suggestion
+    default_name = "SemiCustom" + chosen_planet
+
+    # User names their semi custom planet here
+    custom_planet_name = st.text_input("Enter a name for your modified planet (Hint: name it something that will help you identify what settings you have changed): ", value=default_name)
+
+
+    # Full target directory: /PlanetProfile/<planet_name>
+    planet_folder = os.path.join(parent_directory, chosen_planet)
+    os.makedirs(planet_folder, exist_ok=True)
+
+    # Create module name
+    sanitized_name = sanitize_filename(custom_planet_name)
+    module_filename = f"PPSemiCustom{sanitized_name}.py"
+
+    # Full output path
+    output_path = os.path.join(planet_folder, module_filename)
+
+    st.info("Creating PP" + custom_planet_name + ".py based on user settings at " + str(planet_folder) + " ...")
+
+    planet_data = object_to_dict(SemiCustomPlanet)
+
+    with open(output_path, "w") as f:
+        f.write("# Auto-generated SemiCustomPlanet module\n\n")
+        f.write(f"# Original planet: {chosen_planet}\n")
+        f.write(f"planet_name = '{sanitized_name}'\n\n")
+        f.write("planet_data = ")
+        pprint.pprint(planet_data, stream=f, width=120)
     st.markdown("---")
 else:
-    SemiCustomPlanet = Planet  # No changes, use original
+    SemiCustomPlanet = Planet  # No changes, use original Planet module
     st.info("No settings were modified. Running with default Planet.")
     st.markdown("---")
 
-figures_folder = os.path.join(parent_directory, chosen_planet, "figures")
+
+
 
 
 # This is used to set attributes to the planet object when the settings aren't all the same subtype (step settings has both Planet.Steps and Planet.Ocean, core settings has Planet.Core and Planet.Sil)
@@ -83,12 +136,12 @@ def set_nested_attr(obj, attr_path, value):
         obj = getattr(obj, part)
     setattr(obj, parts[-1], value)
 
-    # Debug print
-    full_path = ".".join(parts)
-    st.write(f"Updated `SemiCustomPlanet.{full_path}` to `{value}`")
-    print(f"Updated SemiCustomPlanet.{full_path} = {value}")
+    # Debug print - used to test and check that the SemiCustomPlanet object has been updated with the changed settings
+    #full_path = ".".join(parts)
+    #st.write(f"Updated `SemiCustomPlanet.{full_path}` to `{value}`")
+    #print(f"Updated SemiCustomPlanet.{full_path} = {value}")
 
-# ----- Summary of Changes Made and Updating of SemiCustomPlanet with new changes -----
+# ----- Changed Settings Summary and Updating of SemiCustomPlanet with new changes -----
 if any_changes_made:
 
     # ----- Changed Bulk Settings Summary -----
@@ -374,7 +427,6 @@ st.markdown("---")
 
 
 # ----- Figure Printing in Streamlit -----
-
 st.subheader("Figures Produced by PlanetProfile will Appear Below")
 
 pdf_files = [f for f in os.listdir(figures_folder) if f.endswith(".pdf")]
