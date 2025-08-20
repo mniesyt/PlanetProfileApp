@@ -60,6 +60,9 @@ step_settings = {
         "description": "Guessed maximum pressure of the hydrosphere in MPa. Must be greater than the actual pressure, but ideally not by much."
     }
 }
+if "step_settings" not in st.session_state:
+    st.session_state["step_settings"] = step_settings
+
 #initializing the reset_bulk_flag in the session state as False
 if "reset_step_flag" not in st.session_state:
     st.session_state["reset_step_flag"] = False

@@ -72,9 +72,25 @@ else:
 figures_folder = os.path.join(parent_directory, chosen_planet, "figures")
 
 
+# This is used to set attributes to the planet object when the settings aren't all the same subtype (step settings has both Planet.Steps and Planet.Ocean, core settings has Planet.Core and Planet.Sil)
+def set_nested_attr(obj, attr_path, value):
+    """
+    Recursively sets a nested attribute given a dotted path.
+    E.g. set_nested_attr(obj, "Steps.nIceI", 5) sets obj.Steps.nIceI = 5
+    """
+    parts = attr_path.split(".")
+    for part in parts[:-1]:
+        obj = getattr(obj, part)
+    setattr(obj, parts[-1], value)
+
+    # Debug print
+    full_path = ".".join(parts)
+    st.write(f"Updated `SemiCustomPlanet.{full_path}` to `{value}`")
+    print(f"Updated SemiCustomPlanet.{full_path} = {value}")
 
 # ----- Summary of Changes Made and Updating of SemiCustomPlanet with new changes -----
 if any_changes_made:
+
     # ----- Changed Bulk Settings Summary -----
     st.markdown("## Custom Bulk Settings Applied")
     # If the user has changed any bulk planetary settings, they will be updated into the SemiCustomPlanet object here
@@ -116,17 +132,32 @@ if any_changes_made:
     # ----- Changed Layer Step Settings Summary -----
     st.markdown("## Custom Layer Step Settings Applied")
     # If the user has changed any layer step settings, they will be updated into the SemiCustomPlanet object here and printed for the user
-    if any(st.session_state["changed_step_settings_flags"].values()):
-        st.warning("You have changed the following settings from the defaults: ")
-        for key, changed in st.session_state["changed_step_settings_flags"].items():
+    for key, new_val in st.session_state.get("changed_step_settings", {}).items():
+        # Remove the "Planet." prefix to get the attribute path
+        attr_path = key.replace("Planet.", "", 1)
+
+        # Set the value in SemiCustomPlanet
+        set_nested_attr(SemiCustomPlanet, attr_path, new_val)
+
+    changed_flags = st.session_state.get("changed_step_settings_flags", {})
+    changed_settings = st.session_state.get("changed_step_settings", {})
+
+    if any(changed_flags.values()):
+        st.warning("You have changed the following settings from the defaults:")
+
+        for key, changed in changed_flags.items():
             if changed:
-                label = step_settings[key]["label"]
+                new_val = changed_settings.get(key, "N/A")
+                default_val = st.session_state.get(key, "N/A")  # Default was stored here at init
+
+                # Strip just the final part of the setting name
                 setting_name = key.split(".")[-1]
-                default_val = step_settings[key]["default"]
-                new_val = st.session_state["changed_step_settings"][key]
-                st.markdown(f"- **{label}** (`{setting_name}`): `{default_val}` → `{new_val}`")
+
+                st.markdown(f"- `{setting_name}`: `{default_val}` → `{new_val}`")
     else:
         st.info("No step settings have been changed. All values are defaults.")
+
+
     st.markdown("---")
 
     # ----- Changed Core and Silicates Settings Summary -----
@@ -158,6 +189,9 @@ if any_changes_made:
                     core_default_val = "N/A"
 
                 st.markdown(f"- **{core_setting_name}**: `{core_default_val}` → `{core_new_val}`")
+                # Apply new value to SemiCustomPlanet
+                attr_path = key.replace("Planet.", "", 1)
+                set_nested_attr(SemiCustomPlanet, attr_path, core_new_val)
     else:
         st.info("No core or silicate settings have been changed. All values are defaults.")
     st.markdown("---")
@@ -194,7 +228,7 @@ for attr in dir(Params):
 #st.write("Updated CALC parameters in Params:", calc_attrs)
 
 
-# ----- Functions for reading PP terminal output LaTeX tabulars and configuring them into tables int he GUI ----
+# ----- Functions for reading PP terminal output LaTeX tabulars and configuring them into tables in the GUI ----
 
 def strip_ansi_codes(s):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*[a-zA-Z]')
