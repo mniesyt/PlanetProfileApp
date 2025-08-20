@@ -11,7 +11,7 @@ import re
 from pathlib import Path
 from dataclasses import asdict, is_dataclass
 import pprint
-
+import shutil
 
 # ----- Page setup stuff -----
 from Utilities.planet_sidebar import show_planet_status
@@ -60,18 +60,6 @@ for key in ["changed_bulk_settings_flags", "custom_ocean_flag", "changed_step_se
 def sanitize_filename(name):
     return re.sub(r"[^\w\-]", "_", name)
 
-# Serializes the attributes of SemiCustomPlanet into a .py file when users do a SemiCustom run
-def object_to_dict(obj):
-    if is_dataclass(obj):
-        return asdict(obj)
-    elif hasattr(obj, "__dict__"):
-        return {
-            key: object_to_dict(val)
-            for key, val in obj.__dict__.items()
-            if not key.startswith("_") and not callable(val)
-        }
-    else:
-        return obj
 
 
 # If the user has changed any inputs, we will create a semi-custom Planet object here to push their changes to
@@ -82,6 +70,82 @@ any_changes_made = (
     or any(st.session_state["changed_step_settings_flags"].values())
     or any(st.session_state["changed_core_settings"].values())
 )
+
+# Writs a PPSemiCustom.py file
+def write_full_planet_module(output_path, planet_name, semi_custom_obj):
+    with open(output_path, "w") as f:
+        # Header and imports
+        f.write(f'"""\nPPSemiCustom{planet_name}\nAuto-generated semi-custom planet module.\n"""\n\n')
+        f.write("import numpy as np\n")
+        f.write("from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants\n\n")
+        f.write(f"Planet = PlanetStruct('{planet_name}')\n\n")
+
+        # Traverse attributes
+        for category_name in dir(semi_custom_obj):
+            if category_name.startswith("_"):
+                continue  # skip private/built-in attributes
+
+            category_obj = getattr(semi_custom_obj, category_name)
+
+            # If it's a nested struct (e.g. Planet.Bulk, Planet.Ocean)
+            if hasattr(category_obj, "__dict__"):
+                for attr_name, attr_value in vars(category_obj).items():
+                    # Format and write the line
+                    value_repr = f"'{attr_value}'" if isinstance(attr_value, str) else repr(attr_value)
+                    f.write(f"Planet.{category_name}.{attr_name} = {value_repr}\n")
+
+        f.write("\n# End of auto-generated module\n")
+
+def sanitize_filename(name):
+    """Sanitize the filename by replacing invalid characters with underscores."""
+    return re.sub(r'\W|^(?=\d)', '_', name)
+
+
+def get_changed_attributes(semi_custom_planet, original_planet, prefix=''):
+    """
+    Recursively compare attributes of two PlanetStruct-like objects.
+    Return a flat dictionary of changed attributes as {"Bulk.Tsurf_K": new_value}
+    """
+    changes = {}
+    for attr in dir(semi_custom_planet):
+        if attr.startswith("__") or callable(getattr(semi_custom_planet, attr)):
+            continue
+        semi_val = getattr(semi_custom_planet, attr)
+        orig_val = getattr(original_planet, attr, None)
+
+        if hasattr(semi_val, "__dict__") and hasattr(orig_val, "__dict__"):
+            # Recurse into nested structs
+            nested_changes = get_changed_attributes(semi_val, orig_val, prefix + attr + ".")
+            changes.update(nested_changes)
+        else:
+            if semi_val != orig_val:
+                changes[prefix + attr] = semi_val
+    return changes
+
+def update_lines_with_changes_and_values(original_lines, changes_dict):
+    """
+    Update lines in the original module with new values from the changes_dict.
+    If a line is changed, append an inline comment noting the change.
+    """
+    updated_lines = []
+    for line in original_lines:
+        stripped = line.strip()
+
+        if stripped.startswith("Planet.") and "=" in stripped:
+            lhs, rhs = stripped.split("=", 1)
+            attr_path = lhs.replace("Planet.", "").strip()
+
+            if attr_path in changes_dict:
+                new_val = changes_dict[attr_path]
+                formatted_val = repr(new_val)
+                updated_line = f"{lhs.strip()} = {formatted_val}  # This setting has been changed from the default value\n"
+                updated_lines.append(updated_line)
+                continue
+
+        updated_lines.append(line)
+
+    return updated_lines
+
 
 # Conditionally create SemiCustomPlanet if any settings have been changed and PPSemiCustomPlanet.py file for running
 if any_changes_made:
@@ -100,21 +164,40 @@ if any_changes_made:
 
     # Create module name
     sanitized_name = sanitize_filename(custom_planet_name)
-    module_filename = f"PPSemiCustom{sanitized_name}.py"
+    module_filename = f"PP{sanitized_name}.py"
 
     # Full output path
     output_path = os.path.join(planet_folder, module_filename)
 
     st.info("Creating PP" + custom_planet_name + ".py based on user settings at " + str(planet_folder) + " ...")
 
-    planet_data = object_to_dict(SemiCustomPlanet)
+    # Load original module file (e.g., PPEnceladus.py)
+    original_path = os.path.join(planet_folder, f"PP{chosen_planet}.py")
+    with open(original_path, "r") as f:
+        original_lines = f.readlines()
 
+  # Compute diffs
+    changes = get_changed_attributes(SemiCustomPlanet, Planet)
+
+    # Update only changed lines with new values and inline comment
+    updated_lines = update_lines_with_changes_and_values(original_lines, changes)
+
+    # Write new file
     with open(output_path, "w") as f:
-        f.write("# Auto-generated SemiCustomPlanet module\n\n")
-        f.write(f"# Original planet: {chosen_planet}\n")
-        f.write(f"planet_name = '{sanitized_name}'\n\n")
-        f.write("planet_data = ")
-        pprint.pprint(planet_data, stream=f, width=120)
+        f.writelines(updated_lines)
+
+    st.success(f"Semi-custom module saved as: {module_filename}")
+
+    #from Utilities.WriteSemiCustomPlanetModule import write_semi_custom_planet_module
+    #from Utilities.WriteSemiCustomPlanetModule import values_are_different
+    #write_semi_custom_planet_module(
+    #output_path = output_path,
+    #planet_name = chosen_planet,
+    #base_planet = Planet,
+    #semi_custom_planet = SemiCustomPlanet,
+    #custom_name = custom_planet_name
+#)
+
     st.markdown("---")
 else:
     SemiCustomPlanet = Planet  # No changes, use original Planet module
@@ -362,6 +445,13 @@ def remove_latex_tables(raw_text):
 
 # ----- Run Planet Profile Button and Outputs -----
 
+# Determine which module to run
+if any_changes_made:
+    module_to_run = f"{sanitize_filename(custom_planet_name)}"
+else:
+    module_to_run = chosen_planet  # e.g., PPEuropa
+
+
 if st.button("Run PlanetProfile with my Choices", type = "primary"):
     with st.spinner("Pushing your settings to PlanetProfile..."):
 
@@ -371,7 +461,7 @@ if st.button("Run PlanetProfile with my Choices", type = "primary"):
         st.success(f"Running PlanetProfileCLI.py from: {parent_dir}")
 
         # Command to actually run PlanetProfile
-        command = ["python", "PlanetProfileCLI.py", str(chosen_planet)]
+        command = ["python", "PlanetProfileCLI.py", str(module_to_run)]
 
         result = subprocess.run(command, cwd=parent_dir, capture_output=True, text=True)
         output_str = result.stdout + "\n" + result.stderr
