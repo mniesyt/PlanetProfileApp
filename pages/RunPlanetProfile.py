@@ -71,80 +71,13 @@ any_changes_made = (
     or any(st.session_state["changed_core_settings"].values())
 )
 
-# Writs a PPSemiCustom.py file
-def write_full_planet_module(output_path, planet_name, semi_custom_obj):
-    with open(output_path, "w") as f:
-        # Header and imports
-        f.write(f'"""\nPPSemiCustom{planet_name}\nAuto-generated semi-custom planet module.\n"""\n\n')
-        f.write("import numpy as np\n")
-        f.write("from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants\n\n")
-        f.write(f"Planet = PlanetStruct('{planet_name}')\n\n")
 
-        # Traverse attributes
-        for category_name in dir(semi_custom_obj):
-            if category_name.startswith("_"):
-                continue  # skip private/built-in attributes
-
-            category_obj = getattr(semi_custom_obj, category_name)
-
-            # If it's a nested struct (e.g. Planet.Bulk, Planet.Ocean)
-            if hasattr(category_obj, "__dict__"):
-                for attr_name, attr_value in vars(category_obj).items():
-                    # Format and write the line
-                    value_repr = f"'{attr_value}'" if isinstance(attr_value, str) else repr(attr_value)
-                    f.write(f"Planet.{category_name}.{attr_name} = {value_repr}\n")
-
-        f.write("\n# End of auto-generated module\n")
 
 def sanitize_filename(name):
     """Sanitize the filename by replacing invalid characters with underscores."""
     return re.sub(r'\W|^(?=\d)', '_', name)
 
 
-def get_changed_attributes(semi_custom_planet, original_planet, prefix=''):
-    """
-    Recursively compare attributes of two PlanetStruct-like objects.
-    Return a flat dictionary of changed attributes as {"Bulk.Tsurf_K": new_value}
-    """
-    changes = {}
-    for attr in dir(semi_custom_planet):
-        if attr.startswith("__") or callable(getattr(semi_custom_planet, attr)):
-            continue
-        semi_val = getattr(semi_custom_planet, attr)
-        orig_val = getattr(original_planet, attr, None)
-
-        if hasattr(semi_val, "__dict__") and hasattr(orig_val, "__dict__"):
-            # Recurse into nested structs
-            nested_changes = get_changed_attributes(semi_val, orig_val, prefix + attr + ".")
-            changes.update(nested_changes)
-        else:
-            if semi_val != orig_val:
-                changes[prefix + attr] = semi_val
-    return changes
-
-def update_lines_with_changes_and_values(original_lines, changes_dict):
-    """
-    Update lines in the original module with new values from the changes_dict.
-    If a line is changed, append an inline comment noting the change.
-    """
-    updated_lines = []
-    for line in original_lines:
-        stripped = line.strip()
-
-        if stripped.startswith("Planet.") and "=" in stripped:
-            lhs, rhs = stripped.split("=", 1)
-            attr_path = lhs.replace("Planet.", "").strip()
-
-            if attr_path in changes_dict:
-                new_val = changes_dict[attr_path]
-                formatted_val = repr(new_val)
-                updated_line = f"{lhs.strip()} = {formatted_val}  # This setting has been changed from the default value\n"
-                updated_lines.append(updated_line)
-                continue
-
-        updated_lines.append(line)
-
-    return updated_lines
 
 
 # Conditionally create SemiCustomPlanet if any settings have been changed and PPSemiCustomPlanet.py file for running
@@ -176,27 +109,10 @@ if any_changes_made:
     with open(original_path, "r") as f:
         original_lines = f.readlines()
 
-  # Compute diffs
-    changes = get_changed_attributes(SemiCustomPlanet, Planet)
-
-    # Update only changed lines with new values and inline comment
-    updated_lines = update_lines_with_changes_and_values(original_lines, changes)
-
-    # Write new file
-    with open(output_path, "w") as f:
-        f.writelines(updated_lines)
 
     st.success(f"Semi-custom module saved as: {module_filename}")
 
-    #from Utilities.WriteSemiCustomPlanetModule import write_semi_custom_planet_module
-    #from Utilities.WriteSemiCustomPlanetModule import values_are_different
-    #write_semi_custom_planet_module(
-    #output_path = output_path,
-    #planet_name = chosen_planet,
-    #base_planet = Planet,
-    #semi_custom_planet = SemiCustomPlanet,
-    #custom_name = custom_planet_name
-#)
+
 
     st.markdown("---")
 else:
@@ -225,6 +141,9 @@ def set_nested_attr(obj, attr_path, value):
     #print(f"Updated SemiCustomPlanet.{full_path} = {value}")
 
 # ----- Changed Settings Summary and Updating of SemiCustomPlanet with new changes -----
+changed_settings_for_SemiCustom = {}
+default_values_for_comments = {}  # For optional inline comment
+
 if any_changes_made:
 
     # ----- Changed Bulk Settings Summary -----
@@ -232,9 +151,13 @@ if any_changes_made:
     # If the user has changed any bulk planetary settings, they will be updated into the SemiCustomPlanet object here
     for key, changed in st.session_state["changed_bulk_settings_flags"].items():
         if changed:
-            setting_name = key.split(".")[-1]
-            value = st.session_state["changed_bulk_settings"][key]
-            setattr(SemiCustomPlanet.Bulk, setting_name, value)
+            attr = key.split(".")[-1]
+            val = st.session_state["changed_bulk_settings"][key]
+            setattr(SemiCustomPlanet.Bulk, attr, val)
+
+            full_key = f"Planet.Bulk.{attr}"
+            changed_settings_for_SemiCustom[full_key] = val
+            default_values_for_comments[full_key] = getattr(Planet.Bulk, attr, "N/A")
 
     # This prints out for the user any of the bulk planetary settings they have changed from the default here
     if any(st.session_state["changed_bulk_settings_flags"].values()):
@@ -260,6 +183,8 @@ if any_changes_made:
         custom_ocean_comp = st.session_state.get("custom_ocean_comp")
         st.write("Your current ocean configuration is: " + custom_ocean_comp)
         SemiCustomPlanet.Ocean.comp = custom_ocean_comp
+        changed_settings_for_SemiCustom["Planet.Ocean.comp"] = custom_ocean_comp
+        default_values_for_comments["Planet.Ocean.comp"] = getattr(Planet.Ocean, "comp", "N/A")
 
     if running_custom_ocean == False:
         st.info("No ocean settings have been changed. Using default ocean.")
@@ -271,9 +196,19 @@ if any_changes_made:
     for key, new_val in st.session_state.get("changed_step_settings", {}).items():
         # Remove the "Planet." prefix to get the attribute path
         attr_path = key.replace("Planet.", "", 1)
-
         # Set the value in SemiCustomPlanet
         set_nested_attr(SemiCustomPlanet, attr_path, new_val)
+        full_key = key  # e.g., Planet.Steps.nIceI
+        changed_settings_for_SemiCustom[full_key] = new_val
+
+        parts = attr_path.split(".")
+        default_obj = Planet
+        try:
+            for part in parts[:-1]:
+                default_obj = getattr(default_obj, part)
+            default_values_for_comments[full_key] = getattr(default_obj, parts[-1], "N/A")
+        except Exception:
+            default_values_for_comments[full_key] = "N/A"
 
     changed_flags = st.session_state.get("changed_step_settings_flags", {})
     changed_settings = st.session_state.get("changed_step_settings", {})
@@ -296,40 +231,77 @@ if any_changes_made:
 
     st.markdown("---")
 
-    # ----- Changed Core and Silicates Settings Summary -----
+    # ----- Changed Core and Silicate Settings Summary -----
     st.markdown("## Custom Core and Silicate Settings Applied")
-    # If the user has changed any core and silicate settings, they will be updated into the SemiCustomPlanet object here and printed for the user
+
     changed_core_settings = st.session_state.get("changed_core_settings", {})
-    #st.write(changed_core_settings)
+
     if changed_core_settings:
         st.warning("You have changed the following settings from the defaults:")
+
         for key, was_changed in st.session_state["changed_core_settings_flags"].items():
             if was_changed:
-                core_setting_name = key.split(".")[-1]
-                core_new_val = st.session_state["changed_core_settings"][key]
+                new_val = st.session_state["changed_core_settings"][key]
+                full_key = key  # e.g., Planet.Core.wFe_ppt
 
-                # All of this extra stuff is because Planet.Core deoesn't encompass everything - there is Planet.Sil and Planet.Do in the core settings attributes
-                # Extract object path from key
-                parts = key.split(".")  # ["Planet", "Core", "wFe_ppt"]
-
-                # Start from Planet
-                obj = Planet
-                try:
-                    # Walk through the object path dynamically
-                    for part in parts[1:-1]:  # skip "Planet", stop before last part (attribute name)
-                        obj = getattr(obj, part)
-
-                        # Get the attribute value (or use "N/A" if missing)
-                    core_default_val = getattr(obj, core_setting_name, "N/A")
-                except AttributeError:
-                    core_default_val = "N/A"
-
-                st.markdown(f"- **{core_setting_name}**: `{core_default_val}` → `{core_new_val}`")
-                # Apply new value to SemiCustomPlanet
+                # Apply to runtime object
                 attr_path = key.replace("Planet.", "", 1)
-                set_nested_attr(SemiCustomPlanet, attr_path, core_new_val)
+                set_nested_attr(SemiCustomPlanet, attr_path, new_val)
+
+                # Store in changed settings
+                changed_settings_for_SemiCustom[full_key] = new_val
+
+                # Get default value for inline comment
+                parts = attr_path.split(".")
+                default_obj = Planet
+                try:
+                    for part in parts[:-1]:
+                        default_obj = getattr(default_obj, part)
+                    default_val = getattr(default_obj, parts[-1], "N/A")
+                except Exception:
+                    default_val = "N/A"
+
+                default_values_for_comments[full_key] = default_val
+
+                # For display
+                setting_name = parts[-1]
+                st.markdown(f"- **{setting_name}**: `{default_val}` → `{new_val}`")
+
     else:
         st.info("No core or silicate settings have been changed. All values are defaults.")
+    st.markdown("---")
+
+    #- ----- Actually updates and writes the PPSemiCustomPlanet.py file -----
+    # --- Load and Modify Lines from Original File ---
+    with open(original_path, "r") as f:
+        original_lines = f.readlines()
+
+    updated_lines = []
+    for line in original_lines:
+        updated = False
+        for full_key, new_val in changed_settings_for_SemiCustom.items():
+            pattern = rf"^\s*{re.escape(full_key)}\s*="
+
+            if re.match(pattern, line):
+                # Format new value
+                if isinstance(new_val, str):
+                    new_val_str = f'"{new_val}"'
+                elif isinstance(new_val, bool):
+                    new_val_str = str(new_val)
+                else:
+                    new_val_str = repr(new_val)
+
+                default_val = default_values_for_comments.get(full_key, "N/A")
+                line = f"{full_key} = {new_val_str}  # changed from default: {default_val}\n"
+                updated = True
+                break  # Move to next line
+        updated_lines.append(line)
+
+    # --- Write Updated File ---
+    with open(output_path, "w") as f:
+        f.writelines(updated_lines)
+
+    st.success(f"Custom planet module updated with your custom settings: `{module_filename}`")
     st.markdown("---")
 
 
