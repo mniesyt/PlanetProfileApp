@@ -9,8 +9,9 @@ core_settings = st.Page("pages/CoreSettings.py", title = "Core and Silicate Sett
 layer_step_settings = st.Page("pages/LayerStepSettings.py", title = "Layer Step Settings", icon = "📶")
 #figure_settings = st.Page("pages/FigureSettings.py", title = "Figure Settings", icon = "📈")
 run_PlanetProfile = st.Page("pages/RunPlanetProfile.py", title = "Run PlanetProfile", icon = "🚀")
+PlanetProfile_outputs = st.Page("pages/PlanetProfileOutputs.py", title = "PlanetProfile Outputs", icon = "📈")
 # Set up navigation
-pg = st.navigation([about, main_settings, bulk_planetary_settings, ocean_settings, core_settings, layer_step_settings, run_PlanetProfile])
+pg = st.navigation([about, main_settings, bulk_planetary_settings, ocean_settings, core_settings, layer_step_settings, run_PlanetProfile, PlanetProfile_outputs])
 
 # Run the selected page
 pg.run()
