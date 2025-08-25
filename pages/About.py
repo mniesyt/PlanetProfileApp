@@ -11,12 +11,14 @@ st.write("PlanetProfile generates simulations of the interiors of planetary bodi
 st.markdown("---")
 
 st.subheader("Page Navigation")
-st.write("Use the Main Settings Page to select your planet or design a custom body.\n\n"
-"Designate properties such as the mass and radius on the Bulk Planetary Settings Page. \n\n"
-"Use the Ocean Settings page to configure your ocean by using a pre-defined ocean or setting your own salt species and concentrations. \n\n"
-"Configre the core and mantle of your planet with the  Core and Silicate Settings Page. \n\n"
-"Designate the granularity of your simulation with the Layer Step Settings page. \n\n"
-"Run your simulation on the final page, Run Planet Profile \n\n"
+st.markdown(
+" - Use the Main Settings Page to select your planet or design a custom body.\n\n"
+" - Designate properties such as the mass and radius on the Bulk Planetary Settings Page. \n\n"
+" - Use the Ocean Settings page to configure your ocean by using a pre-defined ocean or setting your own salt species and concentrations. \n\n"
+" - Configure the core and mantle of your planet with the  Core and Silicate Settings Page. \n\n"
+" - Designate the granularity of your simulation with the Layer Step Settings page. \n\n"
+" - Run your simulation on the Run PlanetProfile page \n\n"
+" - View figure outputs and tables on the PlanetProfile Outputs page \n\n"
 "See below for more information on Planet Profile.")
 st.markdown("---")
 

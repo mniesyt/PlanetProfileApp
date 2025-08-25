@@ -7,8 +7,11 @@ import reaktoro as rkt
 # --- Setting up Main Page ---
 st.set_page_config(page_title="PlanetProfile Main")
 st.title("PlanetProfile")
+st.markdown("---")
 st.set_page_config(page_icon="./PPlogo.ico")
-st.write("Let's Start by Setting Up Your Planet")
+st.write("## Let's Start by Setting Up Your Planet!")
+
+st.write("Note on custom planets - start with an existing planet as a template, and then edit your settings on the following pages.")
 st.markdown("---")
 
 # --- File Path Management ---
@@ -43,55 +46,55 @@ if "planet_selectbox" not in st.session_state:
 if "Planet" not in st.session_state:
     st.session_state["Planet"] = None
 
-if "run_custom_body" not in st.session_state:
-    st.session_state["run_custom_body"] = False
+#if "run_custom_body" not in st.session_state:
+    #st.session_state["run_custom_body"] = False
 
+
+# ----- Removing for now - fully custom planet option. User will instead start from a planet template because that will make it more likely that they will have a successful model ------
 # Option for user to select fully custom planet
-st.subheader("Run fully custom Planet?")
-st.write(
-    "Planet Profile has profiles of many moons ready for you to use. "
-    "If you want to create your own moon, check the box below. "
-    "Otherwise, choose from existing planetary bodies."
-)
+#st.subheader("Run fully custom Planet?")
+#st.write(
+    #"Planet Profile has profiles of many moons ready for you to use. "
+    #"If you want to create your own moon, check the box below. "
+    #"Otherwise, choose from existing planetary bodies."
+#)
+
 
 # Checkbox manages if the user wants to run a custom planet or not
-run_custom_body = st.checkbox("Create fully custom Planet?", value=st.session_state["run_custom_body"], key="run_custom_body")
+#run_custom_body = st.checkbox("Create fully custom Planet?", value=st.session_state["run_custom_body"], key="run_custom_body")
 
 # Custom Planet path
-if run_custom_body:
-    from Utilities.CustomPlanetGenerator import generate_custom_pp_template
-    st.session_state["ChosenPlanet"] = "Custom"
-    st.session_state["Planet"] = None  # Custom settings handled elsewhere
-    st.success("Using Custom Planet. Configure settings in other tabs.")
+#if run_custom_body:
+    #from Utilities.CustomPlanetGenerator import generate_custom_pp_template
+    #st.session_state["ChosenPlanet"] = "Custom"
+    #st.session_state["Planet"] = None  # Custom settings handled elsewhere
+    #st.success("Using Custom Planet. Configure settings in other tabs.")
     # Define folder and file paths (with capital 'Custom')
-    custom_dir = os.path.join(parent_directory, "PlanetProfile", "Default", "Custom")
-    custom_file = os.path.join(custom_dir, "PPCustom.py")
+    #custom_dir = os.path.join(parent_directory, "PlanetProfile", "Default", "Custom")
+    #custom_file = os.path.join(custom_dir, "PPCustom.py")
 
     # Create folder if it doesn't exist
-    if not os.path.exists(custom_dir):
-        os.makedirs(custom_dir)
-        st.info("Created 'Custom' folder for custom planet.")
+    #if not os.path.exists(custom_dir):
+        #os.makedirs(custom_dir)
+        #st.info("Created 'Custom' folder for custom planet.")
 
     # Create PPCustom.py with default contents if it doesn't exist
-    if not os.path.isfile(custom_file):
-        generate_custom_pp_template(parent_directory)
-        st.info("Created PPCustom.py with default custom planet config.")
+    #if not os.path.isfile(custom_file):
+        #generate_custom_pp_template(parent_directory)
+        #st.info("Created PPCustom.py with default custom planet config.")
 
 
+st.subheader("Body Selection")
+st.write("Please select a planetary body from the list of profiles below")
 
-else:
-    st.markdown("---")
-    st.subheader("Body Selection")
-    st.write("Please select a planetary body from the list of profiles below")
-
-    selected_planet = st.selectbox(
-        "Choose your Planetary Body:",
-        planet_list,
-        #index=planet_list.index(st.session_state["planet_selectbox"]),
-        key="planet_selectbox"
-    )
-    if selected_planet != "-- Select a Planet --":
-        st.session_state["ChosenPlanet"] = selected_planet
+selected_planet = st.selectbox(
+    "Choose your Planetary Body:",
+    planet_list,
+    #index=planet_list.index(st.session_state["planet_selectbox"]),
+    key="planet_selectbox"
+)
+if selected_planet != "-- Select a Planet --":
+    st.session_state["ChosenPlanet"] = selected_planet
 
 chosen_planet = st.session_state.get("ChosenPlanet", None)
 

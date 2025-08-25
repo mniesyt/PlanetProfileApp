@@ -2,6 +2,9 @@ import streamlit as st
 from pdf2image import convert_from_path
 import os
 import sys
+import pandas as pd
+import re
+from io import StringIO
 
 # ----- Page setup stuff -----
 from Utilities.planet_sidebar import show_planet_status
@@ -36,11 +39,13 @@ if parent_directory not in sys.path:
     sys.path.append(parent_directory)
 
 figures_folder = os.path.join(parent_directory, chosen_planet, "figures")
-
+planet_folder = os.path.join(parent_directory, chosen_planet)
 
 # ----- Figure Printing in Streamlit -----
-st.subheader("Figures Produced by PlanetProfile will Appear Below")
+st.subheader("Outputs Produced by PlanetProfile will Appear Below")
+st.markdown("---")
 
+st.write(f"# {chosen_planet} Figures")
 pdf_files = [f for f in os.listdir(figures_folder) if f.endswith(".pdf")]
 
 if not pdf_files:
@@ -115,3 +120,98 @@ for tab, label in zip(tabs, figure_labels):
 
             caption = captions.get(label, f"{label}")
             st.caption(f"**{caption}**")
+st.markdown("---")
+
+
+
+
+# ----- .txt. files loading for the GUI -----
+# Read all .txt files in the folder
+txt_files = [f for f in os.listdir(planet_folder) if f.endswith(".txt")]
+
+st.write(f"# {chosen_planet} text files")
+tab1, tab2, tab3 = st.tabs(["Ocean text File", "Core text File", "Profile text File"])
+
+for txt_file in txt_files:
+    file_path = os.path.join(planet_folder, txt_file)
+
+    if txt_file.endswith("Core.txt"):
+        core_column_names = ["RsilTrade (m)", "RcoreTrade (m)", "rhoSilTrade (kg/m³)"]
+        with open(file_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+        data_only = "".join(lines[1:])
+        df_core = pd.read_csv(StringIO(data_only), delim_whitespace=True, header=None)
+        df_core.columns = core_column_names
+
+        with tab2:
+            st.subheader(f"Core Data Table: {txt_file}")
+            st.dataframe(df_core, use_container_width=True)
+
+            st.subheader("Scatter Plot")
+            x_axis = st.selectbox("X-axis", df_core.columns, index=0, key=f"x_{txt_file}")
+            y_axis = st.selectbox("Y-axis", df_core.columns, index=2, key=f"y_{txt_file}")
+            st.scatter_chart(df_core[[x_axis, y_axis]])
+            st.markdown("---")
+
+    elif txt_file.endswith("liquidOceanProps.txt"):
+        with open(file_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+        header_lines = "".join(lines[1:4]).strip()
+        header_line = lines[4].strip()
+        column_names = re.split(r'\s{2,}|\t+', header_line)
+        data_lines = "".join(lines[5:])
+        df_ocean = pd.read_csv(StringIO(data_lines), sep=r'\s+', header=None)
+
+        with tab1:
+            st.subheader(f"Ocean File Header Info: {txt_file}")
+            with st.expander("Show Ocean Header (Lines 2–4)"):
+                st.code(header_lines)
+
+            if len(column_names) != df_ocean.shape[1]:
+                st.warning(f"⚠️ Column count mismatch: Header has {len(column_names)} columns, data has {df_ocean.shape[1]}")
+                df_ocean.columns = [f"Col_{i+1}" for i in range(df_ocean.shape[1])]
+            else:
+                df_ocean.columns = column_names
+
+            st.dataframe(df_ocean, use_container_width=True)
+            st.subheader("Scatter Plot")
+            x_axis = st.selectbox("X-axis", df_ocean.columns, key=f"ocean_x_{txt_file}")
+            y_axis = st.selectbox("Y-axis", df_ocean.columns, key=f"ocean_y_{txt_file}")
+            st.scatter_chart(df_ocean[[x_axis, y_axis]])
+            st.markdown("---")
+
+    else:
+        profile_column_names = [
+            "P (MPa)", "T (K)", "r (m)", "phase ID", "rho (kg/m3)",
+            "Cp (J/kg/K)", "alpha (1/K)", "g (m/s2)", "phi (void/solid frac)",
+            "sigma (S/m)", "k (W/m/K)", "VP (km/s)", "VS (km/s)", "QS",
+            "KS (GPa)", "GS (GPa)", "Ppore (MPa)", "rhoMatrix (kg/m3)",
+            "rhoPore (kg/m3)", "MLayer (kg)", "VLayer (m3)", "Htidal (W/m3)", "eta (Pa s)"
+        ]
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+        header_info = "".join(lines[:81]).strip()
+        data_str = "".join(lines[83:])
+        df_profile = pd.read_csv(StringIO(data_str), sep=r'\s+', header=None, na_values=['nan'])
+
+        with tab3:
+            st.subheader(f"Profile File: {txt_file}")
+            with st.expander("Show Extended Profile Header (Lines 1–81)"):
+                st.code(header_info)
+
+            if df_profile.shape[1] == len(profile_column_names):
+                df_profile.columns = profile_column_names
+            else:
+                st.warning(f"⚠️ Column mismatch: Expected {len(profile_column_names)} headers vs {df_profile.shape[1]} data columns")
+                df_profile.columns = [f"Col_{i+1}" for i in range(df_profile.shape[1])]
+
+            st.dataframe(df_profile, use_container_width=True)
+            st.subheader("Plot Profile Data")
+            x_axis = st.selectbox("X-axis", df_profile.columns, key=f"profile_x_{txt_file}")
+            y_axis = st.selectbox("Y-axis", df_profile.columns, key=f"profile_y_{txt_file}")
+            st.scatter_chart(df_profile[[x_axis, y_axis]])
+            st.markdown("---")

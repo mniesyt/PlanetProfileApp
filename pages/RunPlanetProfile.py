@@ -433,7 +433,12 @@ if st.button("Run PlanetProfile with my Choices", type = "primary"):
         st.success(f"Running PlanetProfileCLI.py from: {parent_dir}")
 
         # Command to actually run PlanetProfile
-        command = ["python", "PlanetProfileCLI.py", str(module_to_run)]
+        if not any_changes_made:
+            command = ["python", "PlanetProfileCLI.py", str(module_to_run)]
+        else:
+            full_path = f"{chosen_planet}/{module_filename}"
+            command = ["python", "PlanetProfileCLI.py", full_path]
+            st.write(command)
 
         result = subprocess.run(command, cwd=parent_dir, capture_output=True, text=True)
         output_str = result.stdout + "\n" + result.stderr
