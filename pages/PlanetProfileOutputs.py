@@ -5,6 +5,7 @@ import sys
 import pandas as pd
 import re
 from io import StringIO
+import altair as alt
 
 # ----- Page setup stuff -----
 from Utilities.planet_sidebar import show_planet_status
@@ -135,6 +136,8 @@ tab1, tab2, tab3 = st.tabs(["Ocean text File", "Core text File", "Profile text F
 for txt_file in txt_files:
     file_path = os.path.join(planet_folder, txt_file)
 
+
+# ----- Printing of the Core.txt file table and scatter plot -----
     if txt_file.endswith("Core.txt"):
         core_column_names = ["RsilTrade (m)", "RcoreTrade (m)", "rhoSilTrade (kg/m³)"]
         with open(file_path, "r", encoding="utf-8") as f:
@@ -149,11 +152,33 @@ for txt_file in txt_files:
             st.dataframe(df_core, use_container_width=True)
 
             st.subheader("Scatter Plot")
-            x_axis = st.selectbox("X-axis", df_core.columns, index=0, key=f"x_{txt_file}")
-            y_axis = st.selectbox("Y-axis", df_core.columns, index=2, key=f"y_{txt_file}")
-            st.scatter_chart(df_core[[x_axis, y_axis]])
-            st.markdown("---")
 
+            # Persistence toggle
+            persist_plot = st.checkbox("Plot multiple Y-axes against same X-axis", key=f"persist_core_{txt_file}")
+
+            # X-axis selection
+            x_axis = st.selectbox("X-axis", df_core.columns, key=f"x_core_{txt_file}")
+
+            # Y-axis selection
+            if persist_plot:
+                y_axes = st.multiselect(
+                    "Y-axis (select one or more)",
+                    df_core.columns.drop(x_axis),
+                    default=[df_core.columns[1]] if x_axis != df_core.columns[1] else df_core.columns[2:3],
+                    key=f"multi_y_core_{txt_file}"
+                )
+            else:
+                y_axes = [st.selectbox("Y-axis", df_core.columns.drop(x_axis), key=f"single_y_core_{txt_file}")]
+
+            # Filter out x=y cases
+            valid_y_axes = [y for y in y_axes if y != x_axis]
+
+            # Only show the chart if valid y-axes exist
+            if valid_y_axes:
+                df_plot = df_core.set_index(x_axis)[valid_y_axes]
+                st.scatter_chart(df_plot)
+
+# ----- Printing of the liquidOceanProps.txt file table and scatter plot -----
     elif txt_file.endswith("liquidOceanProps.txt"):
         with open(file_path, "r", encoding="utf-8") as f:
             lines = f.readlines()
@@ -177,10 +202,41 @@ for txt_file in txt_files:
 
             st.dataframe(df_ocean, use_container_width=True)
             st.subheader("Scatter Plot")
-            x_axis = st.selectbox("X-axis", df_ocean.columns, key=f"ocean_x_{txt_file}")
-            y_axis = st.selectbox("Y-axis", df_ocean.columns, key=f"ocean_y_{txt_file}")
-            st.scatter_chart(df_ocean[[x_axis, y_axis]])
-            st.markdown("---")
+            # Persistence toggle
+            persist_plot = st.checkbox("Plot multiple Y-axes against same X-axis", key=f"persist_{txt_file}")
+
+            # X-axis is always a single select
+            x_axis = st.selectbox("X-axis", df_ocean.columns, key=f"x_{txt_file}")
+
+            # Y-axis selection
+            if persist_plot:
+                y_axes = st.multiselect(
+                    "Y-axis (select one or more)",
+                    df_ocean.columns.drop(x_axis),
+                    default=[df_ocean.columns[1]] if x_axis != df_ocean.columns[1] else df_ocean.columns[2:3],
+                    key=f"multi_y_{txt_file}"
+                )
+            else:
+                y_axes = [st.selectbox("Y-axis", df_ocean.columns.drop(x_axis), key=f"single_y_{txt_file}")]
+
+            # Filter out x=y cases
+            valid_y_axes = [y for y in y_axes if y != x_axis]
+
+            # Only show the chart if valid y-axes exist
+            if valid_y_axes:
+                # Convert columns to numeric (coerce errors to NaN)
+                df_ocean[x_axis] = pd.to_numeric(df_ocean[x_axis], errors='coerce')
+                for col in valid_y_axes:
+                    df_ocean[col] = pd.to_numeric(df_ocean[col], errors='coerce')
+
+                # Drop rows with NaNs in x or y
+                df_plot = df_ocean[[x_axis] + valid_y_axes].dropna()
+
+                # Set x_axis as index for plotting
+                df_plot = df_plot.set_index(x_axis)[valid_y_axes]
+
+                if not df_plot.empty:
+                    st.scatter_chart(df_plot)
 
     else:
         profile_column_names = [
@@ -198,6 +254,8 @@ for txt_file in txt_files:
         data_str = "".join(lines[83:])
         df_profile = pd.read_csv(StringIO(data_str), sep=r'\s+', header=None, na_values=['nan'])
 
+
+# ----- Printing of the Profile... .txt file table and scatter plot -----
         with tab3:
             st.subheader(f"Profile File: {txt_file}")
             with st.expander("Show Extended Profile Header (Lines 1–81)"):
@@ -206,12 +264,64 @@ for txt_file in txt_files:
             if df_profile.shape[1] == len(profile_column_names):
                 df_profile.columns = profile_column_names
             else:
-                st.warning(f"⚠️ Column mismatch: Expected {len(profile_column_names)} headers vs {df_profile.shape[1]} data columns")
+                st.warning(
+                    f"⚠️ Column mismatch: Expected {len(profile_column_names)} headers vs {df_profile.shape[1]} data columns"
+                )
                 df_profile.columns = [f"Col_{i+1}" for i in range(df_profile.shape[1])]
 
             st.dataframe(df_profile, use_container_width=True)
             st.subheader("Plot Profile Data")
-            x_axis = st.selectbox("X-axis", df_profile.columns, key=f"profile_x_{txt_file}")
-            y_axis = st.selectbox("Y-axis", df_profile.columns, key=f"profile_y_{txt_file}")
-            st.scatter_chart(df_profile[[x_axis, y_axis]])
-            st.markdown("---")
+
+            # Chart placeholder
+            chart_placeholder = st.empty()
+
+            # Persistence checkbox
+            persist_plot = st.checkbox(
+                "Plot multiple Y‑axes against same X‑axis", key=f"persist_profile_{txt_file}"
+            )
+
+            # X-axis
+            x_axis = st.selectbox("X-axis", df_profile.columns, key=f"x_profile_{txt_file}")
+
+            # Y-axis logic
+            available_y_columns = [col for col in df_profile.columns if col != x_axis]
+
+            if persist_plot:
+                y_axes = st.multiselect(
+                    "Y-axis (select one or more)",
+                    options=available_y_columns,
+                    default=available_y_columns[:1],
+                    key=f"multi_y_profile_{txt_file}"
+                )
+            else:
+                y_axes = [st.selectbox(
+                    "Y-axis",
+                    options=available_y_columns,
+                    key=f"single_y_profile_{txt_file}"
+                )]
+
+            # Only plot if there are valid Y-axes (not empty and not equal to X)
+            if y_axes:
+                try:
+                    # Convert to numeric, coerce errors to NaN
+                    df_profile[x_axis] = pd.to_numeric(df_profile[x_axis], errors='coerce')
+                    for col in y_axes:
+                        df_profile[col] = pd.to_numeric(df_profile[col], errors='coerce')
+
+                    # Select relevant columns and drop NaNs
+                    chart_data = df_profile[[x_axis] + y_axes].dropna()
+
+                    # Set x_axis as index for plotting
+                    chart_data = chart_data.set_index(x_axis)[y_axes]
+
+                    if not chart_data.empty:
+                        chart_placeholder.scatter_chart(chart_data)
+                    else:
+                        chart_placeholder.empty()
+                        st.info("No valid data to plot after cleaning.")
+                except Exception as e:
+                    chart_placeholder.empty()
+                    st.warning(f"⚠️ Unable to plot: {e}")
+            else:
+                chart_placeholder.empty()
+                st.info("Please select a Y-axis different from the X-axis to plot.")

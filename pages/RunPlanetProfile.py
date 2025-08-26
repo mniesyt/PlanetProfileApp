@@ -78,8 +78,6 @@ def sanitize_filename(name):
     return re.sub(r'\W|^(?=\d)', '_', name)
 
 
-
-
 # Conditionally create SemiCustomPlanet if any settings have been changed and PPSemiCustomPlanet.py file for running
 if any_changes_made:
     SemiCustomPlanet = deepcopy(Planet)
@@ -108,8 +106,6 @@ if any_changes_made:
     original_path = os.path.join(planet_folder, f"PP{chosen_planet}.py")
     with open(original_path, "r") as f:
         original_lines = f.readlines()
-
-
     st.success(f"Semi-custom module saved as: {module_filename}")
 
 
@@ -178,13 +174,33 @@ if any_changes_made:
     # If the user has changed any ocean settings, they will be updated into the SemiCustomPlanet object here and printed for the user
     st.markdown("## Custom Ocean Settings Applied")
     running_custom_ocean = st.session_state.get("custom_ocean_flag")
+    custom_ocean_type = st.session_state.get("custom_ocean_comp", None)
+    custom_ocean_ppt = st.session_state.get("custom_ocean_concentration", None)
+
+    default_ocean_type = getattr(Planet.Ocean, "comp", "N/A")
+    default_ocean_ppt = getattr(Planet.Ocean, "wOcean_ppt", "N/A")
+
     if running_custom_ocean == True:
         st.warning("You are using an ocean different than the default ocean")
-        custom_ocean_comp = st.session_state.get("custom_ocean_comp")
-        st.write("Your current ocean configuration is: " + custom_ocean_comp)
-        SemiCustomPlanet.Ocean.comp = custom_ocean_comp
-        changed_settings_for_SemiCustom["Planet.Ocean.comp"] = custom_ocean_comp
-        default_values_for_comments["Planet.Ocean.comp"] = getattr(Planet.Ocean, "comp", "N/A")
+
+        if custom_ocean_type:
+            st.markdown(f"- **Ocean Composition**: `{default_ocean_type}` → `{custom_ocean_type}`")
+            SemiCustomPlanet.Ocean.comp = custom_ocean_type
+            changed_settings_for_SemiCustom["Planet.Ocean.comp"] = custom_ocean_type
+            default_values_for_comments["Planet.Ocean.comp"] = default_ocean_type
+        else:
+            SemiCustomPlanet.Ocean.comp = default_ocean_type  # reset
+
+        if custom_ocean_ppt is not None:
+            st.markdown(f"- **Ocean Salinity (ppt)**: `{default_ocean_ppt}` → `{custom_ocean_ppt}`")
+            SemiCustomPlanet.Ocean.wOcean_ppt = custom_ocean_ppt
+            changed_settings_for_SemiCustom["Planet.Ocean.wOcean_ppt"] = custom_ocean_ppt
+            default_values_for_comments["Planet.Ocean.wOcean_ppt"] = default_ocean_ppt
+        else:
+            SemiCustomPlanet.Ocean.wOcean_ppt = default_ocean_ppt  # reset
+
+
+
 
     if running_custom_ocean == False:
         st.info("No ocean settings have been changed. Using default ocean.")
@@ -481,8 +497,6 @@ if st.button("Run PlanetProfile with my Choices", type = "primary"):
         """,
         unsafe_allow_html=True,
     )
-
-
 
 
 

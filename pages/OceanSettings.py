@@ -40,8 +40,6 @@ if st.session_state["reset_ocean_flag"]: #if flag is true (if user presses reset
     st.success("Ocean settings reset to planet defaults.")
     st.rerun()
 
-
-
 # ----- Toggle for Ocean/No ocean -----
 st.subheader("Include an Ocean for your Planet?")
 st.write("Determine whether your planet has a liquid water ocean.")
@@ -58,12 +56,15 @@ if user_wants_ocean:
 
     # Define or access the default ocean composition (set this wherever you define defaults)
     default_ocean = getattr(Planet.Ocean, "comp")
+    default_ocean_ppt = Planet.Ocean.wOcean_ppt
 
     # Initializing Ocean session state variables
     if "custom_ocean_flag" not in st.session_state: #custom ocean in this case is just to keep track if the user is using any ocean other than the default for their selected planet
         st.session_state["custom_ocean_flag"] = False
     if "custom_ocean_comp" not in st.session_state:
         st.session_state["custom_ocean_comp"] = None
+    if "custom_ocean_concentration" not in st.session_state:
+        st.session_state["custom_ocean_concentration"] = None
 
 
     st.markdown("---")
@@ -74,7 +75,7 @@ if user_wants_ocean:
 
     # ----- Predefined ocean Options and Settings -----
     # Predefined options list
-    predefined_ocean_options = ("Pure H2O", "Seawater", "MgSO4", "NaCl")
+    predefined_ocean_options = ("PureH2O", "Seawater", "MgSO4", "NaCl")
 
     if user_ocean_type == "Use pre-defined ocean composition":
         try:
@@ -83,14 +84,40 @@ if user_wants_ocean:
             default_ocean_type_index = 0  # Fallback to first option if not found
 
         selected_ocean = st.selectbox("Choose Predefined Ocean", predefined_ocean_options, index=default_ocean_type_index)
-        #Planet.Ocean.comp = selected_ocean --> will do this on the run planet profile page
 
-            # Set flag based on deviation from default
+
+        # Ocean type check
         if selected_ocean != default_ocean:
-            st.session_state["custom_ocean_flag"] = True
             st.session_state["custom_ocean_comp"] = selected_ocean
         else:
+            st.session_state["custom_ocean_comp"] = None
+
+        # Salinity input
+        if selected_ocean != "PureH2O":
+            ocean_concentration = st.number_input(
+                "Please input your desired parts per thousand (ppt) for your salt",
+                value=default_ocean_ppt,
+                min_value=0.0,
+                step=0.1
+            )
+
+            if ocean_concentration != default_ocean_ppt:
+                st.session_state["custom_ocean_concentration"] = ocean_concentration
+            else:
+                st.session_state["custom_ocean_concentration"] = None
+        else:
+            st.session_state["custom_ocean_concentration"] = None  # No salt input for pure H2O
+
+        # Final check: set the custom flag if either value is custom
+        if (
+            st.session_state["custom_ocean_comp"] is not None or
+            st.session_state["custom_ocean_concentration"] is not None
+        ):
+            st.session_state["custom_ocean_flag"] = True
+        else:
             st.session_state["custom_ocean_flag"] = False
+
+
 
 
     # Maybe to add later- dynamic loading of reaktoro salt databases. For now, these are the main 3 we use
