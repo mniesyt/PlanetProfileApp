@@ -22,5 +22,5 @@ GUI for PlanetProfile, found here: git@github.com:vancesteven/PlanetProfile.git
 2. Run the app
 
    ```
-   $ streamlit run IntroPage.py
+   $ streamlit run PlanetProfileApp.py
    ```
