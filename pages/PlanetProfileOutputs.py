@@ -141,7 +141,7 @@ for txt_file in txt_files:
             lines = f.readlines()
 
         data_only = "".join(lines[1:])
-        df_core = pd.read_csv(StringIO(data_only), delim_whitespace=True, header=None)
+        df_core = pd.read_csv(StringIO(data_only), sep='\s+', header=None)
         df_core.columns = core_column_names
 
         with tab2:
