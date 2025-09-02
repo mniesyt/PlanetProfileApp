@@ -454,7 +454,6 @@ if st.button("Run PlanetProfile with my Choices", type = "primary"):
         else:
             full_path = f"{chosen_planet}/{module_filename}"
             command = ["python", "PlanetProfileCLI.py", full_path]
-            st.write(command)
 
         result = subprocess.run(command, cwd=parent_dir, capture_output=True, text=True)
         output_str = result.stdout + "\n" + result.stderr

@@ -96,9 +96,9 @@ if user_wants_ocean:
         if selected_ocean != "PureH2O":
             ocean_concentration = st.number_input(
                 "Please input your desired parts per thousand (ppt) for your salt",
-                value=default_ocean_ppt,
-                min_value=0.0,
-                step=0.1
+                value = float(default_ocean_ppt),
+                min_value = 0.0,
+                step = 0.1
             )
 
             if ocean_concentration != default_ocean_ppt:
