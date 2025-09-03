@@ -56,11 +56,6 @@ for key in ["changed_bulk_settings_flags", "custom_ocean_flag", "changed_step_se
         # For the boolean custom_ocean_flag, initialize as False; for the others, use empty dict
         st.session_state[key] = False if key == "custom_ocean_flag" else {}
 
-# Clean name and build module name if user is doing a SemiCustom run
-def sanitize_filename(name):
-    return re.sub(r"[^\w\-]", "_", name)
-
-
 
 # If the user has changed any inputs, we will create a semi-custom Planet object here to push their changes to
 # Check if any setting has been changed
@@ -71,66 +66,15 @@ any_changes_made = (
     or any(st.session_state["changed_core_settings"].values())
 )
 
-
+#Flags for keeping track of if module has been created or saved
+if "semi_custom_created" not in st.session_state:
+    st.session_state["semi_custom_created"] = False
+if "module_already_saved" not in st.session_state:
+    st.session_state["module_already_saved"] = False
 
 def sanitize_filename(name):
-    """Sanitize the filename by replacing invalid characters with underscores."""
+    #Sanitize the filename by replacing invalid characters with underscores.
     return re.sub(r'\W|^(?=\d)', '_', name)
-
-
-if any_changes_made:
-    # Default name suggestion
-    default_name = "SemiCustom" + chosen_planet
-
-    # Text input for custom name (this only sets a session value, doesn't run logic)
-    custom_planet_name = st.text_input(
-        "Enter a name for your modified planet (Hint: name it something that will help you identify what settings you have changed): ",
-        value=default_name,
-        key="custom_planet_name"  # important to use a key here!
-    )
-
-    # Button to trigger creation
-    create_module = st.button("Create Semi-Custom Module")
-
-    # Module creation logic gated ONLY by button press
-    if create_module:
-        name = st.session_state.custom_planet_name.strip()
-        if name:
-            SemiCustomPlanet = deepcopy(Planet)
-            st.session_state['semi_custom_created'] = True
-
-            # Full target directory
-            planet_folder = os.path.join(parent_directory, chosen_planet)
-            os.makedirs(planet_folder, exist_ok=True)
-
-            # Create module name
-            sanitized_name = sanitize_filename(name)
-            module_filename = f"PP{sanitized_name}.py"
-            output_path = os.path.join(planet_folder, module_filename)
-
-            st.info(f"Creating PP{name}.py based on user settings at {planet_folder} ...")
-
-            # Load original module file
-            original_path = os.path.join(planet_folder, f"PP{chosen_planet}.py")
-            with open(original_path, "r") as f:
-                original_lines = f.readlines()
-
-            # Save the semi-custom module file
-            with open(output_path, "w") as f:
-                f.writelines(original_lines)
-
-            st.success(f"Semi-custom module saved as: {module_filename}")
-            st.markdown("---")
-
-        else:
-            st.warning("Please enter a valid name before creating the module.")
-    else:
-        st.info("Enter a name and click the button to create your semi-custom planet module.")
-else:
-    st.info("No changes detected. Running with default Planet module.")
-    SemiCustomPlanet = Planet
-
-
 
 
 # This is used to set attributes to the planet object when the settings aren't all the same subtype (step settings has both Planet.Steps and Planet.Ocean, core settings has Planet.Core and Planet.Sil)
@@ -146,15 +90,13 @@ def set_nested_attr(obj, attr_path, value):
 
 
 
-
-
-
-
 # ----- Changed Settings Summary and Updating of SemiCustomPlanet with new changes -----
 changed_settings_for_SemiCustom = {}
 default_values_for_comments = {}  # For optional inline comment
 
-if any_changes_made and st.session_state.get('semi_custom_created', False):
+if any_changes_made: #and st.session_state.get('semi_custom_created', False):
+    # TEMP OBJECT to avoid modifying real planet before confirmation
+    SemiCustomPlanet = deepcopy(Planet)
 
     # ----- Changed Bulk Settings Summary -----
     st.markdown("## Custom Bulk Settings Applied")
@@ -301,38 +243,83 @@ if any_changes_made and st.session_state.get('semi_custom_created', False):
         st.info("No core or silicate settings have been changed. All values are defaults.")
     st.markdown("---")
 
+    # ----- Naming of SemiCustomModule
+    # Default name suggestion
+    default_name = "SemiCustom" + chosen_planet
+
+    # Text input for custom name (this only sets a session value, doesn't run logic)
+    custom_planet_name = st.text_input(
+        "Enter a name for your modified planet (Hint: name it something that will help you identify what settings you have changed): ",
+        value=default_name,
+        key="custom_planet_name"  # important to use a key here!
+    )
+
+    # Button to trigger creation
+    create_module = st.button("Create Semi-Custom Module")
+
+    # Module creation logic gated ONLY by button press
+    if create_module:
+        name = st.session_state.custom_planet_name.strip()
+        if name:
+            SemiCustomPlanet = deepcopy(Planet)
+            st.session_state['semi_custom_created'] = True
+            st.session_state['module_already_saved'] = False  # Reset: user wants a new save
+            st.success("Ready to generate semi-custom module after reviewing your settings below.")
+        else:
+            st.warning("Please enter a valid name before creating the module.")
+    else:
+        st.info("Enter a name and click the button to create your semi-custom planet module.")
+        st.markdown("---")
+else:
+    st.info("No changes detected. Running with default Planet module.")
+    SemiCustomPlanet = Planet
+    st.markdown("---")
+
     #- ----- Actually updates and writes the PPSemiCustomPlanet.py file -----
     # --- Load and Modify Lines from Original File ---
+
+if any_changes_made and st.session_state.get("semi_custom_created") and not st.session_state.get("module_already_saved"):
+
+    # Setup
+    name = st.session_state.custom_planet_name.strip()
+    sanitized_name = sanitize_filename(name)
+    module_filename = f"PP{sanitized_name}.py"
+    planet_folder = os.path.join(parent_directory, chosen_planet)
+    output_path = os.path.join(planet_folder, module_filename)
+    original_path = os.path.join(planet_folder, f"PP{chosen_planet}.py")
+
+    # Load original
     with open(original_path, "r") as f:
         original_lines = f.readlines()
 
+    # Update lines
     updated_lines = []
     for line in original_lines:
         updated = False
         for full_key, new_val in changed_settings_for_SemiCustom.items():
             pattern = rf"^\s*{re.escape(full_key)}\s*="
-
             if re.match(pattern, line):
-                # Format new value
                 if isinstance(new_val, str):
                     new_val_str = f'"{new_val}"'
                 elif isinstance(new_val, bool):
                     new_val_str = str(new_val)
                 else:
                     new_val_str = repr(new_val)
-
                 default_val = default_values_for_comments.get(full_key, "N/A")
                 line = f"{full_key} = {new_val_str}  # changed from default: {default_val}\n"
                 updated = True
-                break  # Move to next line
+                break
         updated_lines.append(line)
 
-    # --- Write Updated File ---
+    # Write updated module
     with open(output_path, "w") as f:
         f.writelines(updated_lines)
 
     st.success(f"Custom planet module updated with your custom settings: `{module_filename}`")
     st.markdown("---")
+
+    # Prevent repeat saves on rerun
+    st.session_state["module_already_saved"] = True
 
 
 # ----- Printing All Figures -----
