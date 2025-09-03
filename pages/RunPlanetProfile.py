@@ -78,44 +78,57 @@ def sanitize_filename(name):
     return re.sub(r'\W|^(?=\d)', '_', name)
 
 
-# Conditionally create SemiCustomPlanet if any settings have been changed and PPSemiCustomPlanet.py file for running
 if any_changes_made:
-    SemiCustomPlanet = deepcopy(Planet)
-
     # Default name suggestion
     default_name = "SemiCustom" + chosen_planet
 
-    # User names their semi custom planet here
-    custom_planet_name = st.text_input("Enter a name for your modified planet (Hint: name it something that will help you identify what settings you have changed): ", value=default_name)
+    # Text input for custom name (this only sets a session value, doesn't run logic)
+    custom_planet_name = st.text_input(
+        "Enter a name for your modified planet (Hint: name it something that will help you identify what settings you have changed): ",
+        value=default_name,
+        key="custom_planet_name"  # important to use a key here!
+    )
 
+    # Button to trigger creation
+    create_module = st.button("Create Semi-Custom Module")
 
-    # Full target directory: /PlanetProfile/<planet_name>
-    planet_folder = os.path.join(parent_directory, chosen_planet)
-    os.makedirs(planet_folder, exist_ok=True)
+    # Module creation logic gated ONLY by button press
+    if create_module:
+        name = st.session_state.custom_planet_name.strip()
+        if name:
+            SemiCustomPlanet = deepcopy(Planet)
+            st.session_state['semi_custom_created'] = True
 
-    # Create module name
-    sanitized_name = sanitize_filename(custom_planet_name)
-    module_filename = f"PP{sanitized_name}.py"
+            # Full target directory
+            planet_folder = os.path.join(parent_directory, chosen_planet)
+            os.makedirs(planet_folder, exist_ok=True)
 
-    # Full output path
-    output_path = os.path.join(planet_folder, module_filename)
+            # Create module name
+            sanitized_name = sanitize_filename(name)
+            module_filename = f"PP{sanitized_name}.py"
+            output_path = os.path.join(planet_folder, module_filename)
 
-    st.info("Creating PP" + custom_planet_name + ".py based on user settings at " + str(planet_folder) + " ...")
+            st.info(f"Creating PP{name}.py based on user settings at {planet_folder} ...")
 
-    # Load original module file (e.g., PPEnceladus.py)
-    original_path = os.path.join(planet_folder, f"PP{chosen_planet}.py")
-    with open(original_path, "r") as f:
-        original_lines = f.readlines()
-    st.success(f"Semi-custom module saved as: {module_filename}")
+            # Load original module file
+            original_path = os.path.join(planet_folder, f"PP{chosen_planet}.py")
+            with open(original_path, "r") as f:
+                original_lines = f.readlines()
 
+            # Save the semi-custom module file
+            with open(output_path, "w") as f:
+                f.writelines(original_lines)
 
+            st.success(f"Semi-custom module saved as: {module_filename}")
+            st.markdown("---")
 
-    st.markdown("---")
+        else:
+            st.warning("Please enter a valid name before creating the module.")
+    else:
+        st.info("Enter a name and click the button to create your semi-custom planet module.")
 else:
-    SemiCustomPlanet = Planet  # No changes, use original Planet module
-    st.info("No settings were modified. Running with default Planet.")
-    st.markdown("---")
-
+    st.info("No changes detected. Running with default Planet module.")
+    SemiCustomPlanet = Planet
 
 
 
@@ -131,16 +144,17 @@ def set_nested_attr(obj, attr_path, value):
         obj = getattr(obj, part)
     setattr(obj, parts[-1], value)
 
-    # Debug print - used to test and check that the SemiCustomPlanet object has been updated with the changed settings
-    #full_path = ".".join(parts)
-    #st.write(f"Updated `SemiCustomPlanet.{full_path}` to `{value}`")
-    #print(f"Updated SemiCustomPlanet.{full_path} = {value}")
+
+
+
+
+
 
 # ----- Changed Settings Summary and Updating of SemiCustomPlanet with new changes -----
 changed_settings_for_SemiCustom = {}
 default_values_for_comments = {}  # For optional inline comment
 
-if any_changes_made:
+if any_changes_made and st.session_state.get('semi_custom_created', False):
 
     # ----- Changed Bulk Settings Summary -----
     st.markdown("## Custom Bulk Settings Applied")
@@ -345,11 +359,6 @@ for attr in dir(Params):
     if "CALC" in attr and not attr.startswith("__"):
         setattr(Params, attr, attr not in exclude_calcs) #sets
 
-# Optional: Show updated Params values in Streamlit for confirmation
-#plot_attrs = {attr: getattr(Params, attr) for attr in dir(Params) if "PLOT" in attr and not attr.startswith("__")}
-#calc_attrs = {attr: getattr(Params, attr) for attr in dir(Params) if "CALC" in attr and not attr.startswith("__")}
-#st.write("Updated PLOT parameters in Params:", plot_attrs)
-#st.write("Updated CALC parameters in Params:", calc_attrs)
 
 
 # ----- Functions for reading PP terminal output LaTeX tabulars and configuring them into tables in the GUI ----

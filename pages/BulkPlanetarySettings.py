@@ -26,9 +26,6 @@ if Planet in (None, "-- Select a Planet --"):
     st.stop()
 
 
-
-
-
 # Pulls default values into the app for each PPPlanet, if the user sets a new
 # value then it is saved as a session state variable
 

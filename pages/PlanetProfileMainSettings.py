@@ -3,6 +3,7 @@ import os
 import importlib
 import sys
 import reaktoro as rkt
+from functools import partial
 
 # --- Setting up Main Page ---
 st.set_page_config(page_title="PlanetProfile Main")
@@ -134,20 +135,107 @@ Planet = st.session_state.get("Planet", None)
 st.markdown("---")
 st.subheader("Ice Layer Thickness")
 
-thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set up your Ice Shell. Descriptions of each type display when selected for more information", ("Input Ice Shell thickness", "Input Bottom Temperature Tb_K"))
+# Get the default Tb_K from Planet object
+default_Tb_K = getattr(Planet.Bulk, 'Tb_K')
+
+# Initializing everything to session_state
+if "Planet.Bulk.Tb_K" not in st.session_state:
+    st.session_state["Planet.Bulk.Tb_K"] = default_Tb_K
+
+if 'thickness_or_Tb' not in st.session_state:
+    st.session_state['thickness_or_Tb'] = "Input Bottom Temperature Tb_K"
+
+if 'zb_approximate_km' not in st.session_state:
+    st.session_state['zb_approximate_km'] = None
+
+if 'ICEIh_THICKNESS' not in st.session_state:
+    st.session_state['ICEIh_THICKNESS'] = False
+
+# Ensure st.session_state is ready to track changes -- we are reusing the bulk settings flags since Tb is a bulk setting
+if "changed_bulk_settings_flags" not in st.session_state:
+    st.session_state["changed_bulk_settings_flags"] = {}
+if "changed_bulk_settings" not in st.session_state:
+    st.session_state["changed_bulk_settings"] = {}
+
+# Re-using this function to track cahnges to bulk settings
+def on_change_bulk_setting(bulk_setting_key):
+    st.session_state["changed_bulk_settings_flags"][bulk_setting_key] = True
+    st.session_state["changed_bulk_settings"][bulk_setting_key] = st.session_state[bulk_setting_key]
+
+
+
+# UI
+st.session_state['thickness_or_Tb'] = st.selectbox(
+    "Select how you would like Planet profile to set up your Ice Shell. Descriptions of each type display when selected for more information",
+    ("Input Ice Shell thickness", "Input Bottom Temperature Tb_K"),
+    index=("Input Ice Shell thickness", "Input Bottom Temperature Tb_K").index(st.session_state['thickness_or_Tb'])  # maintains selection
+)
+
+#If user chooses they want to do Ice Shell Thickness
+if st.session_state['thickness_or_Tb'] == "Input Ice Shell thickness":
+    zb_key = "Planet.Bulk.zb_approximate_km"
+    do_flag_key = "Planet.Do.ICEIh_THICKNESS"
+
+    #Creating Planet.Bulk.zb_approximate_km attribute
+    if not hasattr(Planet.Bulk, "zb_approximate_km"):
+        Planet.Bulk.zb_approximate_km = None
+
+     #Initialize session state
+    if zb_key not in st.session_state:
+        default_zb = Planet.Bulk.zb_approximate_km if Planet.Bulk.zb_approximate_km is not None else 30.0
+        st.session_state[zb_key] = default_zb
+
+    st.number_input(
+        "Select the thickness of your Ice I Shell (in  $km$) below",
+        key=zb_key,
+        on_change=on_change_bulk_setting,
+        args=(zb_key,)
+    )
+
+    #Track ICEIh_THICKNESS flag for changed outputs later
+    st.session_state[do_flag_key] = True
+    st.session_state["changed_bulk_settings_flags"][do_flag_key] = True
+    st.session_state["changed_bulk_settings"][do_flag_key] = True
+
+    st.write(
+        "Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. "
+        "Based on the ice shell thickness, the temperature at the bottom of the Ice shell will be calculated."
+    )
+
+# If user chooses they want to do Tb_K
+elif st.session_state['thickness_or_Tb'] == "Input Bottom Temperature Tb_K":
+    tb_key = "Planet.Bulk.Tb_K"
+
+    st.number_input(
+        "Select Your Bottom Temperature (in  $^\circ K$)",
+        key=tb_key,
+        on_change=on_change_bulk_setting,
+        args=(tb_key,)
+    )
+
+    st.session_state['ICEIh_THICKNESS'] = False
+
+    st.write(
+        "The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile "
+        "to determine the thickness of the Ice Shell. Behind the scenes, this sets Planet.Bulk.Tb_K."
+    )
+
+
+
+
+
+
+
+
+#thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set up your Ice Shell. Descriptions of each type display when selected for more information", ("Input Ice Shell thickness", "Input Bottom Temperature Tb_K"))
 
 #Planet is currently just a string. In other pages we turn it into an object with attributes but we have not done that here
-if thickness_or_Tb == "Input Ice Shell thickness":
-    Planet.Bulk.zb_approximate_km = st.number_input("Select the thickness of your Ice I Shell (in  $km$) below")
-    st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the temperature at the bottom of the Ice shell will be calculated")
+#if thickness_or_Tb == "Input Ice Shell thickness":
+    #Planet.Bulk.zb_approximate_km = st.number_input("Select the thickness of your Ice I Shell (in  $km$) below")
+    #st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the temperature at the bottom of the Ice shell will be calculated")
 
     # Ensure Planet.Do exists and is a dictionary
-    if not hasattr(Planet.Do, "ICEIh_THICKNESS"):
-        Planet.Do.ICEIh_THICKNESS = True #if the attribute doesn't exist, this is making it and setting it to true
-    else:
-        Planet.Do.ICEIh_THICKNESS = True  #  #user is inputting the thickness instead of Tb_K so the thickness flag is set to true
-
-if thickness_or_Tb == "Input Bottom Temperature Tb_K":
-    Planet.Bulk.Tb_K =st.number_input("Select Your Bottom Temperature (in  $^\circ K$) - Primarily for PlanetProfile Developers")
-    # User Passes in a Temperature of the bottom of the ocean
-    st.write("The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile to determine the thickness of the Ice Shell thickness. Behind the scenes, this sets Planet.Bulk.Tb_K")
+    #if not hasattr(Planet.Do, "ICEIh_THICKNESS"):
+        #Planet.Do.ICEIh_THICKNESS = True #if the attribute doesn't exist, this is making it and setting it to true
+    #else:
+        #Planet.Do.ICEIh_THICKNESS = True  #  #user is inputting the thickness instead of Tb_K so the thickness flag is set to true
