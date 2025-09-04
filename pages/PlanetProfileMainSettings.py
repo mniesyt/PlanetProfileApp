@@ -6,10 +6,10 @@ import reaktoro as rkt
 from functools import partial
 
 # --- Setting up Main Page ---
-st.set_page_config(page_title="PlanetProfile Main")
+st.set_page_config(page_title = "PlanetProfile Main", page_icon = "./PPlogo.ico")
 st.title("PlanetProfile")
 st.markdown("---")
-st.set_page_config(page_icon="./PPlogo.ico")
+
 st.write("## Let's Start by Setting Up Your Planet!")
 
 st.write("Note on custom planets - start with an existing planet as a template, and then edit your settings on the following pages.")
@@ -31,8 +31,8 @@ if app_directory not in sys.path:
 parent_directory  = os.path.dirname(app_directory)
 
 # Add the parent directory to Python's search path.
-if parent_directory not in sys.path:
-    sys.path.append(parent_directory)
+#if parent_directory not in sys.path:
+    #sys.path.append(parent_directory)
 
 
 #--- Planet Selection - Custom or from dropdown ---
@@ -85,6 +85,36 @@ if "Planet" not in st.session_state:
         #st.info("Created PPCustom.py with default custom planet config.")
 
 
+# This is how the app can find custom modules made by the user and the paths to them
+def get_custom_module_paths(parent_dir, planet_name):
+    """
+    Returns a list of custom module file paths for a given planet,
+    excluding the default module.
+    """
+    custom_dir = os.path.join(parent_dir, planet_name)
+    default_filename = f"PP{planet_name}.py"
+
+    all_files = os.listdir(custom_dir)
+
+    # Filter files that:
+    # - start with "PP"
+    # - end with ".py"
+    # - are NOT the default file (PP{planet}.py)
+    custom_files = [
+        f for f in all_files
+        if f.startswith("PP") and f.endswith(".py") and f != default_filename
+    ]
+
+
+    return [os.path.join(custom_dir, f) for f in custom_files]
+
+# Example usage
+
+planet_name = "Europa"
+get_custom_module_paths(parent_directory, planet_name)
+
+
+
 st.subheader("Body Selection")
 st.write("Please select a planetary body from the list of profiles below")
 
@@ -111,23 +141,51 @@ else:
 # --- Load planet module ---
 from Utilities.PlanetLoader import load_planet_module
 
+# --- Load default + check for custom modules ---
+# --- Get custom modules ---
+parent_directory = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # adjust as needed
+custom_modules = get_custom_module_paths(parent_directory, chosen_planet)
+
+custom_modules = get_custom_module_paths(parent_directory, chosen_planet)
+
+
+use_custom = False
+custom_module_path = None
+
+# --- If custom modules exist, offer choice ---
+if custom_modules:
+    st.info("Custom modules found for this planet.")
+
+    choice = st.radio(
+        "How would you like to load this planet?",
+        options=["Use default module", "Load a custom module"],
+        index=0,
+        key="custom_module_choice"
+    )
+
+    use_custom = (choice == "Load a custom module")
+
+    if use_custom:
+        custom_names = [os.path.basename(path) for path in custom_modules]
+        selected_custom_name = st.selectbox("Choose a custom module:", custom_names, key="custom_module_name")
+        custom_module_path = next(
+            (p for p in custom_modules if os.path.basename(p) == selected_custom_name),
+            None
+        )
+
+# --- Load module (default or custom) ---
 try:
-    planet_module = load_planet_module(parent_directory, chosen_planet)
-    st.success(f"{chosen_planet} data loaded.")
+    planet_module = load_planet_module(parent_directory, chosen_planet, custom_module_path=custom_module_path)
+    st.success(f"{chosen_planet} data loaded{' (custom)' if use_custom else ''}.")
     st.session_state["Planet"] = planet_module.Planet
 except Exception as e:
     st.error(f"Error loading planet module: {e}")
     st.stop()
 
-    # Construct the Planet object
-    #from PlanetProfile.Utilities.defineStructs import PlanetStruct, Constants
-    # Store the planet object in session state
 
-    #st.write(st.session_state["Planet"])
 
 Planet = st.session_state.get("Planet", None)
 
-# need to add what happens if the user selects custom here
 
 
 # --- Main Settings Options Begin here- Tb_K and  Ocean Compositions ---
@@ -219,23 +277,3 @@ elif st.session_state['thickness_or_Tb'] == "Input Bottom Temperature Tb_K":
         "The temperature you select at the bottom of the ocean layer for your planet is used by Planet Profile "
         "to determine the thickness of the Ice Shell. Behind the scenes, this sets Planet.Bulk.Tb_K."
     )
-
-
-
-
-
-
-
-
-#thickness_or_Tb = st.selectbox("Select how you would like Planet profile to set up your Ice Shell. Descriptions of each type display when selected for more information", ("Input Ice Shell thickness", "Input Bottom Temperature Tb_K"))
-
-#Planet is currently just a string. In other pages we turn it into an object with attributes but we have not done that here
-#if thickness_or_Tb == "Input Ice Shell thickness":
-    #Planet.Bulk.zb_approximate_km = st.number_input("Select the thickness of your Ice I Shell (in  $km$) below")
-    #st.write("Planet Profile will use the inputted ice layer thickness to generate the ice shell for your planet. Based on the ice shell thickness, the temperature at the bottom of the Ice shell will be calculated")
-
-    # Ensure Planet.Do exists and is a dictionary
-    #if not hasattr(Planet.Do, "ICEIh_THICKNESS"):
-        #Planet.Do.ICEIh_THICKNESS = True #if the attribute doesn't exist, this is making it and setting it to true
-    #else:
-        #Planet.Do.ICEIh_THICKNESS = True  #  #user is inputting the thickness instead of Tb_K so the thickness flag is set to true
