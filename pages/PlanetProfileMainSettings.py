@@ -26,9 +26,16 @@ app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
 if app_directory not in sys.path:
     sys.path.append(app_directory)
 
+# Point to the root PlanetProfile directory (outermost one)
+this_file = os.path.abspath(__file__)
+PlanetProfileMainSettings_directory = os.path.dirname(this_file)
+app_directory = os.path.dirname(PlanetProfileMainSettings_directory)
+parent_directory = os.path.dirname(app_directory)
 
+if parent_directory not in sys.path:
+    sys.path.insert(0, parent_directory)
 # Get the parent directory (/PlanetProfile)
-parent_directory  = os.path.dirname(app_directory)
+#parent_directory  = os.path.dirname(app_directory)
 
 # Add the parent directory to Python's search path.
 #if parent_directory not in sys.path:
@@ -89,22 +96,23 @@ if "Planet" not in st.session_state:
 def get_custom_module_paths(parent_dir, planet_name):
     """
     Returns a list of custom module file paths for a given planet,
-    excluding the default module.
+    excluding the default module (PP{Planet}.py) that is a copy of the default.
+
+    Example path scanned: PlanetProfile/Europa/PPEuropaLowTemp.py
     """
     custom_dir = os.path.join(parent_dir, planet_name)
     default_filename = f"PP{planet_name}.py"
 
+    if not os.path.exists(custom_dir):
+        return []
+
     all_files = os.listdir(custom_dir)
 
-    # Filter files that:
-    # - start with "PP"
-    # - end with ".py"
-    # - are NOT the default file (PP{planet}.py)
+    # Get files like PPEuropaLowTemp.py but not PPEuropa.py
     custom_files = [
         f for f in all_files
-        if f.startswith("PP") and f.endswith(".py") and f != default_filename
+        if f.startswith(f"PP{planet_name}") and f.endswith(".py") and f != default_filename
     ]
-
 
     return [os.path.join(custom_dir, f) for f in custom_files]
 
