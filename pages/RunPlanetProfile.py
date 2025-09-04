@@ -264,7 +264,6 @@ if any_changes_made: #and st.session_state.get('semi_custom_created', False):
             SemiCustomPlanet = deepcopy(Planet)
             st.session_state['semi_custom_created'] = True
             st.session_state['module_already_saved'] = False  # Reset: user wants a new save
-            st.success("Ready to generate semi-custom module after reviewing your settings below.")
         else:
             st.warning("Please enter a valid name before creating the module.")
     else:
@@ -438,7 +437,9 @@ else:
 
 if st.button("Run PlanetProfile with my Choices", type = "primary"):
     with st.spinner("Pushing your settings to PlanetProfile..."):
-
+        name = st.session_state.custom_planet_name.strip()
+        sanitized_name = sanitize_filename(name)
+        module_filename = f"PP{sanitized_name}.py"
         parent_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
         # Assuming user has cloned the PPApp into the same environment as PlanetProfile
         # have to move up one step out of PPApp into PP to run PP
